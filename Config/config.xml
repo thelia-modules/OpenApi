@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<config xmlns="http://thelia.net/schema/dic/config"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://thelia.net/schema/dic/config http://thelia.net/schema/dic/config/thelia-1.0.xsd">
+
+    <loops>
+        <!-- sample definition
+        <loop name="MySuperLoop" class="OpenApi\Loop\MySuperLoop" />
+        -->
+    </loops>
+
+    <forms>
+        <!--
+        <form name="MyFormName" class="OpenApi\Form\MySuperForm" />
+        -->
+    </forms>
+
+    <commands>
+        <!--
+        <command class="OpenApi\Command\MySuperCommand" />
+        -->
+    </commands>
+
+
+    <services>
+        <service id="open_api.router.annotation" class="OpenApi\Service\AnnotationRouter">
+            <argument type="service" id="router.filelocator"/>
+            <tag name="router.register" priority="255"/>
+        </service>
+
+        <service id="foo.action" class="OpenApi\EventListener\FooEventListener" >
+            <tag name="kernel.event_subscriber"/>
+        </service>
+    </services>
+
+
+    <!--
+    <hooks>
+        <hook id="openapi.hook" class="OpenApi\Hook\MySuperHook">
+            <tag name="hook.event_listener" event="main.body.bottom" type="front|back|pdf|email" method="onMainBodyBottom" />
+        </hook>
+    </hooks>
+    -->
+
+    <!--
+    <exports>
+
+    </exports>
+    -->
+
+    <!--
+    <imports>
+
+    </imports>
+    -->
+</config>

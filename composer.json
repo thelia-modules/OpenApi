@@ -1,0 +1,13 @@
+{
+  "name": "your-vendor/open-api-module",
+  "license": "LGPL-3.0-or-later",
+  "type": "thelia-module",
+  "require": {
+    "thelia/installer": "~1.1",
+    "zircote/swagger-php": "~3.0.0",
+    "sensio/framework-extra-bundle": "~3.0.0"
+  },
+  "extra": {
+    "installer-name": "OpenApi"
+  }
+}

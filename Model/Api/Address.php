@@ -11,7 +11,7 @@ use OpenApi\Annotations as OA;
  *     description="Address model"
  * )
  */
-class Address
+class Address extends BaseApiModel
 {
     /**
      * @OA\Property(

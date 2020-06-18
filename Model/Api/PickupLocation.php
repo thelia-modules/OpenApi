@@ -10,7 +10,7 @@ use OpenApi\Annotations as OA;
  *     description="PickupLocation model"
  * )
  */
-class PickupLocation
+class PickupLocation extends BaseApiModel
 {
     /**
      * @OA\Property(

@@ -4,7 +4,7 @@ namespace OpenApi\Model\Api;
 
 use Thelia\Model\Address;
 
-class Cart
+class Cart extends BaseApiModel
 {
     /**
      * @var Address|null

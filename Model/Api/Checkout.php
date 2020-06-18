@@ -13,7 +13,7 @@ use OpenApi\Annotations as OA;
  *     description="Checkout model",
  * )
  */
-class Checkout
+class Checkout extends BaseApiModel
 {
     /**
      *  @OA\Property(

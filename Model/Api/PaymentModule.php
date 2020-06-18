@@ -11,7 +11,7 @@ use OpenApi\Annotations as OA;
  *     description="A module of type payment"
  * )
  */
-class PaymentModule
+class PaymentModule extends BaseApiModel
 {
     /**
      *  @OA\Property(

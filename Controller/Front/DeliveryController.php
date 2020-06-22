@@ -21,9 +21,7 @@ use Thelia\Model\Module;
 use Thelia\Model\ModuleQuery;
 use Thelia\Model\PickupLocation;
 use Thelia\Model\StateQuery;
-use Thelia\Module\AbstractDeliveryModule;
 use Thelia\Module\BaseModule;
-use Thelia\Module\DeliveryModuleInterface;
 
 /**
  * @Route("/delivery", name="delivery")
@@ -31,7 +29,7 @@ use Thelia\Module\DeliveryModuleInterface;
 class DeliveryController extends BaseFrontController
 {
     /**
-     * @Route("/pickup-locations", name="deliver_pickup_locations", methods="GET")
+     * @Route("/pickup-locations", name="delivery_pickup_locations", methods="GET")
      *
      * @OA\Get(
      *     path="/delivery/pickup-locations",
@@ -116,12 +114,12 @@ class DeliveryController extends BaseFrontController
             $pickupLocationEvent = new PickupLocationEvent(
                 null,
                 null,
-                $request->get('moduleIds'),
                 $request->get('address'),
                 $request->get('city'),
                 $request->get('zipCode'),
                 $state,
-                $country
+                $country,
+                $request->get('moduleIds')
             );
 
             $this->getDispatcher()->dispatch(TheliaEvents::MODULE_DELIVERY_GET_PICKUP_LOCATIONS, $pickupLocationEvent);
@@ -147,7 +145,7 @@ class DeliveryController extends BaseFrontController
     }
 
     /**
-     * @Route("/modules", name="deliver_modules", methods="GET")
+     * @Route("/modules", name="delivery_modules", methods="GET")
      *
      * @OA\Get(
      *     path="/delivery/modules",
@@ -210,7 +208,7 @@ class DeliveryController extends BaseFrontController
         return new JsonResponse(
             array_filter(array_map(
                 function ($module) use ($class, $cart, $deliveryAddress, $country, $state)  {
-                    return $class->getDeliveryData($module, $cart, $deliveryAddress, $country, $state);
+                    return $class->getDeliveryModule($module, $cart, $deliveryAddress, $country, $state);
                 },
                 iterator_to_array($modules)
             ),
@@ -219,7 +217,7 @@ class DeliveryController extends BaseFrontController
         );
     }
 
-    protected function getDeliveryData(Module $deliveryModule, $cart, $address, $country, $state)
+    protected function getDeliveryModule(Module $deliveryModule, $cart, $address, $country, $state)
     {
         $areaDeliveryModule = AreaDeliveryModuleQuery::create()
             ->findByCountryAndModule($country, $deliveryModule, $state);

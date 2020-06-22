@@ -31,7 +31,7 @@ class Error extends BaseApiModel
      * @OA\Property(
      *    type="array",
      *     @OA\Items(
-     *          ref="#/components/schemas/Violations"
+     *          ref="#/components/schemas/Violation"
      *     )
      * )
      */

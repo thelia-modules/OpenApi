@@ -64,14 +64,16 @@ class PaymentModule extends BaseApiModel
 
     /**
      *  @OA\Property(
-     *     type="float"
+     *     type="number",
+     *     format="float"
      *  )
      */
     protected $minimumAmount;
 
     /**
      *  @OA\Property(
-     *     type="float"
+     *     type="number",
+     *     format="float"
      *  )
      */
     protected $maximumAmount;

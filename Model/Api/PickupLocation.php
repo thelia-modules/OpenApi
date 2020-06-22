@@ -21,14 +21,16 @@ class PickupLocation extends BaseApiModel
 
     /**
      * @OA\Property(
-     *    type="float"
+     *     type="number",
+     *     format="float"
      * )
      */
     protected $latitude;
 
     /**
      * @OA\Property(
-     *    type="float"
+     *     type="number",
+     *     format="float"
      * )
      */
     protected $longitude;

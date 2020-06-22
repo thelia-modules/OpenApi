@@ -91,21 +91,24 @@ class DeliveryModule extends BaseApiModel
 
     /**
      *  @OA\Property(
-     *     type="float"
+     *     type="number",
+     *     format="float"
      *  )
      */
     protected $postage;
 
     /**
      *  @OA\Property(
-     *     type="float"
+     *     type="number",
+     *     format="float"
      *  )
      */
     protected $postageTax;
 
     /**
      *  @OA\Property(
-     *     type="float"
+     *     type="number",
+     *     format="float"
      *  )
      */
     protected $postageUntaxed;

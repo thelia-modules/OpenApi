@@ -18,7 +18,7 @@ class AddressController extends BaseFrontController
      * @Route("", name="address", methods="GET")
      *
      * @OA\Get(
-     *     path="/delivery/modules",
+     *     path="/address",
      *     tags={"delivery", "modules"},
      *     summary="List all available delivery modules",
      *     @OA\Parameter(

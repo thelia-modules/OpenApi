@@ -125,8 +125,8 @@ class DeliveryController extends BaseFrontOpenApiController
     public function getPickupLocations(Request $request)
     {
         try {
-            $state = $request->get('stateId') ? (StateQuery::create())->findOneById($request->get('stateId')) : null;
-            $country = $request->get('countryId') ? (CountryQuery::create())->findOneById($request->get('countryId')) : null;
+            $state = $request->get('stateId') ? (StateQuery::create())->filterById($request->get('stateId'))->findOne() : null;
+            $country = $request->get('countryId') ? (CountryQuery::create())->filterById($request->get('countryId'))->findOne() : null;
             $pickupLocationEvent = new PickupLocationEvent(
                 null,
                 $request->get('radius'),

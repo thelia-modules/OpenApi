@@ -189,7 +189,7 @@ class Address extends BaseApiModel
 
         $address->setIsDefault($this->getIsDefault())
             ->setLabel($this->getLabel())
-            ->setCustomerTitle((new CustomerTitle())->setId($this->getCivilityTitle()->getId()))
+            ->setTitleId($this->getCivilityTitle()->getId())
             ->setFirstname($this->getFirstName())
             ->setLastname($this->getLastName())
             ->setCellphone($this->getCellphoneNumber())

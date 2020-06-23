@@ -18,6 +18,13 @@ class FooEventListener implements EventSubscriberInterface
                 ->setTitle('First test')
                 ->setLatitude(42)
                 ->setLongitude(51)
+                ->setOpeningHours(PickupLocation::MONDAY_OPENING_HOURS_KEY, '09:00-12:00 14:00-18:00')
+                ->setOpeningHours(PickupLocation::TUESDAY_OPENING_HOURS_KEY, '09:00-12:00 14:00-18:00')
+                ->setOpeningHours(PickupLocation::WEDNESDAY_OPENING_HOURS_KEY, '09:00-12:00 14:00-18:00')
+                ->setOpeningHours(PickupLocation::THURSDAY_OPENING_HOURS_KEY, '09:00-12:00 14:00-18:00')
+                ->setOpeningHours(PickupLocation::FRIDAY_OPENING_HOURS_KEY, '09:00-12:00 14:00-18:00')
+                ->setOpeningHours(PickupLocation::SATURDAY_OPENING_HOURS_KEY, '09:00-12:00 00:00-00:00')
+                ->setOpeningHours(PickupLocation::SUNDAY_OPENING_HOURS_KEY, '00:00-00:00 00:00-00:00')
                 ->setAddress(
                     (new PickupLocationAddress())
                         ->setId(1)

@@ -108,17 +108,29 @@ class AddressController extends BaseFrontOpenApiController
      */
     public function createAddress(Request $request)
     {
-        $currentCustomer = $this->getSecurityContext()->getCustomerUser();
-        if (null === $currentCustomer) {
-            throw new \Exception(Translator::getInstance()->trans("No customer found", [], OpenApi::DOMAIN_NAME));
+        try {
+            $currentCustomer = $this->getSecurityContext()->getCustomerUser();
+            if (null === $currentCustomer) {
+                throw new \Exception(Translator::getInstance()->trans("No customer found", [], OpenApi::DOMAIN_NAME));
+            }
+
+            $openApiAddress = (new OpenApiAddress())->createFromRequest($request);
+            $theliaAddress = $openApiAddress->toTheliaAddress();
+            $theliaAddress->setCustomer($currentCustomer)
+                ->save();
+
+            return new JsonResponse($openApiAddress);
+        } catch (\Exception $e) {
+            $error = new Error(
+                Translator::getInstance()->trans('Error for retrieving customer addresses', [], OpenApi::DOMAIN_NAME),
+                $e->getMessage()
+            );
+
+            return new JsonResponse(
+                $error,
+                400
+            );
         }
-
-        $openApiAddress = (new OpenApiAddress())->createFromRequest($request);
-        $theliaAddress = $openApiAddress->toTheliaAddress();
-        $theliaAddress->setCustomer($currentCustomer)
-            ->save();
-
-        return new JsonResponse($openApiAddress);
     }
 
     /**
@@ -155,7 +167,38 @@ class AddressController extends BaseFrontOpenApiController
      */
     public function updateAddress(Request $request, $id)
     {
+        try {
+            $currentCustomer = $this->getSecurityContext()->getCustomerUser();
+            if (null === $currentCustomer) {
+                throw new \Exception(Translator::getInstance()->trans("No customer found", [], OpenApi::DOMAIN_NAME));
+            }
 
+            $address = AddressQuery::create()
+                ->filterByCustomerId($currentCustomer->getId())
+                ->filterById($id)
+                ->findOne();
+
+            if (null === $address) {
+                throw new \Exception(Translator::getInstance()->trans("This address does not belong to this customer", [], OpenApi::DOMAIN_NAME));
+            }
+
+            $openApiAddress = (new OpenApiAddress())->createFromRequest($request)
+                ->setId($id);
+
+            $openApiAddress->toTheliaAddress()->save();
+
+            return new JsonResponse($openApiAddress);
+        } catch (\Exception $e) {
+            $error = new Error(
+                Translator::getInstance()->trans('Error for retrieving customer addresses', [], OpenApi::DOMAIN_NAME),
+                $e->getMessage()
+            );
+
+            return new JsonResponse(
+                $error,
+                400
+            );
+        }
     }
 
     /**
@@ -181,6 +224,37 @@ class AddressController extends BaseFrontOpenApiController
      */
     public function deleteAddress(Request $request, $id)
     {
+        try {
+            $currentCustomer = $this->getSecurityContext()->getCustomerUser();
+            if (null === $currentCustomer) {
+                throw new \Exception(Translator::getInstance()->trans("No customer found", [], OpenApi::DOMAIN_NAME));
+            }
 
+            $address = AddressQuery::create()
+                ->filterByCustomerId($currentCustomer->getId())
+                ->filterById($id)
+                ->findOne();
+
+            if (null === $address) {
+                throw new \Exception(Translator::getInstance()->trans("This address does not belong to this customer", [], OpenApi::DOMAIN_NAME));
+            }
+
+            $openApiAddress = (new OpenApiAddress())->createFromRequest($request)
+                ->setId($id);
+
+            $openApiAddress->toTheliaAddress()->delete();
+
+            return new JsonResponse("", 204);
+        } catch (\Exception $e) {
+            $error = new Error(
+                Translator::getInstance()->trans('Error for retrieving customer addresses', [], OpenApi::DOMAIN_NAME),
+                $e->getMessage()
+            );
+
+            return new JsonResponse(
+                $error,
+                400
+            );
+        }
     }
 }

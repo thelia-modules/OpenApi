@@ -74,9 +74,6 @@ class OpenApiController extends BaseFrontController
      *     @OA\Response(
      *          response="200",
      *          description="Success",
-     *          @OA\OpenApi(
-     *
-     *          )
      *     ),
      *     @OA\Response(
      *          response="400",

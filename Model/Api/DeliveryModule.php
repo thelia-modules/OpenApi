@@ -32,6 +32,13 @@ class DeliveryModule extends BaseApiModel
 
     /**
      *  @OA\Property(
+     *     type="boolean"
+     *  )
+     */
+    protected $valid;
+
+    /**
+     *  @OA\Property(
      *     type="integer"
      *  )
      */
@@ -130,7 +137,7 @@ class DeliveryModule extends BaseApiModel
     public function setDeliveryMode($deliveryMode)
     {
         if (!in_array($deliveryMode, ['pickup', 'delivery'])) {
-            throw new \Exception(Translator::getInstance()->trans('A delivery module can only de of type pickup or delivery', [], OpenApi::DOMAIN_NAME));
+            throw new \Exception(Translator::getInstance()->trans('A delivery module can only be of type pickup or delivery', [], OpenApi::DOMAIN_NAME));
         }
 
         $this->deliveryMode = $deliveryMode;
@@ -153,6 +160,25 @@ class DeliveryModule extends BaseApiModel
     public function setId($id)
     {
         $this->id = $id;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getValid()
+    {
+        return $this->valid;
+    }
+
+    /**
+     * @param mixed $valid
+     *
+     * @return DeliveryModule
+     */
+    public function setValid($valid)
+    {
+        $this->valid = $valid;
         return $this;
     }
 

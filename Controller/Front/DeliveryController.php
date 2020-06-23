@@ -26,7 +26,7 @@ use Thelia\Module\BaseModule;
 /**
  * @Route("/delivery", name="delivery")
  */
-class DeliveryController extends BaseFrontController
+class DeliveryController extends BaseFrontOpenApiController
 {
     /**
      * @Route("/pickup-locations", name="delivery_pickup_locations", methods="GET")
@@ -79,7 +79,7 @@ class DeliveryController extends BaseFrontController
      *          )
      *     ),
      *     @OA\Parameter(
-     *          name="moduleIds",
+     *          name="moduleIds[]",
      *          description="For filter pickup locations by modules",
      *          in="query",
      *          @OA\Schema(
@@ -206,13 +206,11 @@ class DeliveryController extends BaseFrontController
 
         $class = $this;
         return new JsonResponse(
-            array_filter(array_map(
+            array_map(
                 function ($module) use ($class, $cart, $deliveryAddress, $country, $state)  {
                     return $class->getDeliveryModule($module, $cart, $deliveryAddress, $country, $state);
                 },
                 iterator_to_array($modules)
-            ),
-                function ($deliveryModule) { return $deliveryModule !== null;}
             )
         );
     }
@@ -223,15 +221,16 @@ class DeliveryController extends BaseFrontController
             ->findByCountryAndModule($country, $deliveryModule, $state);
         $isCartVirtual = $cart->isVirtual();
 
-        if (null === $areaDeliveryModule && false === $isCartVirtual) {
-            return null;
+        $isValid = true;
+        if (false === $isCartVirtual && null === $areaDeliveryModule) {
+            $isValid = false;
         }
 
         $moduleInstance = $deliveryModule->getDeliveryModuleInstance($this->container);
 
         if (true === $isCartVirtual && false === $moduleInstance->handleVirtualProductDelivery()
         ) {
-            return null;
+            $isValid = false;
         }
 
         $deliveryPostageEvent = new DeliveryPostageEvent($moduleInstance, $cart, $address, $country, $state);
@@ -241,22 +240,29 @@ class DeliveryController extends BaseFrontController
         );
 
         if (!$deliveryPostageEvent->isValidModule()) {
-            return null;
+            $isValid = false;
         }
 
-        return (new DeliveryModule())
+        $deliveryModule =  (new DeliveryModule())
+            ->setValid($isValid)
             ->setDeliveryMode($deliveryPostageEvent->getDeliveryMode())
             ->setId($deliveryModule->getId())
             ->setCode($deliveryModule->getCode())
             ->setTitle($deliveryModule->getTitle())
             ->setDescription($deliveryModule->getDescription())
             ->setChapo($deliveryModule->getChapo())
-            ->setPostscriptum($deliveryModule->getPostscriptum())
-            ->setMinimumDeliveryDate($deliveryPostageEvent->getMinimumDeliveryDate())
-            ->setMaximumDeliveryDate($deliveryPostageEvent->getMaximumDeliveryDate())
-            ->setPostage($deliveryPostageEvent->getPostage()->getAmount())
-            ->setPostageTax($deliveryPostageEvent->getPostage()->getAmountTax())
-            ->setPostageUntaxed($deliveryPostageEvent->getPostage()->getAmount() - $deliveryPostageEvent->getPostage()->getAmountTax());
+            ->setPostscriptum($deliveryModule->getPostscriptum());
+
+        if ($isValid) {
+            $deliveryModule
+                ->setMinimumDeliveryDate($deliveryPostageEvent->getMinimumDeliveryDate())
+                ->setMaximumDeliveryDate($deliveryPostageEvent->getMaximumDeliveryDate())
+                ->setPostage($deliveryPostageEvent->getPostage()->getAmount())
+                ->setPostageTax($deliveryPostageEvent->getPostage()->getAmountTax())
+                ->setPostageUntaxed($deliveryPostageEvent->getPostage()->getAmount() - $deliveryPostageEvent->getPostage()->getAmountTax());
+        }
+
+        return $deliveryModule;
     }
 
     protected function getDeliveryAddress(Request $request)

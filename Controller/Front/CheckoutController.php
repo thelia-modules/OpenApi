@@ -11,7 +11,7 @@ use OpenApi\Annotations as OA;
 /**
  * @Route("/checkout")
  */
-class CheckoutController extends BaseFrontController
+class CheckoutController extends BaseFrontOpenApiController
 {
     /**
      * @Route("", name="set_checkout", methods="POST")

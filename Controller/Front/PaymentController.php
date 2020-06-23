@@ -19,7 +19,7 @@ use Thelia\Module\BaseModule;
 /**
  * @Route("/payment", name="payment")
  */
-class PaymentController extends BaseFrontController
+class PaymentController extends BaseFrontOpenApiController
 {
     /**
      * @Route("/modules", name="payment_modules", methods="GET")
@@ -77,13 +77,11 @@ class PaymentController extends BaseFrontController
 
         // Return formatted valid payment
         return new JsonResponse(
-            array_filter(array_map(
+            array_map(
                 function ($module) use ($class, $cart, $lang)  {
                     return $class->getPaymentModule($module, $cart, $lang);
                 },
                 iterator_to_array($modules)
-            ),
-                function ($deliveryModule) { return $deliveryModule !== null;}
             )
         );
     }

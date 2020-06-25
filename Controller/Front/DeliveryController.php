@@ -157,7 +157,8 @@ class DeliveryController extends BaseFrontOpenApiController
             );
 
             return new JsonResponse(
-                $error
+                $error,
+                400
             );
         }
     }

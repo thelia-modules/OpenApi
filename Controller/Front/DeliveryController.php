@@ -73,7 +73,23 @@ class DeliveryController extends BaseFrontOpenApiController
      *     ),
      *     @OA\Parameter(
      *          name="radius",
-     *          description="Radius in km to filter pickup locations",
+     *          description="Radius in meters to filter pickup locations",
+     *          in="query",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *     ),
+     *     @OA\Parameter(
+     *          name="maxRelays",
+     *          description="Max number of relays returned by the module, if applicable",
+     *          in="query",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *     ),
+     *     @OA\Parameter(
+     *          name="orderWeight",
+     *          description="Total weight of the order in grams (eg: 1000 for 1kg)",
      *          in="query",
      *          @OA\Schema(
      *              type="integer"
@@ -81,7 +97,7 @@ class DeliveryController extends BaseFrontOpenApiController
      *     ),
      *     @OA\Parameter(
      *          name="moduleIds[]",
-     *          description="For filter pickup locations by modules",
+     *          description="To filter pickup locations by modules",
      *          in="query",
      *          @OA\Schema(
      *              type="array",
@@ -110,14 +126,16 @@ class DeliveryController extends BaseFrontOpenApiController
     public function getPickupLocations(Request $request)
     {
         try {
-            $state = $request->get('stateId') ? (StateQuery::create())->findOneById($request->get('stateId')) : null;
-            $country = $request->get('countryId') ? (CountryQuery::create())->findOneById($request->get('countryId')) : null;
+            $state = $request->get('stateId') ? (StateQuery::create())->filterById($request->get('stateId'))->findOne() : null;
+            $country = $request->get('countryId') ? (CountryQuery::create())->filterById($request->get('countryId'))->findOne() : null;
             $pickupLocationEvent = new PickupLocationEvent(
                 null,
-                null,
+                $request->get('radius'),
+                $request->get('maxRelays'),
                 $request->get('address'),
                 $request->get('city'),
                 $request->get('zipCode'),
+                $request->get('orderWeight'),
                 $state,
                 $country,
                 $request->get('moduleIds')
@@ -140,7 +158,8 @@ class DeliveryController extends BaseFrontOpenApiController
             );
 
             return new JsonResponse(
-                $error
+                $error,
+                400
             );
         }
     }

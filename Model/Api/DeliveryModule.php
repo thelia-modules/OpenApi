@@ -39,7 +39,7 @@ class DeliveryModule extends BaseApiModel
 
     /**
      *  @OA\Property(
-     *     type="integer"
+     *     type="string"
      *  )
      */
     protected $code;
@@ -73,52 +73,14 @@ class DeliveryModule extends BaseApiModel
     protected $postscriptum;
 
     /**
-     *  @OA\Property(
-     *     type="string",
-     *     description="Delivery logo url"
-     *  )
+     * @OA\Property(
+     *    type="array",
+     *     @OA\Items(
+     *          ref="#/components/schemas/DeliveryModuleOption"
+     *     )
+     * )
      */
-    protected $image;
-
-    /**
-     *  @OA\Property(
-     *     type="string",
-     *     format="date-time"
-     *  )
-     */
-    protected $minimumDeliveryDate;
-
-    /**
-     *  @OA\Property(
-     *     type="string",
-     *     format="date-time"
-     *  )
-     */
-    protected $maximumDeliveryDate;
-
-    /**
-     *  @OA\Property(
-     *     type="number",
-     *     format="float"
-     *  )
-     */
-    protected $postage;
-
-    /**
-     *  @OA\Property(
-     *     type="number",
-     *     format="float"
-     *  )
-     */
-    protected $postageTax;
-
-    /**
-     *  @OA\Property(
-     *     type="number",
-     *     format="float"
-     *  )
-     */
-    protected $postageUntaxed;
+    protected $options;
 
     /**
      * @return mixed

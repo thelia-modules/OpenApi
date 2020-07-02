@@ -16,6 +16,7 @@ use Thelia\Core\HttpFoundation\Request;
 use Thelia\Core\Translation\Translator;
 use Thelia\Model\AddressQuery;
 use Thelia\Model\AreaDeliveryModuleQuery;
+use Thelia\Model\Cart;
 use Thelia\Model\CountryQuery;
 use Thelia\Model\Module;
 use Thelia\Model\ModuleQuery;
@@ -215,7 +216,7 @@ class DeliveryController extends BaseFrontOpenApiController
         );
     }
 
-    protected function getDeliveryModule(Module $deliveryModule, $cart, $address, $country, $state)
+    protected function getDeliveryModule(Module $deliveryModule, Cart $cart, $address, $country, $state)
     {
         $areaDeliveryModule = AreaDeliveryModuleQuery::create()
             ->findByCountryAndModule($country, $deliveryModule, $state);

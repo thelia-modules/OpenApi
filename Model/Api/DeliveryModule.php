@@ -242,114 +242,20 @@ class DeliveryModule extends BaseApiModel
     /**
      * @return mixed
      */
-    public function getImage()
+    public function getOptions()
     {
-        return $this->image;
+        return $this->options;
     }
 
     /**
-     * @param mixed $image
-     *
+     * @param mixed $options
      * @return DeliveryModule
      */
-    public function setImage($image)
+    public function setOptions($options)
     {
-        $this->image = $image;
+        $this->options = $options;
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getMinimumDeliveryDate()
-    {
-        return $this->minimumDeliveryDate;
-    }
 
-    /**
-     * @param mixed $minimumDeliveryDate
-     *
-     * @return DeliveryModule
-     */
-    public function setMinimumDeliveryDate($minimumDeliveryDate)
-    {
-        $this->minimumDeliveryDate = $minimumDeliveryDate;
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getMaximumDeliveryDate()
-    {
-        return $this->maximumDeliveryDate;
-    }
-
-    /**
-     * @param mixed $maximumDeliveryDate
-     *
-     * @return DeliveryModule
-     */
-    public function setMaximumDeliveryDate($maximumDeliveryDate)
-    {
-        $this->maximumDeliveryDate = $maximumDeliveryDate;
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getPostage()
-    {
-        return $this->postage;
-    }
-
-    /**
-     * @param mixed $postage
-     *
-     * @return DeliveryModule
-     */
-    public function setPostage($postage)
-    {
-        $this->postage = $postage;
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getPostageTax()
-    {
-        return $this->postageTax;
-    }
-
-    /**
-     * @param mixed $postageTax
-     *
-     * @return DeliveryModule
-     */
-    public function setPostageTax($postageTax)
-    {
-        $this->postageTax = $postageTax;
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getPostageUntaxed()
-    {
-        return $this->postageUntaxed;
-    }
-
-    /**
-     * @param mixed $postageUntaxed
-     *
-     * @return DeliveryModule
-     */
-    public function setPostageUntaxed($postageUntaxed)
-    {
-        $this->postageUntaxed = $postageUntaxed;
-        return $this;
-    }
 }

@@ -3,7 +3,10 @@
 namespace OpenApi\Controller\Front;
 
 use OpenApi\Annotations as OA;
+use OpenApi\Events\DeliveryModuleOptionEvent;
+use OpenApi\Events\OpenApiEvents;
 use OpenApi\Model\Api\DeliveryModule;
+use OpenApi\Model\Api\DeliveryModuleOption;
 use OpenApi\Model\Api\Error;
 use OpenApi\OpenApi;
 use Thelia\Controller\Front\BaseFrontController;
@@ -23,6 +26,7 @@ use Thelia\Model\ModuleQuery;
 use Thelia\Model\PickupLocation;
 use Thelia\Model\StateQuery;
 use Thelia\Module\BaseModule;
+use Thelia\Module\Exception\DeliveryException;
 
 /**
  * @Route("/delivery", name="delivery")
@@ -254,33 +258,40 @@ class DeliveryController extends BaseFrontOpenApiController
         }
 
         $deliveryPostageEvent = new DeliveryPostageEvent($moduleInstance, $cart, $address, $country, $state);
-        $this->getDispatcher()->dispatch(
-            TheliaEvents::MODULE_DELIVERY_GET_POSTAGE,
-            $deliveryPostageEvent
-        );
+        try {
+            $this->getDispatcher()->dispatch(
+                TheliaEvents::MODULE_DELIVERY_GET_POSTAGE,
+                $deliveryPostageEvent
+            );
+        } catch (DeliveryException $exception) {
+            $isValid = false;
+        }
 
         if (!$deliveryPostageEvent->isValidModule()) {
             $isValid = false;
         }
 
-        $deliveryModule =  (new DeliveryModule())
-            ->setValid($isValid)
+        $deliveryModuleOptionEvent = new DeliveryModuleOptionEvent($deliveryModule, $address, $cart, $country, $state);
+
+        $deliveryModule = (new DeliveryModule())
             ->setDeliveryMode($deliveryPostageEvent->getDeliveryMode())
             ->setId($deliveryModule->getId())
+            ->setValid($isValid)
             ->setCode($deliveryModule->getCode())
             ->setTitle($deliveryModule->getTitle())
             ->setDescription($deliveryModule->getDescription())
             ->setChapo($deliveryModule->getChapo())
-            ->setPostscriptum($deliveryModule->getPostscriptum());
+            ->setPostscriptum($deliveryModule->getPostscriptum())
+        ;
 
-        if ($isValid) {
-            $deliveryModule
-                ->setMinimumDeliveryDate($deliveryPostageEvent->getMinimumDeliveryDate())
-                ->setMaximumDeliveryDate($deliveryPostageEvent->getMaximumDeliveryDate())
-                ->setPostage($deliveryPostageEvent->getPostage()->getAmount())
-                ->setPostageTax($deliveryPostageEvent->getPostage()->getAmountTax())
-                ->setPostageUntaxed($deliveryPostageEvent->getPostage()->getAmount() - $deliveryPostageEvent->getPostage()->getAmountTax());
-        }
+        $this->getDispatcher()->dispatch(
+            OpenApiEvents::MODULE_DELIVERY_GET_OPTIONS,
+            $deliveryModuleOptionEvent
+        );
+
+        $deliveryModule
+            ->setOptions($deliveryModuleOptionEvent->getDeliveryModuleOptions())
+        ;
 
         return $deliveryModule;
     }

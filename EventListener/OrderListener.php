@@ -24,7 +24,7 @@ class OrderListener implements EventSubscriberInterface
         /** @var Address $pickupAddress */
         $pickupAddress = $this->request->getSession()->get(OpenApi::PICKUP_ADDRESS_SESSION_KEY);
 
-        if (null === $pickupAddress) {
+        if (null === $pickupAddress || null === $pickupAddress->getAddress1() || null === $pickupAddress->getCity()) {
             return;
         }
 

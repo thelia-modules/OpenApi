@@ -114,7 +114,7 @@ class AddressController extends BaseFrontOpenApiController
                 throw new \Exception(Translator::getInstance()->trans("No customer found", [], OpenApi::DOMAIN_NAME));
             }
 
-            $openApiAddress = (new OpenApiAddress())->createFromRequest($request);
+            $openApiAddress = (new OpenApiAddress())->createFromJson($request->getContent());
             $theliaAddress = $openApiAddress->toTheliaAddress();
             $theliaAddress->setCustomer($currentCustomer)
                 ->save();
@@ -182,7 +182,7 @@ class AddressController extends BaseFrontOpenApiController
                 throw new \Exception(Translator::getInstance()->trans("This address does not belong to this customer", [], OpenApi::DOMAIN_NAME));
             }
 
-            $openApiAddress = (new OpenApiAddress())->createFromRequest($request)
+            $openApiAddress = (new OpenApiAddress())->createFromJson($request->getContent())
                 ->setId($id);
 
             $openApiAddress->toTheliaAddress()->save();
@@ -239,7 +239,7 @@ class AddressController extends BaseFrontOpenApiController
                 throw new \Exception(Translator::getInstance()->trans("This address does not belong to this customer", [], OpenApi::DOMAIN_NAME));
             }
 
-            $openApiAddress = (new OpenApiAddress())->createFromRequest($request)
+            $openApiAddress = (new OpenApiAddress())->createFromJson($request->getContent())
                 ->setId($id);
 
             $openApiAddress->toTheliaAddress()->delete();

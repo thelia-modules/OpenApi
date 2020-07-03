@@ -32,6 +32,10 @@
         <service id="foo.action" class="OpenApi\EventListener\FooEventListener" >
             <tag name="kernel.event_subscriber"/>
         </service>
+        <service id="open_api.order.listener" class="OpenApi\EventListener\OrderListener">
+            <argument type="service" id="request_stack"/>
+            <tag name="kernel.event_subscriber"/>
+        </service>
     </services>
 
 

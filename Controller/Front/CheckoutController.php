@@ -2,11 +2,23 @@
 
 namespace OpenApi\Controller\Front;
 
+use Front\Front;
+use OpenApi\Model\Api\Checkout;
+use OpenApi\Model\Api\Error;
+use OpenApi\OpenApi;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Thelia\Controller\Front\BaseFrontController;
+use Thelia\Core\Event\Delivery\DeliveryPostageEvent;
+use Thelia\Core\Event\Order\OrderEvent;
+use Thelia\Core\Event\TheliaEvents;
 use Thelia\Core\HttpFoundation\JsonResponse;
-use Thelia\Core\HttpFoundation\Response;
+use Thelia\Core\HttpFoundation\Request;
 use OpenApi\Annotations as OA;
+use Thelia\Core\Translation\Translator;
+use Thelia\Model\AddressQuery;
+use Thelia\Model\AreaDeliveryModuleQuery;
+use Thelia\Model\ModuleQuery;
+use Thelia\Model\Order;
+use Thelia\Module\Exception\DeliveryException;
 
 /**
  * @Route("/checkout")
@@ -35,15 +47,48 @@ class CheckoutController extends BaseFrontOpenApiController
      *     )
      * )
      */
-    public function setCheckout()
+    public function setCheckout(Request $request)
     {
-        return Response::create("Helllo");
+        try {
+            if ($this->getSecurityContext()->hasCustomerUser() === false) {
+                throw new \Exception(Translator::getInstance()->trans('You must be logged in to access this route', [], OpenApi::DOMAIN_NAME));
+            }
+
+            $cart = $this->getSession()->getSessionCart($this->getDispatcher());
+            if ($cart === null || $cart->countCartItems() == 0) {
+                throw new \Exception(Translator::getInstance()->trans('Cart is empty', [], OpenApi::DOMAIN_NAME));
+            }
+
+            $checkout = (new Checkout())
+                ->createFromJson($request->getContent());
+
+            $order = $this->getOrder($this->getRequest());
+            $orderEvent = new OrderEvent($order);
+
+            $this->setOrderDeliveryPart($checkout, $orderEvent);
+            $this->setOrderInvoicePart($checkout, $orderEvent);
+
+            $responseCheckout = $checkout
+                ->createFormOrder($orderEvent->getOrder());
+
+            return new JsonResponse($responseCheckout);
+        } catch (\Exception $e) {
+            $error = new Error(
+                Translator::getInstance()->trans('Error for setting checkout', [], OpenApi::DOMAIN_NAME),
+                $e->getMessage()
+            );
+
+            return new JsonResponse(
+                $error,
+                400
+            );
+        }
     }
 
     /**
      * @Route("", name="get_checkout", methods="GET")
      * @OA\Get(
-     *     path="/open_api/checkout",
+     *     path="/checkout",
      *     tags={"checkout"},
      *     summary="get current checkout",
      *     @OA\Response(
@@ -53,15 +98,163 @@ class CheckoutController extends BaseFrontOpenApiController
      *     )
      * )
      */
-    public function getCheckout()
+    public function getCheckout(Request $request)
     {
-        return JsonResponse::create([
-            'state' => 'VALID',
-            'cartId' => 1,
-            'deliveryModuleId' => 1,
-            'paymentModuleId' => 1,
-            'billingAddressId' => 1,
-            'deliveryAddressId' => 1
-        ]);
+        $order = $this->getOrder($request);
+
+        $checkout = (new Checkout())
+            ->createFormOrder($order);
+
+        $checkout->setPickupAddress($request->getSession()->get(OpenApi::PICKUP_ADDRESS_SESSION_KEY));
+
+        return new JsonResponse($checkout);
+    }
+
+    protected function setOrderDeliveryPart(Checkout $checkout, OrderEvent $orderEvent)
+    {
+        $cart = $this->getSession()->getSessionCart($this->getDispatcher());
+        $deliveryAddress = AddressQuery::create()->findPk($checkout->getDeliveryAddressId());
+        $deliveryModule = ModuleQuery::create()->findPk($checkout->getDeliveryModuleId());
+
+        $pickupAddress = $checkout->getPickupAddress();
+
+        if (null !== $deliveryAddress) {
+            if ($deliveryAddress->getCustomerId() !== $this->getSecurityContext()->getCustomerUser()->getId()) {
+                throw new \Exception(
+                    $this->getTranslator()->trans(
+                        "Delivery address does not belong to the current customer",
+                        [],
+                        Front::MESSAGE_DOMAIN
+                    )
+                );
+            }
+        }
+
+        if (null !== $pickupAddress && $deliveryAddress && $deliveryModule) {
+            if (null === AreaDeliveryModuleQuery::create()->findByCountryAndModule(
+                    $deliveryAddress->getCountry(),
+                    $deliveryModule
+                )) {
+                throw new \Exception(
+                    $this->getTranslator()->trans(
+                        "Delivery module cannot be use with selected delivery address",
+                        [],
+                        Front::MESSAGE_DOMAIN
+                    )
+                );
+            }
+        }
+
+        $postage = null;
+        if ($deliveryAddress && $deliveryModule) {
+            $moduleInstance = $deliveryModule->getDeliveryModuleInstance($this->container);
+
+            $deliveryPostageEvent = new DeliveryPostageEvent($moduleInstance, $cart, $deliveryAddress);
+
+            $this->getDispatcher()->dispatch(
+                TheliaEvents::MODULE_DELIVERY_GET_POSTAGE,
+                $deliveryPostageEvent
+            );
+
+            if (!$deliveryPostageEvent->isValidModule()) {
+                throw new DeliveryException(
+                    $this->getTranslator()->trans('The delivery module is not valid.', [], Front::MESSAGE_DOMAIN)
+                );
+            }
+
+            $postage = $deliveryPostageEvent->getPostage();
+        }
+
+        $orderEvent->setDeliveryAddress($deliveryAddress !== null ? $deliveryAddress->getId() : null);
+        $orderEvent->setDeliveryModule($deliveryModule !== null ? $deliveryModule->getId() : null);
+        $orderEvent->setPostage($postage !== null ? $postage->getAmount() : 0.0);
+        $orderEvent->setPostageTax($postage !== null ? $postage->getAmountTax() : 0.0);
+        $orderEvent->setPostageTaxRuleTitle($postage !== null ? $postage->getTaxRuleTitle() : "");
+
+        $this->getDispatcher()->dispatch(TheliaEvents::ORDER_SET_DELIVERY_ADDRESS, $orderEvent);
+        $this->getDispatcher()->dispatch(TheliaEvents::ORDER_SET_POSTAGE, $orderEvent);
+        $this->getDispatcher()->dispatch(TheliaEvents::ORDER_SET_DELIVERY_MODULE, $orderEvent);
+
+        if ($deliveryAddress && $deliveryModule) {
+            $this->checkValidDelivery();
+        }
+
+        $this->getRequest()->getSession()->set(OpenApi::PICKUP_ADDRESS_SESSION_KEY, $pickupAddress);
+    }
+
+    protected function setOrderInvoicePart(Checkout $checkout, OrderEvent $orderEvent)
+    {
+        $billingAddress = AddressQuery::create()->findPk($checkout->getBillingAddressId());
+
+        if ($billingAddress) {
+            if ($billingAddress->getCustomerId() !== $this->getSecurityContext()->getCustomerUser()->getId()) {
+                throw new \Exception(
+                    $this->getTranslator()->trans(
+                        "Invoice address does not belong to the current customer",
+                        [],
+                        Front::MESSAGE_DOMAIN
+                    )
+                );
+            }
+        }
+
+        $paymentModule = ModuleQuery::create()->findPk($checkout->getPaymentModuleId());
+
+        $orderEvent->setInvoiceAddress($billingAddress !== null ? $billingAddress->getId() : null);
+        $orderEvent->setPaymentModule($paymentModule !== null ? $paymentModule->getId() : null);
+        $this->getDispatcher()->dispatch(TheliaEvents::ORDER_SET_INVOICE_ADDRESS, $orderEvent);
+        $this->getDispatcher()->dispatch(TheliaEvents::ORDER_SET_PAYMENT_MODULE, $orderEvent);
+
+        // Only check invoice is module and address is set
+        if ($billingAddress && $paymentModule) {
+            $this->checkValidInvoice();
+        }
+    }
+
+    protected function getOrder(Request $request)
+    {
+        $session = $request->getSession();
+
+        if (null !== $order = $session->getOrder()) {
+            return $order;
+        }
+
+        $order = new Order();
+
+        $session->setOrder($order);
+
+        return $order;
+    }
+
+    protected function checkValidDelivery()
+    {
+        $order = $this->getSession()->getOrder();
+        if (null === $order
+            ||
+            null === $order->getChoosenDeliveryAddress()
+            ||
+            null === $order->getDeliveryModuleId()
+            ||
+            null === AddressQuery::create()->findPk($order->getChoosenDeliveryAddress())
+            ||
+            null === ModuleQuery::create()->findPk($order->getDeliveryModuleId())) {
+            throw new \Exception(Translator::getInstance()->trans('Invalid delivery', [], OpenApi::DOMAIN_NAME));
+        }
+    }
+
+    protected function checkValidInvoice()
+    {
+        $order = $this->getSession()->getOrder();
+        if (null === $order
+            ||
+            null === $order->getChoosenInvoiceAddress()
+            ||
+            null === $order->getPaymentModuleId()
+            ||
+            null === AddressQuery::create()->findPk($order->getChoosenInvoiceAddress())
+            ||
+            null === ModuleQuery::create()->findPk($order->getPaymentModuleId())) {
+            throw new \Exception(Translator::getInstance()->trans('Invalid invoice', [], OpenApi::DOMAIN_NAME));
+        }
     }
 }

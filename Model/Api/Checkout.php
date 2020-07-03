@@ -3,6 +3,7 @@
 namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
+use Thelia\Model\Order;
 
 /**
  * Class Checkout
@@ -15,21 +16,8 @@ use OpenApi\Annotations as OA;
  */
 class Checkout extends BaseApiModel
 {
-    /**
-     *  @OA\Property(
-     *     property="state",
-     *     type="string",
-     *     enum={"INCOMPLETE", "INVALID", "VALID"}
-     *  )
-     */
-    protected $state;
 
-    /**
-     *  @OA\Property(
-     *     type="integer"
-     *  )
-     */
-    protected $cartId;
+    protected $isComplete = false;
 
     /**
      *  @OA\Property(
@@ -61,4 +49,157 @@ class Checkout extends BaseApiModel
      */
     protected $deliveryAddressId;
 
+    /**
+     * @var Address
+     * @OA\Property(
+     *     ref="#/components/schemas/Address"
+     * )
+     */
+    protected $pickupAddress;
+
+    public function createFromJson($json)
+    {
+        parent::createFromJson($json);
+
+        $data = json_decode($json, true);
+
+        $this->pickupAddress = (new Address())
+            ->createFromJson(json_encode($data['pickupAddress']));
+
+        return $this;
+    }
+
+    public function createFormOrder(Order $order)
+    {
+        $this->setDeliveryAddressId($order->getChoosenDeliveryAddress());
+        $this->setBillingAddressId($order->getChoosenInvoiceAddress());
+
+        $this->setDeliveryModuleId($order->getDeliveryModuleId())
+            ->setPaymentModuleId($order->getPaymentModuleId());
+
+        return $this;
+    }
+
+    /**
+     *  @OA\Property(
+     *     property="isComplete",
+     *     type="boolean"
+     *  )
+     * @return boolean
+     */
+    public function getIsComplete()
+    {
+        if (null === $this->getDeliveryModuleId()) {
+            return false;
+        }
+
+        if (null === $this->getDeliveryAddressId()) {
+            return false;
+        }
+
+        if (null === $this->getBillingAddressId()) {
+            return false;
+        }
+
+        if (null === $this->getPaymentModuleId()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDeliveryModuleId()
+    {
+        return $this->deliveryModuleId;
+    }
+
+    /**
+     * @param mixed $deliveryModuleId
+     *
+     * @return Checkout
+     */
+    public function setDeliveryModuleId($deliveryModuleId)
+    {
+        $this->deliveryModuleId = $deliveryModuleId;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPaymentModuleId()
+    {
+        return $this->paymentModuleId;
+    }
+
+    /**
+     * @param mixed $paymentModuleId
+     *
+     * @return Checkout
+     */
+    public function setPaymentModuleId($paymentModuleId)
+    {
+        $this->paymentModuleId = $paymentModuleId;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getBillingAddressId()
+    {
+        return $this->billingAddressId;
+    }
+
+    /**
+     * @param mixed $billingAddressId
+     *
+     * @return Checkout
+     */
+    public function setBillingAddressId($billingAddressId)
+    {
+        $this->billingAddressId = $billingAddressId;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDeliveryAddressId()
+    {
+        return $this->deliveryAddressId;
+    }
+
+    /**
+     * @param mixed $deliveryAddressId
+     *
+     * @return Checkout
+     */
+    public function setDeliveryAddressId($deliveryAddressId)
+    {
+        $this->deliveryAddressId = $deliveryAddressId;
+        return $this;
+    }
+
+    /**
+     * @return Address
+     */
+    public function getPickupAddress()
+    {
+        return $this->pickupAddress;
+    }
+
+    /**
+     * @param Address $pickupAddress
+     *
+     * @return Checkout
+     */
+    public function setPickupAddress($pickupAddress)
+    {
+        $this->pickupAddress = $pickupAddress;
+        return $this;
+    }
 }

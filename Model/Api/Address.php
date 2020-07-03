@@ -6,7 +6,6 @@ use OpenApi\Annotations as OA;
 use Thelia\Core\HttpFoundation\Request;
 use Thelia\Model\AddressQuery;
 use Thelia\Model\CountryQuery;
-use Thelia\Model\CustomerTitle;
 
 /**
  * @OA\Schema(
@@ -132,6 +131,19 @@ class Address extends BaseApiModel
      */
     protected $additionalData;
 
+    public function createFromJson($json)
+    {
+        parent::createFromJson($json);
+
+        $address = json_decode($json, true);
+        if (isset($address['civilityTitle'])) {
+            $customerTitleId = $address['civilityTitle']['id'];
+            $this->setCivilityTitle((new CivilityTitle())->setId($customerTitleId));
+        }
+
+        return $this;
+    }
+
     public function createFromTheliaAddress(\Thelia\Model\Address $address, $locale = 'en_US')
     {
         $customerTitle = $address->getCustomerTitle()
@@ -155,29 +167,6 @@ class Address extends BaseApiModel
             ->setZipCode($address->getZipcode())
             ->setCity($address->getCity())
             ->setCountryCode($address->getCountry()->getIsoalpha2());
-
-        return $this;
-    }
-
-    public function createFromRequest(Request $request)
-    {
-        $address = json_decode($request->getContent(), true);
-        $customerTitleId = $address['civilityTitle']['id'];
-
-        $this
-            ->setCivilityTitle((new CivilityTitle())->setId($customerTitleId))
-            ->setIsDefault($address['isDefault'])
-            ->setFirstName($address['firstName'])
-            ->setLastName($address['lastName'])
-            ->setCellphoneNumber($address['cellphoneNumber'])
-            ->setPhoneNumber($address['phoneNumber'])
-            ->setCompany($address['company'])
-            ->setAddress1($address['address1'])
-            ->setAddress2($address['address2'])
-            ->setAddress3($address['address3'])
-            ->setZipCode($address['zipCode'])
-            ->setCity($address['city'])
-            ->setCountryCode($address['countryCode']);
 
         return $this;
     }

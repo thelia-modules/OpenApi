@@ -19,6 +19,9 @@ class OpenApi extends BaseModule
     /** @var string */
     const DOMAIN_NAME = 'openapi';
 
+    const PICKUP_ADDRESS_SESSION_KEY = "pickup_address";
+
+
     /*
      * You may now override BaseModuleInterface methods, such as:
      * install, destroy, preActivation, postActivation, preDeactivation, postDeactivation

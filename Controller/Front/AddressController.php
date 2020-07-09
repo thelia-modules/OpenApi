@@ -239,10 +239,7 @@ class AddressController extends BaseFrontOpenApiController
                 throw new \Exception(Translator::getInstance()->trans("This address does not belong to this customer", [], OpenApi::DOMAIN_NAME));
             }
 
-            $openApiAddress = (new OpenApiAddress())->createFromJson($request->getContent())
-                ->setId($id);
-
-            $openApiAddress->toTheliaAddress()->delete();
+            $address->delete();
 
             return new JsonResponse("", 204);
         } catch (\Exception $e) {

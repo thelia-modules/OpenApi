@@ -208,7 +208,7 @@ class CartController extends BaseFrontOpenApiController
     /**
      * @Route("/{cartItemId}", name="update_cartitem", methods="PATCH")
      *
-     * @OA\Delete(
+     * @OA\Patch(
      *     path="/cart/{cartItemId}",
      *     tags={"cart"},
      *     summary="Modify an item in the current cart",

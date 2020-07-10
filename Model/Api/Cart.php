@@ -109,7 +109,7 @@ class Cart extends BaseApiModel
             ->setTaxes($cart->getTotalVAT($deliveryCountry, null, false))
             ->setDelivery($estimatedPostage)
             ->setCoupons($coupons)
-            ->setDiscount($cart->getDiscount())
+            ->setDiscount((float)$cart->getDiscount())
             ->setTotal($cart->getTaxedAmount($deliveryCountry, false, null))
             ->setCurrency($cart->getCurrency()->getSymbol())
             ->setItems($cartItems)

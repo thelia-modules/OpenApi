@@ -63,8 +63,10 @@ class Checkout extends BaseApiModel
 
         $data = json_decode($json, true);
 
-        $this->pickupAddress = (new Address())
-            ->createFromJson(json_encode($data['pickupAddress']));
+        if (!null === $data['pickupAddress']) {
+            $this->pickupAddress = (new Address())
+                ->createFromJson(json_encode($data['pickupAddress']));
+        }
 
         return $this;
     }

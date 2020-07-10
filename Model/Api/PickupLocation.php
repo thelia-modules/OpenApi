@@ -14,7 +14,7 @@ class PickupLocation extends BaseApiModel
 {
     /**
      * @OA\Property(
-     *    type="integer"
+     *    type="integer",
      * )
      */
     protected $id;
@@ -22,7 +22,7 @@ class PickupLocation extends BaseApiModel
     /**
      * @OA\Property(
      *     type="number",
-     *     format="float"
+     *     format="float",
      * )
      */
     protected $latitude;
@@ -30,14 +30,14 @@ class PickupLocation extends BaseApiModel
     /**
      * @OA\Property(
      *     type="number",
-     *     format="float"
+     *     format="float",
      * )
      */
     protected $longitude;
 
     /**
      * @OA\Property(
-     *     type="string"
+     *     type="string",
      * )
      */
     protected $title;

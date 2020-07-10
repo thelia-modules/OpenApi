@@ -252,8 +252,7 @@ class DeliveryController extends BaseFrontOpenApiController
 
         $moduleInstance = $deliveryModule->getDeliveryModuleInstance($this->container);
 
-        if (true === $isCartVirtual && false === $moduleInstance->handleVirtualProductDelivery()
-        ) {
+        if (true === $isCartVirtual && false === $moduleInstance->handleVirtualProductDelivery()) {
             $isValid = false;
         }
 

@@ -15,21 +15,21 @@ class DeliveryModuleOption extends BaseApiModel
 {
     /**
      *  @OA\Property(
-     *     type="string"
+     *     type="string",
      *  )
      */
     protected $code;
 
     /**
      *  @OA\Property(
-     *     type="boolean"
+     *     type="boolean",
      *  )
      */
     protected $valid;
 
     /**
      *  @OA\Property(
-     *     type="string"
+     *     type="string",
      *  )
      */
     protected $title;
@@ -37,7 +37,7 @@ class DeliveryModuleOption extends BaseApiModel
     /**
      *  @OA\Property(
      *     type="string",
-     *     description="Delivery logo url"
+     *     description="Delivery logo url",
      *  )
      */
     protected $image;
@@ -45,7 +45,7 @@ class DeliveryModuleOption extends BaseApiModel
     /**
      *  @OA\Property(
      *     type="string",
-     *     format="date-time"
+     *     format="date-time",
      *  )
      */
     protected $minimumDeliveryDate;
@@ -53,7 +53,7 @@ class DeliveryModuleOption extends BaseApiModel
     /**
      *  @OA\Property(
      *     type="string",
-     *     format="date-time"
+     *     format="date-time",
      *  )
      */
     protected $maximumDeliveryDate;
@@ -61,7 +61,7 @@ class DeliveryModuleOption extends BaseApiModel
     /**
      *  @OA\Property(
      *     type="number",
-     *     format="float"
+     *     format="float",
      *  )
      */
     protected $postage;
@@ -69,7 +69,7 @@ class DeliveryModuleOption extends BaseApiModel
     /**
      *  @OA\Property(
      *     type="number",
-     *     format="float"
+     *     format="float",
      *  )
      */
     protected $postageTax;
@@ -77,7 +77,7 @@ class DeliveryModuleOption extends BaseApiModel
     /**
      *  @OA\Property(
      *     type="number",
-     *     format="float"
+     *     format="float",
      *  )
      */
     protected $postageUntaxed;

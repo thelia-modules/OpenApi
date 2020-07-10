@@ -67,7 +67,7 @@ class AddressController extends BaseFrontOpenApiController
             );
         } catch (\Exception $e) {
             $error = new Error(
-                Translator::getInstance()->trans('Error for retrieving customer addresses', [], OpenApi::DOMAIN_NAME),
+                Translator::getInstance()->trans('Error while trying to retrieve customer addresses', [], OpenApi::DOMAIN_NAME),
                 $e->getMessage()
             );
 
@@ -116,13 +116,14 @@ class AddressController extends BaseFrontOpenApiController
 
             $openApiAddress = (new OpenApiAddress())->createFromJson($request->getContent());
             $theliaAddress = $openApiAddress->toTheliaAddress();
-            $theliaAddress->setCustomer($currentCustomer)
+            $theliaAddress
+                ->setCustomer($currentCustomer)
                 ->save();
 
             return new JsonResponse($openApiAddress);
         } catch (\Exception $e) {
             $error = new Error(
-                Translator::getInstance()->trans('Error for retrieving customer addresses', [], OpenApi::DOMAIN_NAME),
+                Translator::getInstance()->trans('Error while trying to retrieve customer addresses', [], OpenApi::DOMAIN_NAME),
                 $e->getMessage()
             );
 

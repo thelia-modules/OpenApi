@@ -150,6 +150,7 @@ class Address extends BaseApiModel
             ->setLocale($locale);
 
         $this->setId($address->getId())
+            ->setLabel($address->getLabel())
             ->setCivilityTitle((new CivilityTitle())
                 ->setId($customerTitle->getId())
                 ->setLong($customerTitle->getLong())

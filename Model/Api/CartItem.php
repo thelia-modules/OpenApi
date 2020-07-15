@@ -7,8 +7,8 @@ use OpenApi\Annotations as OA;
 use OpenApi\Service\ImageService;
 use Thelia\Core\Translation\Translator;
 use Thelia\Model\Country;
-use Thelia\Model\ProductSaleElements;
 use Thelia\Model\ProductSaleElementsQuery;
+use \Thelia\Model\CartItem as TheliaCartItem;
 
 /**
  * Class CartItem
@@ -71,7 +71,7 @@ class CartItem extends BaseApiModel
      * @return $this
      * @throws \Propel\Runtime\Exception\PropelException
      */
-    public function createFromTheliaCartItemAndCountry(\Thelia\Model\CartItem $cartItem, Country $country, ImageService $imageService)
+    public function createFromTheliaCartItemAndCountry(TheliaCartItem $cartItem, Country $country, ImageService $imageService)
     {
         $pse = $cartItem->getProductSaleElements();
 
@@ -87,11 +87,9 @@ class CartItem extends BaseApiModel
             foreach ($pseImages as $pseImage) {
                 $images[] = (new Image())->createFromTheliaImage($pseImage->getProductImage(), 'product', $imageService);
             }
-        } else {
-            $images = $this->product->getImages();
         }
 
-        $this->images = $images;
+        $this->images = !empty($images) ? $images : $this->product->getImages();
 
         return $this;
     }
@@ -121,9 +119,9 @@ class CartItem extends BaseApiModel
             foreach ($pseImages as $pseImage) {
                 $images[] = (new Image())->createFromTheliaImage($pseImage->getProductImage(), 'product', $imageService);
             }
-        } else {
-            $images = $this->product->getImages();
         }
+
+        $this->images = !empty($images) ? $images : $this->product->getImages();
 
         $this->images = $images;
 

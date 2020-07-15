@@ -3,9 +3,7 @@
 namespace OpenApi\Model\Api;
 
 use OpenApi\Service\ImageService;
-use Thelia\Model\Address;
 use Thelia\Model\Country;
-use Thelia\Model\State;
 use OpenApi\Annotations as OA;
 
 /**

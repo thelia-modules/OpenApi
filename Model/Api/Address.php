@@ -3,9 +3,9 @@
 namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
-use Thelia\Core\HttpFoundation\Request;
 use Thelia\Model\AddressQuery;
 use Thelia\Model\CountryQuery;
+use Thelia\Model\Address as TheliaAddress;
 
 /**
  * @OA\Schema(
@@ -144,7 +144,7 @@ class Address extends BaseApiModel
         return $this;
     }
 
-    public function createFromTheliaAddress(\Thelia\Model\Address $address, $locale = 'en_US')
+    public function createFromTheliaAddress(TheliaAddress $address, $locale = 'en_US')
     {
         $customerTitle = $address->getCustomerTitle()
             ->setLocale($locale);
@@ -174,7 +174,7 @@ class Address extends BaseApiModel
 
     public function toTheliaAddress()
     {
-        $address = $this->id === null ? (new \Thelia\Model\Address()) : AddressQuery::create()->findPk($this->id);
+        $address = $this->id === null ? (new TheliaAddress()) : AddressQuery::create()->findPk($this->id);
         $country = CountryQuery::create()->findOneByIsoalpha2($this->getCountryCode());
 
         $address->setIsDefault($this->getIsDefault())

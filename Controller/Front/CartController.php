@@ -122,7 +122,7 @@ class CartController extends BaseFrontOpenApiController
     public function cartAddCartItem(Request $request)
     {
         try {
-            $cart = $request->getSession()->getSessionCart();
+            $cart = $request->getSession()->getSessionCart($this->getDispatcher());
             if (null === $cart) {
                 throw new \Exception(Translator::getInstance()->trans('No cart found', [], OpenApi::DOMAIN_NAME));
             }

@@ -27,6 +27,14 @@ class CartItem extends BaseApiModel
      */
     protected $id;
 
+
+    /**
+     * @OA\Property(
+     *    type="boolean",
+     * )
+     */
+    protected $isPromo;
+
     /**
      * @OA\Property(
      *    type="object",
@@ -41,7 +49,7 @@ class CartItem extends BaseApiModel
      *    ref="#/components/schemas/ProductSaleElement",
      * )
      */
-    protected $pse;
+    protected $productSaleElement;
 
     /**
      * @OA\Property(
@@ -63,6 +71,21 @@ class CartItem extends BaseApiModel
     protected $price;
 
     /**
+     * @OA\Property(
+     *    type="object",
+     *    ref="#/components/schemas/Price"
+     * )
+     */
+    protected $promoPrice;
+
+    /**
+     * @OA\Property(
+     *    type="integer",
+     * )
+     */
+    protected $quantity;
+
+    /**
      * Create a new OpenApi CartItem from a Thelia CartItem and a Country, then returns it
      *
      * @param \Thelia\Model\CartItem $cartItem
@@ -77,8 +100,11 @@ class CartItem extends BaseApiModel
 
         $this->id = $cartItem->getId();
         $this->product = (new Product())->createFromTheliaCartItemAndCountry($cartItem, $country, $imageService);
-        $this->pse = (new ProductSaleElement())->createFromTheliaPse($pse);
-        $this->price = (new Price())->createFromTheliaPseAndCountry($pse, $country);
+        $this->productSaleElement = (new ProductSaleElement())->createFromTheliaPseAndCountry($pse, $country);
+        $this->isPromo = (bool)$cartItem->getPromo();
+        $this->price = (new Price())->setTaxed($cartItem->getPrice());
+        $this->promoPrice = (new Price())->setTaxed($cartItem->getPromoPrice());
+        $this->quantity = $cartItem->getQuantity();
 
         /** If there are PSE specific images, we use them. Otherwise, we just use the product images */
         $images = [];
@@ -108,9 +134,12 @@ class CartItem extends BaseApiModel
 
         $pse = ProductSaleElementsQuery::create()->findPk($cartItem['pseId']);
 
-        $this->product = (new Product())->createFromTheliaPseAndCountry($pse, $cartItem['quantity'],$country, $imageService);
-        $this->pse = (new ProductSaleElement())->createFromTheliaPse($pse);
-        $this->price = (new Price())->createFromTheliaPseAndCountry($pse, $country);
+        $this->product = (new Product())->createFromTheliaPseAndCountry($pse, $country, $imageService);
+        $this->productSaleElement = (new ProductSaleElement())->createFromTheliaPseAndCountry($pse, $country);
+        $this->isPromo = $cartItem['isPromo'];
+        $this->price = (new Price())->setTaxed($cartItem['price']);
+        $this->promoPrice = (new Price())->setTaxed($cartItem['promoPrice']);
+        $this->quantity = $cartItem['quantity'];
 
         /** If there are PSE specific images, we use them. Otherwise, we just use the product images */
         $images = [];
@@ -122,8 +151,6 @@ class CartItem extends BaseApiModel
         }
 
         $this->images = !empty($images) ? $images : $this->product->getImages();
-
-        $this->images = $images;
 
         return $this;
     }
@@ -167,18 +194,18 @@ class CartItem extends BaseApiModel
     /**
      * @return mixed
      */
-    public function getPse()
+    public function getProductSaleElement()
     {
-        return $this->pse;
+        return $this->productSaleElement;
     }
 
     /**
-     * @param mixed $pse
+     * @param mixed $productSaleElement
      * @return CartItem
      */
-    public function setPse($pse)
+    public function setProductSaleElement($productSaleElement)
     {
-        $this->pse = $pse;
+        $this->productSaleElement = $productSaleElement;
         return $this;
     }
 
@@ -215,6 +242,60 @@ class CartItem extends BaseApiModel
     public function setPrice($price)
     {
         $this->price = $price;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getIsPromo()
+    {
+        return $this->isPromo;
+    }
+
+    /**
+     * @param mixed $isPromo
+     * @return CartItem
+     */
+    public function setIsPromo($isPromo)
+    {
+        $this->isPromo = $isPromo;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getQuantity()
+    {
+        return $this->quantity;
+    }
+
+    /**
+     * @param mixed $quantity
+     * @return CartItem
+     */
+    public function setQuantity($quantity)
+    {
+        $this->quantity = $quantity;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPromoPrice()
+    {
+        return $this->promoPrice;
+    }
+
+    /**
+     * @param mixed $promoPrice
+     * @return CartItem
+     */
+    public function setPromoPrice($promoPrice)
+    {
+        $this->promoPrice = $promoPrice;
         return $this;
     }
 }

@@ -19,13 +19,6 @@ class Price extends BaseApiModel
 {
     /**
      * @OA\Property(
-     *    type="boolean",
-     * )
-     */
-    protected $isPromo;
-
-    /**
-     * @OA\Property(
      *    type="number",
      *    format="float",
      * )
@@ -41,50 +34,22 @@ class Price extends BaseApiModel
     protected $taxed;
 
     /**
-     * @OA\Property(
-     *    type="object",
-     *    ref="#/components/schemas/Promo",
-     *    description="A promo object containing untaxed and taxed promo prices",
-     * )
-     */
-    protected $promo;
-
-    /**
      * Create a new OpenApi Price from a Thelia ProductSaleElements and a Country, then returns it
      *
      * @param ProductSaleElements $pse
      * @param Country $country
+     * @param bool $isPromo
      * @return $this
      * @throws \Propel\Runtime\Exception\PropelException
      */
-    public function createFromTheliaPseAndCountry(ProductSaleElements $pse, Country $country)
+    public function createFromTheliaPseAndCountry(ProductSaleElements $pse, Country $country, $isPromo = false)
     {
         $price = ProductPriceQuery::create()->filterByProductSaleElements($pse)->findOne();
         $pse->setVirtualColumn('price_PRICE', (float)$price->getPrice());
         $pse->setVirtualColumn('price_PROMO_PRICE', (float)$price->getPromoPrice());
-        $this->isPromo = $pse->getPromo();
-        $this->untaxed = $pse->getPrice();
-        $this->taxed = $pse->getTaxedPrice($country);
-        $this->promo = (new Promo())->createFromTheliaPseAndCountry($pse, $country);
+        $this->untaxed = $isPromo ? $pse->getPromoPrice() : $pse->getPrice();
+        $this->taxed = $isPromo ? $pse->getTaxedPromoPrice($country) : $pse->getTaxedPrice($country);
 
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getIsPromo()
-    {
-        return $this->isPromo;
-    }
-
-    /**
-     * @param mixed $isPromo
-     * @return Price
-     */
-    public function setIsPromo($isPromo)
-    {
-        $this->isPromo = $isPromo;
         return $this;
     }
 
@@ -123,24 +88,4 @@ class Price extends BaseApiModel
         $this->taxed = $taxed;
         return $this;
     }
-
-    /**
-     * @return Promo
-     */
-    public function getPromo()
-    {
-        return $this->promo;
-    }
-
-    /**
-     * @param Promo $promo
-     * @return Price
-     */
-    public function setPromo(Promo $promo)
-    {
-        $this->promo = $promo;
-        return $this;
-    }
-
-
 }

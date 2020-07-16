@@ -3,6 +3,7 @@
 namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
+use Thelia\Model\CustomerTitle;
 
 /**
  * @OA\Schema(
@@ -34,6 +35,26 @@ class CivilityTitle extends BaseApiModel
      */
     protected $long;
 
+    /**
+     * Create an OpenApi CivilityTitle from a Thelia CustomerTitle, then returns it
+     *
+     * @param CustomerTitle $title
+     * @return $this
+     */
+    public function createFromTheliaCustomerTitle(CustomerTitle $title)
+    {
+        $this->id = $title->getId();
+        $this->short = $title->getShort();
+        $this->long = $title->getLong();
+
+        return $this;
+    }
+
+    public function createFromArray($array)
+    {
+
+    }
+    
     /**
      * @return mixed
      */

@@ -50,48 +50,4 @@ class OpenApiController extends BaseFrontController
 
     }
 
-    /**
-     * @Route("/login", name="login", methods="GET")
-     *
-     * @OA\Get(
-     *     path="/login",
-     *     summary="Login",
-     *     security={},
-     *     @OA\Parameter(
-     *          name="email",
-     *          in="query",
-     *          @OA\Schema(
-     *              type="string"
-     *          )
-     *     ),
-     *     @OA\Parameter(
-     *          name="password",
-     *          in="query",
-     *          @OA\Schema(
-     *              type="string"
-     *          )
-     *     ),
-     *     @OA\Response(
-     *          response="200",
-     *          description="Success",
-     *     ),
-     *     @OA\Response(
-     *          response="400",
-     *          description="Bad request",
-     *     )
-     * )
-     */
-    public function login(Request $request)
-    {
-        header("Access-Control-Allow-Origin: *");
-
-        $customer = CustomerQuery::create()->findOneByEmail($request->get('email'));
-
-        $this->getDispatcher()->dispatch(
-            TheliaEvents::CUSTOMER_LOGIN,
-            new CustomerLoginEvent($customer)
-        );
-
-        return new JsonResponse("success", 200);
-    }
 }

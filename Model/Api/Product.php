@@ -58,21 +58,6 @@ class Product extends BaseApiModel
     protected $images;
 
     /**
-     * @OA\Property(
-     *    type="object",
-     *    ref="#/components/schemas/Price"
-     * )
-     */
-    protected $price;
-
-    /**
-     * @OA\Property(
-     *    type="integer",
-     * )
-     */
-    protected $quantity;
-
-    /**
      * Create an OpenApi Product from a Thelia CartItem and a Country
      *
      * @param \Thelia\Model\CartItem $cartItem
@@ -95,8 +80,6 @@ class Product extends BaseApiModel
         $this->url = $product->getUrl();
         $this->title = $product->getTitle();
         $this->images = $images;
-        $this->price = (new Price())->createFromTheliaPseAndCountry($cartItem->getProductSaleElements(), $country);
-        $this->quantity = $cartItem->getQuantity();
 
         return $this;
     }
@@ -105,13 +88,12 @@ class Product extends BaseApiModel
      * Create an OpenApi Product from a Thelia Pse and a Country
      *
      * @param ProductSaleElements $pse
-     * @param $quantity
      * @param Country $country
      * @param ImageService $imageService
      * @return $this
      * @throws \Propel\Runtime\Exception\PropelException
      */
-    public function createFromTheliaPseAndCountry(ProductSaleElements $pse, $quantity, Country $country, ImageService $imageService)
+    public function createFromTheliaPseAndCountry(ProductSaleElements $pse, Country $country, ImageService $imageService)
     {
         $product = $pse->getProduct();
         $images = [];
@@ -125,8 +107,6 @@ class Product extends BaseApiModel
         $this->url = $product->getUrl();
         $this->title = $product->getTitle();
         $this->images = $images;
-        $this->price = (new Price())->createFromTheliaPseAndCountry($pse, $country);
-        $this->quantity = $quantity;
 
         return $this;
     }
@@ -220,41 +200,4 @@ class Product extends BaseApiModel
         $this->images = $images;
         return $this;
     }
-
-    /**
-     * @return mixed
-     */
-    public function getPrice()
-    {
-        return $this->price;
-    }
-
-    /**
-     * @param mixed $price
-     * @return Product
-     */
-    public function setPrice($price)
-    {
-        $this->price = $price;
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getQuantity()
-    {
-        return $this->quantity;
-    }
-
-    /**
-     * @param mixed $quantity
-     * @return Product
-     */
-    public function setQuantity($quantity)
-    {
-        $this->quantity = $quantity;
-        return $this;
-    }
-
 }

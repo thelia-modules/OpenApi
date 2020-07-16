@@ -4,6 +4,7 @@
 namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
+use Thelia\Model\Country;
 use Thelia\Model\ProductSaleElements;
 
 /**
@@ -24,6 +25,13 @@ class ProductSaleElement extends BaseApiModel
 
     /**
      * @OA\Property(
+     *    type="boolean",
+     * )
+     */
+    protected $isPromo;
+
+    /**
+     * @OA\Property(
      *     type="string",
      * )
      */
@@ -41,13 +49,30 @@ class ProductSaleElement extends BaseApiModel
     protected $attributes;
 
     /**
-     * Create an OpenApi ProductSaleElement from a Thelia ProductSaleElements, then returns it
+     * @OA\Property(
+     *    type="object",
+     *    ref="#/components/schemas/Price"
+     * )
+     */
+    protected $price;
+
+    /**
+     * @OA\Property(
+     *    type="object",
+     *    ref="#/components/schemas/Price"
+     * )
+     */
+    protected $promoPrice;
+
+    /**
+     * Create an OpenApi ProductSaleElement from a Thelia ProductSaleElements and a Country, then returns it
      *
      * @param ProductSaleElements $pse
+     * @param Country $country
      * @return $this
      * @throws \Propel\Runtime\Exception\PropelException
      */
-    public function createFromTheliaPse(ProductSaleElements $pse)
+    public function createFromTheliaPseAndCountry(ProductSaleElements $pse, Country $country)
     {
         $attributes = [];
         foreach ($pse->getAttributeCombinations() as $attributeCombination) {
@@ -55,6 +80,9 @@ class ProductSaleElement extends BaseApiModel
         }
 
         $this->id = $pse->getId();
+        $this->isPromo = (bool)$pse->getPromo();
+        $this->price = (new Price())->createFromTheliaPseAndCountry($pse, $country);
+        $this->promoPrice = (new Price())->createFromTheliaPseAndCountry($pse, $country, true);
         $this->reference = $pse->getRef();
         $this->attributes = $attributes;
 
@@ -112,6 +140,60 @@ class ProductSaleElement extends BaseApiModel
     public function setAttributes($attributes)
     {
         $this->attributes = $attributes;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getIsPromo()
+    {
+        return $this->isPromo;
+    }
+
+    /**
+     * @param mixed $isPromo
+     * @return ProductSaleElement
+     */
+    public function setIsPromo($isPromo)
+    {
+        $this->isPromo = $isPromo;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPrice()
+    {
+        return $this->price;
+    }
+
+    /**
+     * @param mixed $price
+     * @return ProductSaleElement
+     */
+    public function setPrice($price)
+    {
+        $this->price = $price;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPromoPrice()
+    {
+        return $this->promoPrice;
+    }
+
+    /**
+     * @param mixed $promoPrice
+     * @return ProductSaleElement
+     */
+    public function setPromoPrice($promoPrice)
+    {
+        $this->promoPrice = $promoPrice;
         return $this;
     }
 }

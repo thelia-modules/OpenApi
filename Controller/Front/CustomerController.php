@@ -143,7 +143,7 @@ class CustomerController extends BaseFrontOpenApiController
     /**
      * @Route("", name="update_customer", methods="PATCH")
      *
-     * @OA\Post(
+     * @OA\Patch(
      *     path="/customer",
      *     tags={"customer"},
      *     summary="Edit the current customer",

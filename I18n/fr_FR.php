@@ -1,4 +1,5 @@
 <?php
+
 return array(
-    // 'an english string' => 'La traduction française de la chaine',
+    'This value should not be blank' => 'Cette valeur ne peut pas être vide',
 );

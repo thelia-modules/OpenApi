@@ -56,7 +56,7 @@ class CustomerController extends BaseFrontOpenApiController
      * )
      * )
      */
-    public function getCurrentCustomer(Request $request)
+    public function getCustomer(Request $request)
     {
         try {
             if (null === $currentCustomer = $this->getSecurityContext()->getCustomerUser()) {

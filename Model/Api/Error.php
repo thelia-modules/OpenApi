@@ -31,11 +31,11 @@ class Error extends BaseApiModel
      * @OA\Property(
      *    type="array",
      *     @OA\Items(
-     *          ref="#/components/schemas/Violation"
+     *          ref="#/components/schemas/SchemaViolation"
      *     )
      * )
      */
-    protected $violations;
+    protected $schemaViolations;
 
     /**
      * Error constructor.
@@ -48,6 +48,7 @@ class Error extends BaseApiModel
         $description = null
     )
     {
+        parent::__construct();
         $this->title = $title;
         $this->description = $description;
     }
@@ -91,30 +92,31 @@ class Error extends BaseApiModel
     }
 
     /** @return array */
-    public function getViolations()
+    public function getSchemaViolations()
     {
-        return $this->violations;
+        return $this->schemaViolations;
     }
 
     /**
-     * @param $violations Violation[]
+     * @param $schemaViolations SchemaViolation[]
+     *
      * @return Error
      */
-    public function setViolations($violations)
+    public function setSchemaViolations($schemaViolations)
     {
-        $this->violations = $violations;
+        $this->schemaViolations = $schemaViolations;
 
         return $this;
     }
 
     /**
-     * @param $violation Violation
+     * @param $schemaViolation SchemaViolation
      *
      * @return $this
      */
-    public function appendViolation($violation)
+    public function appendViolation($schemaViolation)
     {
-        $this->violations[] = $violation;
+        $this->schemaViolations[] = $schemaViolation;
         return $this;
     }
 }

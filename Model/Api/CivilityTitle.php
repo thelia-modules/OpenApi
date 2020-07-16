@@ -3,6 +3,7 @@
 namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
+use Symfony\Component\Validator\Constraints as Assert;
 use Thelia\Model\CustomerTitle;
 
 /**
@@ -17,14 +18,16 @@ class CivilityTitle extends BaseApiModel
     /**
      * @OA\Property(
      *    type="integer"
-     * )
+     * ),
+     * @Assert\NotNull(groups={"read", "update"})
      */
     protected $id;
 
     /**
      * @OA\Property(
      *    type="string"
-     * )
+     * ),
+     * @Assert\NotNull(groups={"create", "update"})
      */
     protected $short;
 
@@ -32,6 +35,7 @@ class CivilityTitle extends BaseApiModel
      * @OA\Property(
      *    type="string"
      * )
+     * @Assert\NotNull(groups={"create", "update"})
      */
     protected $long;
 
@@ -54,7 +58,7 @@ class CivilityTitle extends BaseApiModel
     {
 
     }
-    
+
     /**
      * @return mixed
      */

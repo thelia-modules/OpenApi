@@ -28,7 +28,11 @@
             <argument type="service" id="router.filelocator"/>
             <tag name="router.register" priority="255"/>
         </service>
+        <service id="open_api.image.service" class="OpenApi\Service\ImageService">
+            <argument type="service" id="event_dispatcher"/>
+        </service>
 
+        <!--   LISTENERS     -->
         <service id="foo.action" class="OpenApi\EventListener\FooEventListener" >
             <tag name="kernel.event_subscriber"/>
         </service>
@@ -36,8 +40,8 @@
             <argument type="service" id="request_stack"/>
             <tag name="kernel.event_subscriber"/>
         </service>
-        <service id="open_api.image.service" class="OpenApi\Service\ImageService">
-            <argument type="service" id="event_dispatcher"/>
+        <service id="open_api.exception.listener" class="OpenApi\EventListener\ExceptionListener">
+            <tag name="kernel.event_subscriber"/>
         </service>
     </services>
 

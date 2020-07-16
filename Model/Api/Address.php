@@ -3,6 +3,7 @@
 namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
+use OpenApi\Constraint as Constraint;
 use Thelia\Model\AddressQuery;
 use Thelia\Model\CountryQuery;
 use Thelia\Model\Address as TheliaAddress;
@@ -13,6 +14,7 @@ use Thelia\Model\Address as TheliaAddress;
  *     title="Address",
  *     description="Address model"
  * )
+ *
  */
 class Address extends BaseApiModel
 {
@@ -20,6 +22,7 @@ class Address extends BaseApiModel
      * @OA\Property(
      *    type="integer"
      * )
+     * @Constraint\NotBlank(groups={"read", "update"})
      */
     protected $id;
 
@@ -27,6 +30,7 @@ class Address extends BaseApiModel
      * @OA\Property(
      *    type="boolean"
      * )
+     * @Constraint\NotNull(groups={"create", "update"})
      */
     protected $isDefault;
 
@@ -42,14 +46,16 @@ class Address extends BaseApiModel
      * @var CivilityTitle
      * @OA\Property(
      *     ref="#/components/schemas/CivilityTitle"
-     * )
+     * ),
+     * @Constraint\NotBlank(groups={"create","update"})
      */
     protected $civilityTitle;
 
     /**
      * @OA\Property(
      *     type="string",
-     * )
+     * ),
+     * @Constraint\NotBlank(groups={"create","update"})
      */
     protected $firstName;
 
@@ -57,6 +63,7 @@ class Address extends BaseApiModel
      * @OA\Property(
      *     type="string",
      * )
+     * @Constraint\NotBlank(groups={"create","update"})
      */
     protected $lastName;
 
@@ -85,6 +92,7 @@ class Address extends BaseApiModel
      * @OA\Property(
      *     type="string",
      * )
+     * @Constraint\NotBlank(groups={"create","update"})
      */
     protected $address1;
 
@@ -105,7 +113,8 @@ class Address extends BaseApiModel
     /**
      * @OA\Property(
      *     type="string",
-     * )
+     * ),
+     * @Constraint\NotBlank(groups={"create","update"})
      */
     protected $zipCode;
 
@@ -113,6 +122,7 @@ class Address extends BaseApiModel
      * @OA\Property(
      *     type="string",
      * )
+     * @Constraint\NotBlank(groups={"create","update"})
      */
     protected $city;
 
@@ -120,6 +130,11 @@ class Address extends BaseApiModel
      * @OA\Property(
      *     type="string",
      *     description="Country ISO 3166-1 alpha-2 code"
+     * )
+     * @Constraint\NotBlank(groups={"create","update"})
+     * @Constraint\Length(
+     *      min = 2,
+     *      max = 2
      * )
      */
     protected $countryCode;

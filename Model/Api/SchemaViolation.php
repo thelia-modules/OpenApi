@@ -5,20 +5,20 @@ namespace OpenApi\Model\Api;
 use OpenApi\Annotations as OA;
 
 /**
- * Class Violations
+ * Class SchemaViolation
  * @package OpenApi\Model\Api
  * @OA\Schema(
- *     description="A violations (part of an error)"
+ *     description="A schema violation"
  * )
  */
-class Violation extends BaseApiModel
+class SchemaViolation extends BaseApiModel
 {
     /**
      * @OA\Property(
      *    type="string"
      * )
      */
-    protected $label;
+    protected $key;
 
     /**
      * @OA\Property(
@@ -28,29 +28,31 @@ class Violation extends BaseApiModel
     protected $error;
 
     public function __construct(
-        $label = null,
+        $key = null,
         $error = null
     ) {
-        $this->label = $label;
+        parent::__construct();
+
+        $this->key = $key;
         $this->error = $error;
     }
 
     /**
      * @return null
      */
-    public function getLabel()
+    public function getKey()
     {
-        return $this->label;
+        return $this->key;
     }
 
     /**
-     * @param null $label
+     * @param null $key
      *
-     * @return Violation
+     * @return SchemaViolation
      */
-    public function setLabel($label)
+    public function setKey($key)
     {
-        $this->label = $label;
+        $this->key = $key;
         return $this;
     }
 
@@ -65,7 +67,7 @@ class Violation extends BaseApiModel
     /**
      * @param null $error
      *
-     * @return Violation
+     * @return SchemaViolation
      */
     public function setError($error)
     {

@@ -5,6 +5,7 @@ namespace OpenApi\Controller;
 use OpenApi\Annotations as OA;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Validation;
 use Thelia\Controller\BaseController;
 use Thelia\Controller\Front\BaseFrontController;
 use Thelia\Core\Event\Customer\CustomerLoginEvent;
@@ -49,5 +50,4 @@ class OpenApiController extends BaseFrontController
         return new JsonResponse($annotations);
 
     }
-
 }

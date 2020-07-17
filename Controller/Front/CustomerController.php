@@ -15,6 +15,10 @@ use Thelia\Core\HttpFoundation\Request;
 use Thelia\Core\Translation\Translator;
 use Symfony\Component\Routing\Annotation\Route;
 use OpenApi\Annotations as OA;
+use Thelia\Model\Address;
+use Thelia\Model\CartItem;
+use Thelia\Model\Customer;
+use Thelia\Model\Product;
 
 /**
  * @Route("/customer", name="customer")
@@ -119,12 +123,17 @@ class CustomerController extends BaseFrontOpenApiController
                 ->validate(self::GROUP_CREATE)
             ;
 
+            /*
             $openApiAddress = (new OpenApiAddress())
                 ->createFromData($data['address'])
                 ->validate(self::GROUP_CREATE)
             ;
+            */
 
-
+            /** @var Customer $theliaCustomer */
+            $theliaCustomer = $openApiCustomer->toTheliaModel();
+            $theliaCustomer->setPassword($data['password'])->save();
+            /*
             //todo
             $event = $this->createCustomerCreateEvent($request->getContent());
 
@@ -132,6 +141,8 @@ class CustomerController extends BaseFrontOpenApiController
 
             $newCustomer = $event->getCustomer();
             return new JsonResponse((new \OpenApi\Model\Api\Customer())->createFromTheliaCustomer($newCustomer), 200);
+            */
+            return new JsonResponse((new \OpenApi\Model\Api\Customer())->createFromTheliaCustomer($theliaCustomer), 200);
         } catch (\Exception $exception) {
             return new JsonResponse(
                 new Error(

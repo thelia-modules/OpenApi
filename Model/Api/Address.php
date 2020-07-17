@@ -513,4 +513,19 @@ class Address extends BaseApiModel
         $this->additionalData = $additionalData;
         return $this;
     }
+
+    /** Thelia model creation functions */
+
+    public function getTheliaModel()
+    {
+        return new \Thelia\Model\Address();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTitleId()
+    {
+        return $this->getCivilityTitle()->getId();
+    }
 }

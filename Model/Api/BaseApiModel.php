@@ -89,4 +89,33 @@ abstract class BaseApiModel implements \JsonSerializable
 
         return $this;
     }
+
+    /**
+     * Should return the Thelia model associated with the OpenApi model
+     *
+     * @return mixed
+     */
+    public function getTheliaModel()
+    {
+        return null;
+    }
+
+    public function toTheliaModel()
+    {
+        if (!$theliaModel = $this->getTheliaModel()) {
+            throw new \Exception(Translator::getInstance()->trans('You need to override the getTheliaModel method to use the toTheliaModel method.', [], OpenApi::DOMAIN_NAME));
+        }
+
+        foreach (get_class_methods($this) as $methodName) {
+            if (0 === strncasecmp('get', $methodName, 3)) {
+                $theliaMethod = 'set' . substr($methodName, 3);
+
+                if (method_exists($theliaModel, $theliaMethod)) {
+                    $theliaModel->$theliaMethod($this->$methodName);
+                }
+            }
+        }
+
+        return $theliaModel;
+    }
 }

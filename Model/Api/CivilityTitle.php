@@ -17,6 +17,7 @@ use OpenApi\Constraint as Constraint;
 class CivilityTitle extends BaseApiModel
 {
     /**
+     * @var integer
      * @OA\Property(
      *    type="integer"
      * ),
@@ -25,6 +26,7 @@ class CivilityTitle extends BaseApiModel
     protected $id;
 
     /**
+     * @var string
      * @OA\Property(
      *    type="string"
      * ),
@@ -32,6 +34,7 @@ class CivilityTitle extends BaseApiModel
     protected $short;
 
     /**
+     * @var string
      * @OA\Property(
      *    type="string"
      * )
@@ -54,7 +57,7 @@ class CivilityTitle extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getId()
     {
@@ -62,8 +65,7 @@ class CivilityTitle extends BaseApiModel
     }
 
     /**
-     * @param mixed $id
-     *
+     * @param int $id
      * @return CivilityTitle
      */
     public function setId($id)
@@ -73,7 +75,7 @@ class CivilityTitle extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getShort()
     {
@@ -81,8 +83,7 @@ class CivilityTitle extends BaseApiModel
     }
 
     /**
-     * @param mixed $short
-     *
+     * @param string $short
      * @return CivilityTitle
      */
     public function setShort($short)
@@ -92,7 +93,7 @@ class CivilityTitle extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getLong()
     {
@@ -100,8 +101,7 @@ class CivilityTitle extends BaseApiModel
     }
 
     /**
-     * @param mixed $long
-     *
+     * @param string $long
      * @return CivilityTitle
      */
     public function setLong($long)

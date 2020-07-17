@@ -16,6 +16,7 @@ use OpenApi\Constraint as Constraint;
 class Customer extends BaseApiModel
 {
     /**
+     * @var integer
      * @OA\Property(
      *    type="integer",
      * )
@@ -24,6 +25,7 @@ class Customer extends BaseApiModel
     protected $id;
 
     /**
+     * @var CivilityTitle
      * @OA\Property(
      *    type="object",
      *    ref="#/components/schemas/CivilityTitle",
@@ -33,6 +35,7 @@ class Customer extends BaseApiModel
     protected $civilityTitle;
 
     /**
+     * @var Language
      * @OA\Property(
      *    type="object",
      *    ref="#/components/schemas/Language",
@@ -42,6 +45,7 @@ class Customer extends BaseApiModel
     protected $lang;
 
     /**
+     * @var string
      * @OA\Property(
      *     type="string",
      * )
@@ -50,6 +54,7 @@ class Customer extends BaseApiModel
     protected $reference;
 
     /**
+     * @var string
      * @OA\Property(
      *     type="string",
      * )
@@ -58,6 +63,7 @@ class Customer extends BaseApiModel
     protected $firstname;
 
     /**
+     * @var string
      * @OA\Property(
      *     type="string",
      * )
@@ -66,6 +72,7 @@ class Customer extends BaseApiModel
     protected $lastname;
 
     /**
+     * @var string
      * @OA\Property(
      *     type="string",
      * )
@@ -74,6 +81,7 @@ class Customer extends BaseApiModel
     protected $email;
 
     /**
+     * @var boolean
      * @OA\Property(
      *    type="boolean",
      * )
@@ -82,6 +90,7 @@ class Customer extends BaseApiModel
     protected $rememberMe;
 
     /**
+     * @var float
      * @OA\Property(
      *    type="number",
      *    format="float",
@@ -91,6 +100,7 @@ class Customer extends BaseApiModel
     protected $discount;
 
     /**
+     * @var boolean
      * @OA\Property(
      *    type="boolean",
      * )
@@ -122,7 +132,7 @@ class Customer extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getId()
     {
@@ -130,7 +140,7 @@ class Customer extends BaseApiModel
     }
 
     /**
-     * @param mixed $id
+     * @param int $id
      * @return Customer
      */
     public function setId($id)
@@ -140,7 +150,7 @@ class Customer extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return CivilityTitle
      */
     public function getCivilityTitle()
     {
@@ -148,7 +158,7 @@ class Customer extends BaseApiModel
     }
 
     /**
-     * @param mixed $civilityTitle
+     * @param CivilityTitle $civilityTitle
      * @return Customer
      */
     public function setCivilityTitle($civilityTitle)
@@ -158,7 +168,7 @@ class Customer extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return Language
      */
     public function getLang()
     {
@@ -166,7 +176,7 @@ class Customer extends BaseApiModel
     }
 
     /**
-     * @param mixed $lang
+     * @param Language $lang
      * @return Customer
      */
     public function setLang($lang)
@@ -176,7 +186,7 @@ class Customer extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getReference()
     {
@@ -184,7 +194,7 @@ class Customer extends BaseApiModel
     }
 
     /**
-     * @param mixed $reference
+     * @param string $reference
      * @return Customer
      */
     public function setReference($reference)
@@ -194,7 +204,7 @@ class Customer extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getFirstname()
     {
@@ -202,7 +212,7 @@ class Customer extends BaseApiModel
     }
 
     /**
-     * @param mixed $firstname
+     * @param string $firstname
      * @return Customer
      */
     public function setFirstname($firstname)
@@ -212,7 +222,7 @@ class Customer extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getLastname()
     {
@@ -220,7 +230,7 @@ class Customer extends BaseApiModel
     }
 
     /**
-     * @param mixed $lastname
+     * @param string $lastname
      * @return Customer
      */
     public function setLastname($lastname)
@@ -230,7 +240,7 @@ class Customer extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getEmail()
     {
@@ -238,7 +248,7 @@ class Customer extends BaseApiModel
     }
 
     /**
-     * @param mixed $email
+     * @param string $email
      * @return Customer
      */
     public function setEmail($email)
@@ -248,15 +258,15 @@ class Customer extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return bool
      */
-    public function getRememberMe()
+    public function isRememberMe()
     {
         return $this->rememberMe;
     }
 
     /**
-     * @param mixed $rememberMe
+     * @param bool $rememberMe
      * @return Customer
      */
     public function setRememberMe($rememberMe)
@@ -266,7 +276,7 @@ class Customer extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return float
      */
     public function getDiscount()
     {
@@ -274,7 +284,7 @@ class Customer extends BaseApiModel
     }
 
     /**
-     * @param mixed $discount
+     * @param float $discount
      * @return Customer
      */
     public function setDiscount($discount)
@@ -284,15 +294,15 @@ class Customer extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return bool
      */
-    public function getReseller()
+    public function isReseller()
     {
         return $this->reseller;
     }
 
     /**
-     * @param mixed $reseller
+     * @param bool $reseller
      * @return Customer
      */
     public function setReseller($reseller)
@@ -301,5 +311,26 @@ class Customer extends BaseApiModel
         return $this;
     }
 
+    /** Thelia model creation functions */
 
+    /**
+     * @return \Thelia\Model\Customer
+     */
+    public function getTheliaModel()
+    {
+        return new \Thelia\Model\Customer();
+    }
+
+    /**
+     * @return integer
+     */
+    public function getTitleId()
+    {
+        return $this->getCivilityTitle()->getId();
+    }
+
+    public function setLangId()
+    {
+        return $this->getLang()->getId();
+    }
 }

@@ -97,7 +97,7 @@ class AddressController extends BaseFrontOpenApiController
     {
         $currentCustomer = $this->getCurrentCustomer();
 
-        $openApiAddress = $this->modelFactory->buildModel('Address', $request->getContent());
+        $openApiAddress = $this->getModelFactory()->buildModel('Address', $request->getContent());
 
         $openApiAddress->validate('create');
 
@@ -159,7 +159,7 @@ class AddressController extends BaseFrontOpenApiController
             );
         }
 
-        $openApiAddress = $this->modelFactory->buildModel('Address', $request->getContent())
+        $openApiAddress = $this->getModelFactory()->buildModel('Address', $request->getContent())
             ->setId($id);
 
         $openApiAddress->validate('update');

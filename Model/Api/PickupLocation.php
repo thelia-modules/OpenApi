@@ -3,6 +3,7 @@
 namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
+use OpenApi\Constraint as Constraint;
 
 /**
  * @OA\Schema(
@@ -16,6 +17,7 @@ class PickupLocation extends BaseApiModel
      * @OA\Property(
      *    type="integer",
      * )
+     * @Constraint\NotBlank(groups={"read"})
      */
     protected $id;
 

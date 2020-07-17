@@ -3,6 +3,7 @@
 namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
+use OpenApi\Constraint as Constraint;
 
 /**
  * Class Error

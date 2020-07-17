@@ -9,6 +9,7 @@ use Thelia\Core\Translation\Translator;
 use Thelia\Model\Country;
 use Thelia\Model\ProductSaleElementsQuery;
 use \Thelia\Model\CartItem as TheliaCartItem;
+use OpenApi\Constraint as Constraint;
 
 /**
  * Class CartItem
@@ -24,6 +25,7 @@ class CartItem extends BaseApiModel
      *    type="integer",
      *    description="cartItemId, not to be confused with the productId or pseId",
      * )
+     * @Constraint\NotBlank(groups={"read"})
      */
     protected $id;
 

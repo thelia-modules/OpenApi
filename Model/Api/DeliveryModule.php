@@ -5,6 +5,7 @@ namespace OpenApi\Model\Api;
 use OpenApi\Annotations as OA;
 use OpenApi\OpenApi;
 use Thelia\Core\Translation\Translator;
+use OpenApi\Constraint as Constraint;
 
 /**
  * Class DeliveryModule
@@ -27,6 +28,7 @@ class DeliveryModule extends BaseApiModel
      *  @OA\Property(
      *     type="integer"
      *  )
+     * @Constraint\NotBlank(groups={"read"})
      */
     protected $id;
 

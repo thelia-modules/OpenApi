@@ -5,6 +5,7 @@ namespace OpenApi\Model\Api;
 use OpenApi\Annotations as OA;
 use Symfony\Component\Validator\Constraints as Assert;
 use Thelia\Model\CustomerTitle;
+use OpenApi\Constraint as Constraint;
 
 /**
  * @OA\Schema(
@@ -19,7 +20,7 @@ class CivilityTitle extends BaseApiModel
      * @OA\Property(
      *    type="integer"
      * ),
-     * @Assert\NotNull(groups={"read", "update"})
+     * @Constraint\NotBlank(groups={"read"})
      */
     protected $id;
 
@@ -27,7 +28,6 @@ class CivilityTitle extends BaseApiModel
      * @OA\Property(
      *    type="string"
      * ),
-     * @Assert\NotNull(groups={"create", "update"})
      */
     protected $short;
 
@@ -35,7 +35,6 @@ class CivilityTitle extends BaseApiModel
      * @OA\Property(
      *    type="string"
      * )
-     * @Assert\NotNull(groups={"create", "update"})
      */
     protected $long;
 

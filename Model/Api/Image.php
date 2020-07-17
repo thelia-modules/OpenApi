@@ -4,21 +4,14 @@
 namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
-use OpenApi\Controller\Front\ImageController;
 use OpenApi\Service\ImageService;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcher;
-use Thelia\Core\Event\Image\ImageEvent;
-use Thelia\Core\Event\TheliaEvents;
 use Thelia\Model\BrandImage;
 use Thelia\Model\CategoryImage;
-use Thelia\Model\ConfigQuery;
 use Thelia\Model\ContentImage;
 use Thelia\Model\FolderImage;
 use Thelia\Model\ModuleImage;
 use Thelia\Model\ProductImage;
+use OpenApi\Constraint as Constraint;
 
 /**
  * Class Image

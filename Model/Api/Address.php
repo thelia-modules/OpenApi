@@ -47,7 +47,7 @@ class Address extends BaseApiModel
      * @OA\Property(
      *     ref="#/components/schemas/CivilityTitle"
      * ),
-     * @Constraint\NotBlank(groups={"create","update"})
+     * @Constraint\NotNull(groups={"create","update"})
      */
     protected $civilityTitle;
 
@@ -55,7 +55,7 @@ class Address extends BaseApiModel
      * @OA\Property(
      *     type="string",
      * ),
-     * @Constraint\NotBlank(groups={"create","update"})
+     * @Constraint\NotNull(groups={"create","update"})
      */
     protected $firstName;
 
@@ -63,7 +63,7 @@ class Address extends BaseApiModel
      * @OA\Property(
      *     type="string",
      * )
-     * @Constraint\NotBlank(groups={"create","update"})
+     * @Constraint\NotNull(groups={"create","update"})
      */
     protected $lastName;
 

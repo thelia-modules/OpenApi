@@ -15,6 +15,14 @@ use Thelia\Model\CustomerQuery;
 
 abstract class BaseFrontOpenApiController extends BaseFrontController
 {
+    const GROUP_CREATE = 'create';
+
+    const GROUP_READ = 'read';
+
+    const GROUP_UPDATE = 'update';
+
+    const GROUP_DELETE = 'delete';
+
     public function __construct()
     {
         header("Access-Control-Allow-Origin: *");

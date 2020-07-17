@@ -25,6 +25,7 @@ abstract class BaseApiModel implements \JsonSerializable
     /**
      * @param $groups
      *
+     * @return BaseApiModel
      * @throws OpenApiException
      */
     public function validate($groups, $recursively = true)
@@ -32,7 +33,7 @@ abstract class BaseApiModel implements \JsonSerializable
         $violations = $this->getViolations($groups, $recursively);
 
         if (empty($violations)) {
-            return;
+            return $this;
         }
 
         $error = new Error(
@@ -77,6 +78,11 @@ abstract class BaseApiModel implements \JsonSerializable
     {
         $data = json_decode($json, true);
 
+        return $this->createFromArray($data);
+    }
+
+    public function createFromArray($data)
+    {
         foreach ($data as $key => $value) {
             $methodName = 'set'.ucfirst($key);
             if (method_exists($this, $methodName)) {

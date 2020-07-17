@@ -4,6 +4,7 @@ namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
 use Thelia\Model\Order;
+use OpenApi\Constraint as Constraint;
 
 /**
  * Class Checkout

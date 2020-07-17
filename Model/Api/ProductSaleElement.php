@@ -6,6 +6,7 @@ namespace OpenApi\Model\Api;
 use OpenApi\Annotations as OA;
 use Thelia\Model\Country;
 use Thelia\Model\ProductSaleElements;
+use OpenApi\Constraint as Constraint;
 
 /**
  * Class ProductSaleElement
@@ -20,6 +21,7 @@ class ProductSaleElement extends BaseApiModel
      * @OA\Property(
      *    type="integer",
      * )
+     * @Constraint\NotBlank(groups={"read"})
      */
     protected $id;
 

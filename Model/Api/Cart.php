@@ -5,6 +5,7 @@ namespace OpenApi\Model\Api;
 use OpenApi\Service\ImageService;
 use Thelia\Model\Country;
 use OpenApi\Annotations as OA;
+use OpenApi\Constraint as Constraint;
 
 /**
  * Class Cart
@@ -19,6 +20,7 @@ class Cart extends BaseApiModel
      * @OA\Property(
      *    type="integer",
      * )
+     * @Constraint\NotBlank(groups={"read", "update"})
      */
     protected $id;
 
@@ -27,6 +29,7 @@ class Cart extends BaseApiModel
      *    type="number",
      *    format="float",
      * )
+     * @Constraint\NotBlank(groups={"create", "update"})
      */
     protected $taxes;
 
@@ -36,6 +39,7 @@ class Cart extends BaseApiModel
      *    format="float",
      *    description="The estimated delivery price for this cart",
      * )
+     * @Constraint\NotBlank(groups={"create", "update"})
      */
     protected $delivery;
 
@@ -62,6 +66,7 @@ class Cart extends BaseApiModel
      *    type="number",
      *    format="float",
      * )
+     * @Constraint\NotBlank(groups={"create", "update"})
      */
     protected $total;
 
@@ -70,6 +75,7 @@ class Cart extends BaseApiModel
      *     description="Symbol of the currently used currency",
      *     type="string",
      * )
+     * @Constraint\NotBlank(groups={"create", "update"})
      */
     protected $currency;
 
@@ -80,6 +86,7 @@ class Cart extends BaseApiModel
      *          ref="#/components/schemas/CartItem"
      *     )
      * )
+     * @Constraint\NotBlank(groups={"create", "update"})
      */
     protected $items;
 

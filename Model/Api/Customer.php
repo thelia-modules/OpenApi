@@ -4,6 +4,7 @@
 namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
+use OpenApi\Constraint as Constraint;
 
 /**
  * @OA\Schema(
@@ -18,6 +19,7 @@ class Customer extends BaseApiModel
      * @OA\Property(
      *    type="integer",
      * )
+     * @Constraint\NotBlank(groups={"read", "update"})
      */
     protected $id;
 
@@ -26,6 +28,7 @@ class Customer extends BaseApiModel
      *    type="object",
      *    ref="#/components/schemas/CivilityTitle",
      * )
+     * @Constraint\NotBlank(groups={"create", "update"})
      */
     protected $civilityTitle;
 
@@ -34,6 +37,7 @@ class Customer extends BaseApiModel
      *    type="object",
      *    ref="#/components/schemas/Language",
      * )
+     * @Constraint\NotBlank(groups={"create", "update"})
      */
     protected $lang;
 
@@ -41,6 +45,7 @@ class Customer extends BaseApiModel
      * @OA\Property(
      *     type="string",
      * )
+     * @Constraint\NotBlank(groups={"create", "update"})
      */
     protected $reference;
 
@@ -48,6 +53,7 @@ class Customer extends BaseApiModel
      * @OA\Property(
      *     type="string",
      * )
+     * @Constraint\NotBlank(groups={"create", "update"})
      */
     protected $firstname;
 
@@ -55,6 +61,7 @@ class Customer extends BaseApiModel
      * @OA\Property(
      *     type="string",
      * )
+     * @Constraint\NotBlank(groups={"create", "update"})
      */
     protected $lastname;
 
@@ -62,6 +69,7 @@ class Customer extends BaseApiModel
      * @OA\Property(
      *     type="string",
      * )
+     * @Constraint\NotBlank(groups={"create", "update"})
      */
     protected $email;
 
@@ -69,6 +77,7 @@ class Customer extends BaseApiModel
      * @OA\Property(
      *    type="boolean",
      * )
+     * @Constraint\NotNull(groups={"create", "update"})
      */
     protected $rememberMe;
 
@@ -77,6 +86,7 @@ class Customer extends BaseApiModel
      *    type="number",
      *    format="float",
      * )
+     * @Constraint\NotBlank(groups={"create", "update"})
      */
     protected $discount;
 
@@ -84,6 +94,7 @@ class Customer extends BaseApiModel
      * @OA\Property(
      *    type="boolean",
      * )
+     * @Constraint\NotNull(groups={"create", "update"})
      */
     protected $reseller;
 

@@ -4,7 +4,9 @@
 namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
+use Thelia\Model\AttributeAv;
 use Thelia\Model\AttributeCombination;
+use OpenApi\Constraint as Constraint;
 
 /**
  * Class Attribute
@@ -19,6 +21,7 @@ class Attribute extends BaseApiModel
      * @OA\Property(
      *    type="integer",
      * )
+     * @Constraint\NotBlank(groups={"read"})
      */
     protected $id;
 
@@ -31,7 +34,12 @@ class Attribute extends BaseApiModel
 
     /**
      * @OA\Property(
-     *     type="string",
+     *     type="array",
+     *     @OA\Items(
+     *         @OA\Property(
+     *             type="string",
+     *         )
+     *     )
      * )
      */
     protected $value;
@@ -45,9 +53,15 @@ class Attribute extends BaseApiModel
      */
     public function createFromTheliaAttributeCombination(AttributeCombination $attributeCombination)
     {
+        $values = [];
+        /** @var AttributeAv $attributeValue */
+        foreach ($attributeCombination->getAttributeAv() as $attributeValue) {
+            $values[] = $attributeValue->getTitle();
+        }
+
         $this->id = $attributeCombination->getAttributeId();
         $this->title = $attributeCombination->getAttribute()->getTitle();
-        $this->value = $attributeCombination->getAttributeAv()->getTitle();
+        $this->value = $values;
 
         return $this;
     }

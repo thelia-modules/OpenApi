@@ -3,6 +3,7 @@
 namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
+use OpenApi\Constraint as Constraint;
 
 /**
  * Class DeliveryModuleOption
@@ -17,6 +18,7 @@ class DeliveryModuleOption extends BaseApiModel
      *  @OA\Property(
      *     type="string",
      *  )
+     * @Constraint\NotBlank(groups={"read"})
      */
     protected $code;
 

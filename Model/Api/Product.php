@@ -4,11 +4,10 @@
 namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
-use OpenApi\Controller\Front\ImageController;
 use OpenApi\Service\ImageService;
 use Thelia\Model\Country;
-use Thelia\Model\ProductQuery;
 use Thelia\Model\ProductSaleElements;
+use OpenApi\Constraint as Constraint;
 
 /**
  * Class Product
@@ -23,6 +22,7 @@ class Product extends BaseApiModel
      * @OA\Property(
      *    type="integer",
      * )
+     * @Constraint\NotBlank(groups={"read"})
      */
     protected $id;
 

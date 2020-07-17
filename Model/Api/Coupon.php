@@ -4,7 +4,8 @@
 namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
-use Thelia\Model\CouponQuery;
+use OpenApi\Constraint as Constraint;
+
 
 /**
  * Class Coupon
@@ -19,6 +20,7 @@ class Coupon extends BaseApiModel
      * @OA\Property(
      *    type="integer",
      * )
+     * @Constraint\NotBlank(groups={"read", "update"})
      */
     protected $id;
 
@@ -26,6 +28,7 @@ class Coupon extends BaseApiModel
      * @OA\Property(
      *     type="string",
      * )
+     * @Constraint\NotBlank(groups={"create", "update"})
      */
     protected $code;
 
@@ -34,6 +37,7 @@ class Coupon extends BaseApiModel
      *    type="number",
      *    format="float",
      * )
+     * @Constraint\NotBlank(groups={"create", "update"})
      */
     protected $amount;
 

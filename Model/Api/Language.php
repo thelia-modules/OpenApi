@@ -5,6 +5,7 @@ namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
 use Thelia\Model\Lang;
+use OpenApi\Constraint as Constraint;
 
 /**
  * @OA\Schema(
@@ -19,6 +20,7 @@ class Language extends BaseApiModel
      * @OA\Property(
      *    type="integer",
      * )
+     * @Constraint\NotBlank(groups={"read"})
      */
     protected $id;
 

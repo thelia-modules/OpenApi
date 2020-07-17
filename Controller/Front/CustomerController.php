@@ -4,27 +4,17 @@
 namespace OpenApi\Controller\Front;
 
 
-use ColissimoLabel\Exception\Exception;
-use OpenApi\Model\Api\CivilityTitle;
+use OpenApi\Model\Api\Address as OpenApiAddress;
+use OpenApi\Model\Api\Customer as OpenApiCustomer;
 use OpenApi\Model\Api\Error;
 use OpenApi\OpenApi;
 use Thelia\Core\Event\Customer\CustomerCreateOrUpdateEvent;
-use Thelia\Core\Event\Customer\CustomerLoginEvent;
 use Thelia\Core\Event\TheliaEvents;
 use Thelia\Core\HttpFoundation\JsonResponse;
 use Thelia\Core\HttpFoundation\Request;
-use Thelia\Core\Security\Authentication\CustomerUsernamePasswordFormAuthenticator;
-use Thelia\Core\Security\Token\CookieTokenProvider;
 use Thelia\Core\Translation\Translator;
-use Thelia\Form\CustomerLogin;
-use Thelia\Form\Definition\FrontForm;
 use Symfony\Component\Routing\Annotation\Route;
 use OpenApi\Annotations as OA;
-use Thelia\Model\ConfigQuery;
-use Thelia\Model\Customer;
-use Thelia\Model\CustomerQuery;
-use Thelia\Model\CustomerTitle;
-use Thelia\Model\CustomerTitleQuery;
 
 /**
  * @Route("/customer", name="customer")
@@ -123,6 +113,19 @@ class CustomerController extends BaseFrontOpenApiController
     public function createCustomer(Request $request)
     {
         try {
+            $data = json_decode($request->getContent(), true);
+            $openApiCustomer = (new OpenApiCustomer())
+                ->createFromArray($data['customer'])
+                ->validate(self::GROUP_CREATE)
+            ;
+
+            $openApiAddress = (new OpenApiAddress())
+                ->createFromArray($data['address'])
+                ->validate(self::GROUP_CREATE)
+            ;
+
+
+            //todo
             $event = $this->createCustomerCreateEvent($request->getContent());
 
             $this->dispatch(TheliaEvents::CUSTOMER_CREATEACCOUNT, $event);
@@ -187,6 +190,14 @@ class CustomerController extends BaseFrontOpenApiController
                 throw new \Exception(Translator::getInstance()->trans('No customer currently logged in.', [], OpenApi::DOMAIN_NAME));
             }
 
+            $data = json_decode($request->getContent(), true);
+            $openApiCustomer = (new \OpenApi\Model\Api\Customer())
+                ->createFromArray($data['customer'])
+                ->validate(self::GROUP_CREATE)
+            ;
+
+
+            //todo
             $event = $this->createCustomerUpdateEvent($request->getContent());
             $event->setCustomer($currentCustomer);
 
@@ -231,7 +242,32 @@ class CustomerController extends BaseFrontOpenApiController
         );
     }
 
-    protected function createCustomerCreateEvent($json)
+    protected function createCustomerCreateEvent(OpenApiCustomer $customer, $password)
+    {
+        return new CustomerCreateOrUpdateEvent(
+            $data['customer']['civilityTitle']['id'],
+            $customer->getFirstname(),
+            $customer->getLastname(),
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            $customer->getEmail(),
+            $password,
+            $data['customer']['lang']['id'],
+            $customer->getReseller(),
+            null,
+            $customer->getDiscount(),
+            null,
+            null
+        );
+    }
+
+    protected function OLDcreateCustomerCreateEvent($json)
     {
         $data = json_decode($json, true);
 
@@ -246,7 +282,7 @@ class CustomerController extends BaseFrontOpenApiController
             isset($data['address']['cellphoneNumber']) ? $data['address']['cellphoneNumber'] : null,
             $data['address']['zipCode'],
             $data['address']['city'],
-            $data['address']['countryCode'],
+            $data['address']['countryCode']->getId,
             $data['customer']['email'],
             $data['password'],
             $data['customer']['lang']['id'],

@@ -4,6 +4,7 @@ namespace OpenApi\Controller\Front;
 
 use OpenApi\Exception\OpenApiException;
 use OpenApi\Model\Api\Error;
+use OpenApi\Model\Api\ModelFactory;
 use OpenApi\OpenApi;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Thelia\Core\HttpFoundation\JsonResponse;
@@ -96,7 +97,8 @@ class AddressController extends BaseFrontOpenApiController
     {
         $currentCustomer = $this->getCurrentCustomer();
 
-        $openApiAddress = (new OpenApiAddress())->createFromData($request->getContent());
+        $openApiAddress = $this->modelFactory->buildModel('Address', $request->getContent());
+
         $openApiAddress->validate('create');
 
         $theliaAddress = $openApiAddress->toTheliaAddress();
@@ -104,7 +106,7 @@ class AddressController extends BaseFrontOpenApiController
             ->setCustomer($currentCustomer)
             ->save();
 
-        return new JsonResponse($openApiAddress);
+        return $this->jsonResponse($openApiAddress);
     }
 
     /**
@@ -157,8 +159,9 @@ class AddressController extends BaseFrontOpenApiController
             );
         }
 
-        $openApiAddress = (new OpenApiAddress())->createFromData($request->getContent())
+        $openApiAddress = $this->modelFactory->buildModel('Address', $request->getContent())
             ->setId($id);
+
         $openApiAddress->validate('update');
 
         $openApiAddress->toTheliaAddress()->save();

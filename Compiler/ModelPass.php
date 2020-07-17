@@ -15,10 +15,10 @@ class ModelPass implements CompilerPassInterface
         $modelServices = [];
         foreach ($taggedServices as $id => $tags) {
             foreach ($tags as $attributes) {
-                $modelsServices[$attributes['alias']] = $id;
+                $modelServices[$attributes['alias']] = $id;
             }
         }
 
-        define(OpenApi::OPEN_API_MODELS_CONSTANT_KEY, $modelServices);
+        $containerBuilder->setParameter(OpenApi::OPEN_API_MODELS_PARAMETER_KEY, $modelServices);
     }
 }

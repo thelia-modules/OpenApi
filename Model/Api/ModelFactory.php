@@ -17,12 +17,8 @@ class ModelFactory
 
     public function buildModel($modelName, $data)
     {
-        if (!defined(OpenApi::OPEN_API_MODELS_CONSTANT_KEY)) {
-            return null;
-        }
-
-        $openApiModels = constant(OpenApi::OPEN_API_MODELS_CONSTANT_KEY);
-        if (!in_array($modelName, $openApiModels)) {
+        $openApiModels = $this->container->getParameter(OpenApi::OPEN_API_MODELS_PARAMETER_KEY);
+        if (!is_array($openApiModels) || !array_key_exists($modelName, $openApiModels)) {
             return null;
         }
 

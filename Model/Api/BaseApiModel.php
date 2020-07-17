@@ -41,8 +41,10 @@ abstract class BaseApiModel implements \JsonSerializable
             return $this;
         }
 
-        $error = new Error(
-            Translator::getInstance()->trans('Invalid data', [], OpenApi::DOMAIN_NAME)
+        /** @var Error $error */
+        $error = $this->modelFactory->buildModel(
+            'Error',
+            ['title' => Translator::getInstance()->trans('Invalid data', [], OpenApi::DOMAIN_NAME)]
         );
 
         $error->setSchemaViolations($violations);
@@ -52,10 +54,15 @@ abstract class BaseApiModel implements \JsonSerializable
 
     public function getViolations($groups, $recursively = true, $propertyPatchPrefix = "")
     {
-        $violations = array_map(function ($violation) use ($propertyPatchPrefix) {
-            return (new SchemaViolation())
-                    ->setKey($propertyPatchPrefix.$violation->getPropertyPath())
-                    ->setError($violation->getMessage());
+        $modelFactory = $this->modelFactory;
+        $violations = array_map(function ($violation) use ($modelFactory, $propertyPatchPrefix) {
+            return $modelFactory->buildModel(
+                'SchemaViolation',
+                [
+                    'key' => $propertyPatchPrefix.$violation->getPropertyPath(),
+                    'error' => $violation->getMessage()
+                ]
+            );
         },
             iterator_to_array($this->validator->validate($this, $groups))
         );

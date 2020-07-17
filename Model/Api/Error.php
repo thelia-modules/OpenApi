@@ -39,22 +39,6 @@ class Error extends BaseApiModel
     protected $schemaViolations;
 
     /**
-     * Error constructor.
-     *
-     * @param null $title
-     * @param null $description
-     */
-    public function __construct(
-        $title = null,
-        $description = null
-    )
-    {
-        parent::__construct();
-        $this->title = $title;
-        $this->description = $description;
-    }
-
-    /**
      * @return null
      */
     public function getTitle()

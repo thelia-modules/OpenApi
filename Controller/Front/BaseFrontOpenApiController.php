@@ -14,7 +14,7 @@ use Thelia\Core\Translation\Translator;
 abstract class BaseFrontOpenApiController extends BaseFrontController
 {
     /** @var ModelFactory */
-    protected $modelFactory;
+    private $modelFactory;
 
     const GROUP_CREATE = 'create';
 
@@ -24,9 +24,8 @@ abstract class BaseFrontOpenApiController extends BaseFrontController
 
     const GROUP_DELETE = 'delete';
 
-    public function __construct(ModelFactory $modelFactory)
+    public function __construct()
     {
-        $this->modelFactory = $modelFactory;
         $loader = require THELIA_VENDOR.'autoload.php';
         AnnotationRegistry::registerLoader([$loader, 'loadClass']);
     }
@@ -63,5 +62,14 @@ abstract class BaseFrontOpenApiController extends BaseFrontController
         }
 
         return $currentCustomer;
+    }
+
+    protected function getModelFactory()
+    {
+        if (null === $this->modelFactory) {
+            $this->modelFactory = $this->getContainer()->get('open_api.model.factory');
+        }
+
+        return $this->modelFactory;
     }
 }

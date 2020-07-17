@@ -3,18 +3,19 @@
 namespace OpenApi\Controller\Front;
 
 use Doctrine\Common\Annotations\AnnotationRegistry;
-use OpenApi\Annotations as OA;
 use OpenApi\Exception\OpenApiException;
 use OpenApi\Model\Api\Error;
+use OpenApi\Model\Api\ModelFactory;
 use OpenApi\OpenApi;
-use Thelia\Controller\BaseController;
 use Thelia\Controller\Front\BaseFrontController;
-use Thelia\Core\HttpFoundation\Request;
+use Thelia\Core\HttpFoundation\JsonResponse;
 use Thelia\Core\Translation\Translator;
-use Thelia\Model\CustomerQuery;
 
 abstract class BaseFrontOpenApiController extends BaseFrontController
 {
+    /** @var ModelFactory */
+    protected $modelFactory;
+
     const GROUP_CREATE = 'create';
 
     const GROUP_READ = 'read';
@@ -23,12 +24,21 @@ abstract class BaseFrontOpenApiController extends BaseFrontController
 
     const GROUP_DELETE = 'delete';
 
-    public function __construct()
+    public function __construct(ModelFactory $modelFactory)
     {
-        header("Access-Control-Allow-Origin: *");
-
+        $this->modelFactory = $modelFactory;
         $loader = require THELIA_VENDOR.'autoload.php';
         AnnotationRegistry::registerLoader([$loader, 'loadClass']);
+    }
+
+    public function jsonResponse($data, $code = 200)
+    {
+        $response = (new JsonResponse())
+            ->setContent(json_encode(data));
+
+        // TODO : Add more flexibility to CORS check
+        $response->headers->set('Access-Control-Allow-Origin', '*');
+        return $response;
     }
 
     /**

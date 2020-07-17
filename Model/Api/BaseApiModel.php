@@ -13,13 +13,18 @@ use Thelia\Core\Translation\Translator;
 abstract class BaseApiModel implements \JsonSerializable
 {
     /** @var ValidatorInterface  */
-    private $validator;
+    protected $validator;
 
-    public function __construct()
+    /** @var ModelFactory */
+    protected $modelFactory;
+
+    public function __construct(ModelFactory $modelFactory)
     {
         $this->validator = Validation::createValidatorBuilder()
             ->enableAnnotationMapping()
             ->getValidator();
+
+        $this->modelFactory = $modelFactory;
     }
 
     /**
@@ -83,6 +88,10 @@ abstract class BaseApiModel implements \JsonSerializable
         foreach ($data as $key => $value) {
             $methodName = 'set'.ucfirst($key);
             if (method_exists($this, $methodName)) {
+                if (is_array($value)) {
+                    $openApiModel = $this->modelFactory->buildModel(ucfirst($key), $value);
+                    $value = null !== $openApiModel ? $openApiModel : $value;
+                }
                 $this->$methodName($value);
             }
         }

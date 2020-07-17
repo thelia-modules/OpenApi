@@ -146,18 +146,18 @@ class Address extends BaseApiModel
      */
     protected $additionalData;
 
-    public function createFromData($json)
-    {
-        parent::createFromData($json);
-
-        $address = json_decode($json, true);
-        if (isset($address['civilityTitle'])) {
-            $customerTitleId = $address['civilityTitle']['id'];
-            $this->setCivilityTitle((new CivilityTitle())->setId($customerTitleId));
-        }
-
-        return $this;
-    }
+//    public function createFromData($data)
+//    {
+//        parent::createFromData($data);
+//
+//        $address = json_decode($json, true);
+//        if (isset($address['civilityTitle'])) {
+//            $customerTitleId = $address['civilityTitle']['id'];
+//            $this->setCivilityTitle((new CivilityTitle())->setId($customerTitleId));
+//        }
+//
+//        return $this;
+//    }
 
     public function createFromTheliaAddress(TheliaAddress $address, $locale = 'en_US')
     {

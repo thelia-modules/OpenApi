@@ -45,7 +45,15 @@
         </service>
 
         <!--    MODELS    -->
+        <service id="open_api.model.factory" class="OpenApi\Model\Api\ModelFactory" >
+            <argument type="service" id="service_container"/>
+        </service>
+        <service id="open_api.model.address" class="OpenApi\Model\Api\Address" >
+            <argument type="service" id="open_api.model.factory"/>
+            <tag name="open_api.model" alias="Address"/>
+        </service>
         <service id="open_api.model.civility_title" class="OpenApi\Model\Api\CivilityTitle" >
+            <argument type="service" id="open_api.model.factory"/>
             <tag name="open_api.model" alias="CivilityTitle"/>
         </service>
     </services>

@@ -60,7 +60,7 @@ class CouponController extends BaseFrontOpenApiController
                 throw new \Exception(Translator::getInstance()->trans('No cart found', [], OpenApi::DOMAIN_NAME));
             }
 
-            $openApiCoupon = (new Coupon())->createFromJson($request->getContent());
+            $openApiCoupon = (new Coupon())->createFromData($request->getContent());
 
             if (null === $openApiCoupon->getCode()) {
                 throw new \Exception(Translator::getInstance()->trans('Coupon code cannot be null', [], OpenApi::DOMAIN_NAME));

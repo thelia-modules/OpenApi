@@ -146,9 +146,9 @@ class Address extends BaseApiModel
      */
     protected $additionalData;
 
-    public function createFromJson($json)
+    public function createFromData($json)
     {
-        parent::createFromJson($json);
+        parent::createFromData($json);
 
         $address = json_decode($json, true);
         if (isset($address['civilityTitle'])) {

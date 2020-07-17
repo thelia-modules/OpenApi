@@ -12,6 +12,7 @@
 
 namespace OpenApi;
 
+use OpenApi\Compiler\ModelPass;
 use Thelia\Module\BaseModule;
 
 class OpenApi extends BaseModule
@@ -21,6 +22,8 @@ class OpenApi extends BaseModule
 
     const PICKUP_ADDRESS_SESSION_KEY = "pickup_address";
 
+    const OPEN_API_MODELS_CONSTANT_KEY = "OPEN_API_MODELS";
+
 
     /*
      * You may now override BaseModuleInterface methods, such as:
@@ -28,4 +31,11 @@ class OpenApi extends BaseModule
      *
      * Have fun !
      */
+
+    public static function getCompilers()
+    {
+        return [
+            new ModelPass()
+        ];
+    }
 }

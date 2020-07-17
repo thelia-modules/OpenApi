@@ -115,12 +115,12 @@ class CustomerController extends BaseFrontOpenApiController
         try {
             $data = json_decode($request->getContent(), true);
             $openApiCustomer = (new OpenApiCustomer())
-                ->createFromArray($data['customer'])
+                ->createFromData($data['customer'])
                 ->validate(self::GROUP_CREATE)
             ;
 
             $openApiAddress = (new OpenApiAddress())
-                ->createFromArray($data['address'])
+                ->createFromData($data['address'])
                 ->validate(self::GROUP_CREATE)
             ;
 
@@ -192,7 +192,7 @@ class CustomerController extends BaseFrontOpenApiController
 
             $data = json_decode($request->getContent(), true);
             $openApiCustomer = (new \OpenApi\Model\Api\Customer())
-                ->createFromArray($data['customer'])
+                ->createFromData($data['customer'])
                 ->validate(self::GROUP_CREATE)
             ;
 

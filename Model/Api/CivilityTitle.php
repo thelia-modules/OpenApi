@@ -53,11 +53,6 @@ class CivilityTitle extends BaseApiModel
         return $this;
     }
 
-    public function createFromArray($array)
-    {
-
-    }
-
     /**
      * @return mixed
      */

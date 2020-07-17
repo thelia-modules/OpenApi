@@ -124,7 +124,7 @@ class CartItem extends BaseApiModel
 
     public function createFromJsonAndCountry($json, Country $country, ImageService $imageService)
     {
-        $this->createFromJson($json);
+        $this->createFromData($json);
 
         $cartItem = json_decode($json, true);
         if (!isset($cartItem['pseId'])) {

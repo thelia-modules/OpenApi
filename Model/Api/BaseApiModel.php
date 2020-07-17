@@ -74,15 +74,12 @@ abstract class BaseApiModel implements \JsonSerializable
         return $serializer->normalize($this, null);
     }
 
-    public function createFromJson($json)
+    public function createFromData($data)
     {
-        $data = json_decode($json, true);
+        if (is_string($data)) {
+            $data = json_decode($data, true);
+        }
 
-        return $this->createFromArray($data);
-    }
-
-    public function createFromArray($data)
-    {
         foreach ($data as $key => $value) {
             $methodName = 'set'.ucfirst($key);
             if (method_exists($this, $methodName)) {

@@ -43,6 +43,11 @@
         <service id="open_api.exception.listener" class="OpenApi\EventListener\ExceptionListener">
             <tag name="kernel.event_subscriber"/>
         </service>
+
+        <!--    MODELS    -->
+        <service id="open_api.model.civility_title" class="OpenApi\Model\Api\CivilityTitle" >
+            <tag name="open_api.model" alias="CivilityTitle"/>
+        </service>
     </services>
 
 

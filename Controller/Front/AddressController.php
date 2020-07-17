@@ -96,7 +96,7 @@ class AddressController extends BaseFrontOpenApiController
     {
         $currentCustomer = $this->getCurrentCustomer();
 
-        $openApiAddress = (new OpenApiAddress())->createFromJson($request->getContent());
+        $openApiAddress = (new OpenApiAddress())->createFromData($request->getContent());
         $openApiAddress->validate('create');
 
         $theliaAddress = $openApiAddress->toTheliaAddress();
@@ -157,7 +157,7 @@ class AddressController extends BaseFrontOpenApiController
             );
         }
 
-        $openApiAddress = (new OpenApiAddress())->createFromJson($request->getContent())
+        $openApiAddress = (new OpenApiAddress())->createFromData($request->getContent())
             ->setId($id);
         $openApiAddress->validate('update');
 

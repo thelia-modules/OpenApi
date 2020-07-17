@@ -60,7 +60,7 @@ class CheckoutController extends BaseFrontOpenApiController
             }
 
             $checkout = (new Checkout())
-                ->createFromJson($request->getContent());
+                ->createFromData($request->getContent());
 
             $order = $this->getOrder($this->getRequest());
             $orderEvent = new OrderEvent($order);

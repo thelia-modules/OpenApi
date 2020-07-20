@@ -18,6 +18,8 @@ class ModelFactory
     public function buildModel($modelName, $data)
     {
         $openApiModels = $this->container->getParameter(OpenApi::OPEN_API_MODELS_PARAMETER_KEY);
+
+        // If no correpondant OpenApi model was found
         if (!is_array($openApiModels) || !array_key_exists($modelName, $openApiModels)) {
             return null;
         }
@@ -35,7 +37,7 @@ class ModelFactory
     {
         $openApiModels = $this->container->getParameter(OpenApi::OPEN_API_MODELS_PARAMETER_KEY);
         if (!is_array($openApiModels) || !array_key_exists($modelName, $openApiModels)) {
-            return null;
+            return false;
         }
 
         return true;

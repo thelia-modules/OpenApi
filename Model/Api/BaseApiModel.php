@@ -88,18 +88,24 @@ abstract class BaseApiModel implements \JsonSerializable
 
     public function createFromData($data)
     {
+        if (is_object($data)) {
+            $this->modelFactory->buildModel(get_class($data), $data);
+        }
+
         if (is_string($data)) {
             $data = json_decode($data, true);
         }
 
-        foreach ($data as $key => $value) {
-            $methodName = 'set'.ucfirst($key);
-            if (method_exists($this, $methodName)) {
-                if (is_array($value)) {
-                    $openApiModel = $this->modelFactory->buildModel(ucfirst($key), $value);
-                    $value = null !== $openApiModel ? $openApiModel : $value;
+        if (is_iterable($data)) {
+            foreach ($data as $key => $value) {
+                $methodName = 'set'.ucfirst($key);
+                if (method_exists($this, $methodName)) {
+                    if (is_array($value)) {
+                        $openApiModel = $this->modelFactory->buildModel(ucfirst($key), $value);
+                        $value = null !== $openApiModel ? $openApiModel : $value;
+                    }
+                    $this->$methodName($value);
                 }
-                $this->$methodName($value);
             }
         }
 
@@ -137,30 +143,34 @@ abstract class BaseApiModel implements \JsonSerializable
 
     public function createFromTheliaModel($theliaModel)
     {
-        foreach (get_class_methods($this) as $oaMethod) {
-            if (0 === strncasecmp('set', $oaMethod, 3)) {
-                $method = ucfirst(substr($oaMethod, 3));
+        foreach (get_class_methods($this) as $modelMethod) {
+            if (0 === strncasecmp('set', $modelMethod, 3)) {
+                $property = ucfirst(substr($modelMethod, 3));
 
                 $theliaPossibleMethods = [
-                    'get' . $method,
-                    'get' . $method . 'Model',
-                    'get' . substr(get_class($theliaModel), strrpos(get_class($theliaModel), "\\") + 1) . $method
+                    'get' . $property,
+                    'get' . $property . 'Model',
+                    'get' . substr(get_class($theliaModel), strrpos(get_class($theliaModel), "\\") + 1) . $property
                 ];
 
-                foreach ($theliaPossibleMethods as $theliaPossibleMethod) {
-                    if (method_exists($theliaModel, $theliaPossibleMethod)) {
-                        if (!$this->modelFactory->modelExists($method)) {
-                            $this->$oaMethod($theliaModel->$theliaPossibleMethod());
-                            break;
-                        }
+                $availableMethods = array_intersect($theliaPossibleMethods, get_class_methods($theliaModel));
 
-                        $oaModel = $this->modelFactory->buildModel($method, null);
-                        if (is_object($theliaModel->$theliaPossibleMethod())) {
-                            $this->$oaMethod($oaModel->createFromTheliaModel($theliaModel->$theliaPossibleMethod()));
-                            break;
-                        }
+                if (empty($availableMethods)) {
+                    continue;
+                }
+
+                $theliaValue = null;
+                while (!empty($availableMethods) && $theliaValue === null) {
+                    $theliaMethod = array_pop($availableMethods);
+
+                    $theliaValue = $theliaModel->$theliaMethod();
+
+                    if ($this->modelFactory->modelExists($property)) {
+                        $theliaValue = $this->modelFactory->buildModel($property, $theliaValue);
                     }
                 }
+
+                $this->$modelMethod($theliaValue);
             }
         }
 

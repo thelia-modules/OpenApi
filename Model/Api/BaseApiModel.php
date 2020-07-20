@@ -120,7 +120,7 @@ abstract class BaseApiModel implements \JsonSerializable
                 $theliaMethod = 'set' . substr($methodName, 3);
 
                 if (method_exists($theliaModel, $theliaMethod)) {
-                    $theliaModel->$theliaMethod($this->$methodName);
+                    $theliaModel->$theliaMethod($this->$methodName());
                 }
             }
         }

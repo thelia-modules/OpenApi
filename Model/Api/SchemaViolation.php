@@ -27,16 +27,6 @@ class SchemaViolation extends BaseApiModel
      */
     protected $error;
 
-    public function __construct(
-        $key = null,
-        $error = null
-    ) {
-        parent::__construct();
-
-        $this->key = $key;
-        $this->error = $error;
-    }
-
     /**
      * @return null
      */

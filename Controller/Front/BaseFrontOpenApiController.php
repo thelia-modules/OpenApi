@@ -51,14 +51,15 @@ abstract class BaseFrontOpenApiController extends BaseFrontController
         $currentCustomer = $this->getSecurityContext()->getCustomerUser();
 
         if (null === $currentCustomer && $throwExceptionIfNull) {
-            throw new OpenApiException(
-                (
-                new Error(
-                    Translator::getInstance()->trans("Invalid data", [], OpenApi::DOMAIN_NAME),
-                    Translator::getInstance()->trans("No customer found", [], OpenApi::DOMAIN_NAME)
-                )
-                )
+            /** @var Error $error */
+            $error = $this->modelFactory->buildModel(
+                'Error',
+                [
+                    'title' => Translator::getInstance()->trans('Invalid data', [], OpenApi::DOMAIN_NAME),
+                    'description' => Translator::getInstance()->trans("No customer found", [], OpenApi::DOMAIN_NAME),
+                ]
             );
+            throw new OpenApiException($error);
         }
 
         return $currentCustomer;

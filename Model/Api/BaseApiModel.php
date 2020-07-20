@@ -137,30 +137,28 @@ abstract class BaseApiModel implements \JsonSerializable
 
     public function createFromTheliaModel($theliaModel)
     {
-        foreach (get_class_methods($theliaModel) as $theliaMethod) {
-            if (0 === strncasecmp('get', $theliaMethod, 3)) {
-                $oaMethod = 'set' . substr($theliaMethod, 3);
-                $theliaPossibleMethods = [
-                    $theliaMethod,
-                    $theliaMethod . 'Model',
-                    'get' . substr(get_class($this), strrpos(get_class($this), "\\") + 1) . substr($theliaMethod, 3)
-                ];
-                
-                if (method_exists($this, $oaMethod)) {
-                    if ($this->modelFactory->modelExists(ucfirst(substr($theliaMethod, 3)))) {
-                        $oaModel = $this->modelFactory->buildModel(ucfirst(substr($theliaMethod, 3)), null);
+        foreach (get_class_methods($this) as $oaMethod) {
+            if (0 === strncasecmp('set', $oaMethod, 3)) {
+                $method = ucfirst(substr($oaMethod, 3));
 
-                        foreach ($theliaPossibleMethods as $theliaPossibleMethod) {
-                            if (method_exists($theliaModel, $theliaPossibleMethod)) {
-                                if (is_object($theliaModel->$theliaPossibleMethod())) {
-                                    $this->$oaMethod($oaModel->createFromTheliaModel($theliaModel->$theliaPossibleMethod()));
-                                    break;
-                                }
-                            }
+                $theliaPossibleMethods = [
+                    'get' . $method,
+                    'get' . $method . 'Model',
+                    'get' . substr(get_class($theliaModel), strrpos(get_class($theliaModel), "\\") + 1) . $method
+                ];
+
+                foreach ($theliaPossibleMethods as $theliaPossibleMethod) {
+                    if (method_exists($theliaModel, $theliaPossibleMethod)) {
+                        if (!$this->modelFactory->modelExists($method)) {
+                            $this->$oaMethod($theliaModel->$theliaPossibleMethod());
+                            break;
                         }
 
-                    } else {
-                        $this->$oaMethod($theliaModel->$theliaMethod());
+                        $oaModel = $this->modelFactory->buildModel($method, null);
+                        if (is_object($theliaModel->$theliaPossibleMethod())) {
+                            $this->$oaMethod($oaModel->createFromTheliaModel($theliaModel->$theliaPossibleMethod()));
+                            break;
+                        }
                     }
                 }
             }

@@ -318,7 +318,7 @@ class Customer extends BaseApiModel
     /**
      * @return TheliaCustomer
      */
-    public function getTheliaModel()
+    protected function getTheliaModel()
     {
         return new TheliaCustomer();
     }

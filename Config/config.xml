@@ -41,12 +41,17 @@
             <tag name="kernel.event_subscriber"/>
         </service>
         <service id="open_api.exception.listener" class="OpenApi\EventListener\ExceptionListener">
+            <argument type="service" id="open_api.model.factory"/>
             <tag name="kernel.event_subscriber"/>
         </service>
 
         <!--    MODELS    -->
         <service id="open_api.model.factory" class="OpenApi\Model\Api\ModelFactory" >
             <argument type="service" id="service_container"/>
+        </service>
+        <service id="open_api.model.error" class="OpenApi\Model\Api\Error" >
+            <argument type="service" id="open_api.model.factory"/>
+            <tag name="open_api.model" alias="Error"/>
         </service>
         <service id="open_api.model.address" class="OpenApi\Model\Api\Address" >
             <argument type="service" id="open_api.model.factory"/>

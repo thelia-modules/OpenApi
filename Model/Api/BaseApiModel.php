@@ -111,7 +111,7 @@ abstract class BaseApiModel implements \JsonSerializable
      *
      * @return mixed
      */
-    public function getTheliaModel()
+    protected function getTheliaModel()
     {
         return null;
     }

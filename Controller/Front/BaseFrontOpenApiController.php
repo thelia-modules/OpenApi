@@ -7,6 +7,7 @@ use OpenApi\Exception\OpenApiException;
 use OpenApi\Model\Api\Error;
 use OpenApi\Model\Api\ModelFactory;
 use OpenApi\OpenApi;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Thelia\Controller\Front\BaseFrontController;
 use Thelia\Core\HttpFoundation\JsonResponse;
 use Thelia\Core\Translation\Translator;
@@ -28,6 +29,14 @@ abstract class BaseFrontOpenApiController extends BaseFrontController
     {
         $loader = require THELIA_VENDOR.'autoload.php';
         AnnotationRegistry::registerLoader([$loader, 'loadClass']);
+    }
+
+    public function setContainer(ContainerInterface $container = null)
+    {
+        parent::setContainer($container);
+
+        // Used to identify all routes as "OPEN API ROUTES" (e.g for json exception)
+        $this->getRequest()->attributes->set(OpenApi::OPEN_API_ROUTE_REQUEST_KEY, true);
     }
 
     public function jsonResponse($data, $code = 200)

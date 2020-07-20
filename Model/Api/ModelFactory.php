@@ -30,4 +30,14 @@ class ModelFactory
 
         return $model;
     }
+
+    public function modelExists($modelName)
+    {
+        $openApiModels = $this->container->getParameter(OpenApi::OPEN_API_MODELS_PARAMETER_KEY);
+        if (!is_array($openApiModels) || !array_key_exists($modelName, $openApiModels)) {
+            return null;
+        }
+
+        return true;
+    }
 }

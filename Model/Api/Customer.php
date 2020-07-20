@@ -5,6 +5,8 @@ namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
 use OpenApi\Constraint as Constraint;
+use Thelia\Model\Customer as TheliaCustomer;
+use Thelia\Model\CustomerTitle;
 
 /**
  * @OA\Schema(
@@ -35,10 +37,10 @@ class Customer extends BaseApiModel
     protected $civilityTitle;
 
     /**
-     * @var Language
+     * @var Lang
      * @OA\Property(
      *    type="object",
-     *    ref="#/components/schemas/Language",
+     *    ref="#/components/schemas/Lang",
      * )
      * @Constraint\NotBlank(groups={"create", "update"})
      */
@@ -49,7 +51,7 @@ class Customer extends BaseApiModel
      * @OA\Property(
      *     type="string",
      * )
-     * @Constraint\NotBlank(groups={"create", "update"})
+     * @Constraint\NotBlank(groups={"update"})
      */
     protected $reference;
 
@@ -85,7 +87,7 @@ class Customer extends BaseApiModel
      * @OA\Property(
      *    type="boolean",
      * )
-     * @Constraint\NotNull(groups={"create", "update"})
+     * @Constraint\NotNull(groups={"update"})
      */
     protected $rememberMe;
 
@@ -111,15 +113,15 @@ class Customer extends BaseApiModel
     /**
      * Creates an OpenApi customer from a Thelia Customer, then returns it
      *
-     * @param \Thelia\Model\Customer $customer
+     * @param TheliaCustomer $customer
      * @return $this
      * @throws \Propel\Runtime\Exception\PropelException
      */
-    public function createFromTheliaCustomer(\Thelia\Model\Customer $customer)
+    public function createFromTheliaCustomer(TheliaCustomer $customer)
     {
         $this->id = $customer->getId();
         $this->civilityTitle = (new CivilityTitle())->createFromTheliaCustomerTitle($customer->getCustomerTitle());
-        $this->lang = (new Language())->createFromTheliaLang($customer->getCustomerLang());
+        $this->lang = (new Lang())->createFromTheliaLang($customer->getCustomerLang());
         $this->reference = $customer->getRef();
         $this->firstname = $customer->getFirstname();
         $this->lastname = $customer->getLastname();
@@ -134,7 +136,7 @@ class Customer extends BaseApiModel
     /**
      * @return int
      */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
@@ -168,7 +170,7 @@ class Customer extends BaseApiModel
     }
 
     /**
-     * @return Language
+     * @return Lang
      */
     public function getLang()
     {
@@ -176,7 +178,7 @@ class Customer extends BaseApiModel
     }
 
     /**
-     * @param Language $lang
+     * @param Lang $lang
      * @return Customer
      */
     public function setLang($lang)
@@ -314,11 +316,11 @@ class Customer extends BaseApiModel
     /** Thelia model creation functions */
 
     /**
-     * @return \Thelia\Model\Customer
+     * @return TheliaCustomer
      */
     public function getTheliaModel()
     {
-        return new \Thelia\Model\Customer();
+        return new TheliaCustomer();
     }
 
     /**
@@ -329,8 +331,17 @@ class Customer extends BaseApiModel
         return $this->getCivilityTitle()->getId();
     }
 
-    public function setLangId()
+    /**
+     * @return integer
+     */
+    public function getLangId()
     {
         return $this->getLang()->getId();
+    }
+
+    public function setTitle(CivilityTitle $civilityTitle)
+    {
+        $this->civilityTitle = $civilityTitle;
+        return $this;
     }
 }

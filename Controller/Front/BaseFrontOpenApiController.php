@@ -43,7 +43,7 @@ abstract class BaseFrontOpenApiController extends BaseFrontController
     /**
      * @param bool $throwExceptionIfNull
      *
-     * @return \Thelia\Model\Customer|null
+     * @return \Thelia\Model\Customer
      * @throws OpenApiException
      */
     protected function getCurrentCustomer($throwExceptionIfNull = true)
@@ -63,6 +63,31 @@ abstract class BaseFrontOpenApiController extends BaseFrontController
         }
 
         return $currentCustomer;
+    }
+
+    /**
+     * @param bool $throwExceptionIfNull
+     *
+     * @return \Thelia\Model\Cart
+     * @throws OpenApiException
+     */
+    protected function getSessionCart($throwExceptionIfNull = true)
+    {
+        $cart = $this->getRequest()->getSession()->getSessionCart($this->getDispatcher());
+
+        if (null === $cart && $throwExceptionIfNull) {
+            /** @var Error $error */
+            $error = $this->modelFactory->buildModel(
+                'Error',
+                [
+                    'title' => Translator::getInstance()->trans('Invalid data', [], OpenApi::DOMAIN_NAME),
+                    'description' => Translator::getInstance()->trans("No cart found", [], OpenApi::DOMAIN_NAME),
+                ]
+            );
+            throw new OpenApiException($error);
+        }
+
+        return $cart;
     }
 
     protected function getModelFactory()

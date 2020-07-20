@@ -43,6 +43,15 @@ class Address extends BaseApiModel
     protected $label;
 
     /**
+     * @var Customer
+     * @OA\Property(
+     *     ref="#/components/schemas/Customer"
+     * ),
+     * @Constraint\NotNull(groups={"create","update"})
+     */
+    protected $customer;
+
+    /**
      * @var CivilityTitle
      * @OA\Property(
      *     ref="#/components/schemas/CivilityTitle"
@@ -514,18 +523,44 @@ class Address extends BaseApiModel
         return $this;
     }
 
+    /**
+     * @return Customer
+     */
+    public function getCustomer()
+    {
+        return $this->customer;
+    }
+
+    /**
+     * @param Customer $customer
+     * @return Address
+     */
+    public function setCustomer($customer)
+    {
+        $this->customer = $customer;
+        return $this;
+    }
+
     /** Thelia model creation functions */
 
     public function getTheliaModel()
     {
-        return new \Thelia\Model\Address();
+        return new TheliaAddress;
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getTitleId()
     {
         return $this->getCivilityTitle()->getId();
+    }
+
+    /**
+     * @return int
+     */
+    public function getCustomerId()
+    {
+        return$this->getCustomer()->getId();
     }
 }

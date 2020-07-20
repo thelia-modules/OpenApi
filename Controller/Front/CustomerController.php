@@ -53,11 +53,13 @@ class CustomerController extends BaseFrontOpenApiController
     public function getCustomer(Request $request)
     {
         try {
-            if (null === $currentCustomer = $this->getSecurityContext()->getCustomerUser()) {
-                throw new \Exception(Translator::getInstance()->trans("No customer logged in.", [], OpenApi::DOMAIN_NAME));
-            }
+            $currentCustomer = $this->getCurrentCustomer();
 
-            return new JsonResponse((new \OpenApi\Model\Api\Customer())->createFromTheliaCustomer($currentCustomer), 200);
+            /** @var OpenApiCustomer $openApiCustomer */
+            $openApiCustomer = $this->getModelFactory()->buildModel('Customer', $data['customer']);
+            $openApiCustomer->validate(self::GROUP_READ);
+
+            return new JsonResponse((new OpenApiCustomer())->createFromTheliaCustomer($currentCustomer)->validate(self::GROUP_READ), 200);
         } catch (\Exception$exception) {
             return new JsonResponse(
                 new Error(
@@ -118,31 +120,28 @@ class CustomerController extends BaseFrontOpenApiController
     {
         try {
             $data = json_decode($request->getContent(), true);
-            $openApiCustomer = (new OpenApiCustomer())
-                ->createFromData($data['customer'])
-                ->validate(self::GROUP_CREATE)
-            ;
 
-            /*
-            $openApiAddress = (new OpenApiAddress())
-                ->createFromData($data['address'])
-                ->validate(self::GROUP_CREATE)
-            ;
-            */
+            /** @var OpenApiCustomer $openApiCustomer */
+            $openApiCustomer = $this->getModelFactory()->buildModel('Customer', $data['customer']);
+            $openApiCustomer->validate(self::GROUP_CREATE);
+
+            /** @var OpenApiAddress $openApiAddress */
+            $openApiAddress = $this->getModelFactory()->buildModel('Address', $data['address']);
+            $openApiAddress->setCustomer($openApiCustomer)->validate(self::GROUP_CREATE);
 
             /** @var Customer $theliaCustomer */
             $theliaCustomer = $openApiCustomer->toTheliaModel();
             $theliaCustomer->setPassword($data['password'])->save();
-            /*
-            //todo
-            $event = $this->createCustomerCreateEvent($request->getContent());
 
-            $this->dispatch(TheliaEvents::CUSTOMER_CREATEACCOUNT, $event);
+            /** @var Address $theliaAddress */
+            $theliaAddress = $openApiAddress->toTheliaModel();
+            $theliaAddress
+                ->setLabel(Translator::getInstance()->trans('Main Address', [], OpenApi::DOMAIN_NAME))
+                ->setIsDefault(1)
+                ->save()
+            ;
 
-            $newCustomer = $event->getCustomer();
-            return new JsonResponse((new \OpenApi\Model\Api\Customer())->createFromTheliaCustomer($newCustomer), 200);
-            */
-            return new JsonResponse((new \OpenApi\Model\Api\Customer())->createFromTheliaCustomer($theliaCustomer), 200);
+            return $this->jsonResponse($openApiCustomer);
         } catch (\Exception $exception) {
             return new JsonResponse(
                 new Error(
@@ -197,16 +196,20 @@ class CustomerController extends BaseFrontOpenApiController
     public function updateCustomer(Request $request)
     {
         try {
-            if (!$currentCustomer = $this->getSecurityContext()->getCustomerUser()) {
-                throw new \Exception(Translator::getInstance()->trans('No customer currently logged in.', [], OpenApi::DOMAIN_NAME));
-            }
+            $currentCustomer = $this->getCurrentCustomer();
 
-            $data = json_decode($request->getContent(), true);
-            $openApiCustomer = (new \OpenApi\Model\Api\Customer())
-                ->createFromData($data['customer'])
-                ->validate(self::GROUP_CREATE)
-            ;
+            $test = $this->getModelFactory()->buildModel('Customer', null);
+            $test->createFromTheliaModel($currentCustomer);
 
+            /** @var OpenApiCustomer $openApiCustomer */
+            $openApiCustomer = $this->getModelFactory()->buildModel('Customer', $request->getContent());
+            $openApiCustomer->validate(self::GROUP_UPDATE);
+
+            /** @var Customer $theliaCustomer */
+            $theliaCustomer = $openApiCustomer->toTheliaModel();
+            $theliaCustomer->save();
+
+            return new JsonResponse((new OpenApiCustomer())->createFromTheliaCustomer($theliaCustomer), 200);
 
             //todo
             $event = $this->createCustomerUpdateEvent($request->getContent());
@@ -214,7 +217,7 @@ class CustomerController extends BaseFrontOpenApiController
 
             $this->dispatch(TheliaEvents::CUSTOMER_UPDATEPROFILE, $event);
 
-            return new JsonResponse((new \OpenApi\Model\Api\Customer())->createFromTheliaCustomer($event->getCustomer()), 200);
+            return new JsonResponse((new OpenApiCustomer())->createFromTheliaCustomer($event->getCustomer()), 200);
         } catch (\Exception $exception) {
             return new JsonResponse(
                 new Error(

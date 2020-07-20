@@ -55,6 +55,16 @@
         <service id="open_api.model.civility_title" class="OpenApi\Model\Api\CivilityTitle" >
             <argument type="service" id="open_api.model.factory"/>
             <tag name="open_api.model" alias="CivilityTitle"/>
+            <tag name="open_api.model" alias="Title"/>
+        </service>
+        <service id="open_api.model.customer" class="OpenApi\Model\Api\Customer" >
+            <argument type="service" id="open_api.model.factory"/>
+            <tag name="open_api.model" alias="Customer"/>
+        </service>
+        <service id="open_api.model.language" class="OpenApi\Model\Api\Language" >
+            <argument type="service" id="open_api.model.factory"/>
+            <tag name="open_api.model" alias="Language"/>
+            <tag name="open_api.model" alias="Lang"/>
         </service>
     </services>
 

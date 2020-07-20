@@ -516,7 +516,7 @@ class Address extends BaseApiModel
 
     /** Thelia model creation functions */
 
-    public function getTheliaModel()
+    protected function getTheliaModel()
     {
         return new \Thelia\Model\Address();
     }

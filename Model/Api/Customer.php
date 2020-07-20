@@ -316,7 +316,7 @@ class Customer extends BaseApiModel
     /**
      * @return \Thelia\Model\Customer
      */
-    public function getTheliaModel()
+    protected function getTheliaModel()
     {
         return new \Thelia\Model\Customer();
     }

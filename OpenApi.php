@@ -22,6 +22,8 @@ class OpenApi extends BaseModule
 
     const PICKUP_ADDRESS_SESSION_KEY = "pickup_address";
 
+    const OPEN_API_ROUTE_REQUEST_KEY = "is_open_api_route";
+
     const OPEN_API_MODELS_PARAMETER_KEY = "OPEN_API_MODELS";
 
 

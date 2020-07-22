@@ -86,10 +86,11 @@ abstract class BaseApiModel implements \JsonSerializable
         return $serializer->normalize($this, null);
     }
 
+    /** todo : remove */
     public function createFromData($data)
     {
         if (is_object($data)) {
-            $this->modelFactory->buildModel(get_class($data), $data);
+            $this->createFromTheliaModel($data, $locale);
         }
 
         if (is_string($data)) {
@@ -105,6 +106,37 @@ abstract class BaseApiModel implements \JsonSerializable
                         $value = null !== $openApiModel ? $openApiModel : $value;
                     }
                     $this->$methodName($value);
+                }
+            }
+        }
+
+        return $this;
+    }
+
+    public function createOrUpdateFromData($data, $locale)
+    {
+        if (is_object($data)) {
+            $this->createFromTheliaModel($data, $locale);
+        }
+
+        if (is_string($data)) {
+            $data = json_decode($data, true);
+        }
+
+        if (is_iterable($data)) {
+            foreach ($data as $key => $value) {
+                $setMethodName = 'set'.ucfirst($key);
+                $getMethodName = 'get'.ucfirst($key);
+                if (method_exists($this, $setMethodName)) {
+                    if (is_array($value)) {
+                        if (method_exists($this, $getMethodName) && $this->$getMethodName() instanceof BaseApiModel) {
+                            $this->$setMethodName($this->$getMethodName()->updateFromData($value));
+                            continue;
+                        }
+                        $openApiModel = $this->modelFactory->buildModel(ucfirst($key), $value);
+                        $value = null !== $openApiModel ? $openApiModel : $value;
+                    }
+                    $this->$setMethodName($value);
                 }
             }
         }
@@ -129,28 +161,44 @@ abstract class BaseApiModel implements \JsonSerializable
         }
 
         foreach (get_class_methods($this) as $methodName) {
-            if (0 === strncasecmp('get', $methodName, 3)) {
-                $theliaMethod = 'set' . substr($methodName, 3);
-
-                if (method_exists($theliaModel, $theliaMethod)) {
-                    $theliaModel->$theliaMethod($this->$methodName());
-                }
+            if (0 !== strncasecmp('get', $methodName, 3)) {
+                continue ;
             }
+
+            $theliaMethod = 'set' . substr($methodName, 3);
+
+            if (!method_exists($theliaModel, $theliaMethod) || !method_exists($theliaModel, $methodName)) {
+                continue ;
+            }
+
+            if ($theliaModel->$methodName() === $this->$methodName()) {
+                continue ;
+            }
+
+            if ($this->$methodName() instanceof BaseApiModel && $this->$methodName()->getTheliaModel()) {
+                $theliaModel->$theliaMethod($this->$methodName()->toTheliaModel());
+                continue ;
+            }
+            $theliaModel->$theliaMethod($this->$methodName());
         }
 
         return $theliaModel;
     }
 
-    public function createFromTheliaModel($theliaModel)
+    public function createFromTheliaModel($theliaModel, $locale)
     {
         foreach (get_class_methods($this) as $modelMethod) {
             if (0 === strncasecmp('set', $modelMethod, 3)) {
                 $property = ucfirst(substr($modelMethod, 3));
+                $lowercaseProperty = ucfirst(strtolower($property));
 
                 $theliaPossibleMethods = [
                     'get' . $property,
+                    'get' . $lowercaseProperty,
                     'get' . $property . 'Model',
-                    'get' . substr(get_class($theliaModel), strrpos(get_class($theliaModel), "\\") + 1) . $property
+                    'get' . $lowercaseProperty . 'Model',
+                    'get' . substr(get_class($theliaModel), strrpos(get_class($theliaModel), "\\") + 1) . $property,
+                    'get' . substr(get_class($theliaModel), strrpos(get_class($theliaModel), "\\") + 1) . $lowercaseProperty
                 ];
 
                 $availableMethods = array_intersect($theliaPossibleMethods, get_class_methods($theliaModel));

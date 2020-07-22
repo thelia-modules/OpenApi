@@ -42,7 +42,7 @@ abstract class BaseFrontOpenApiController extends BaseFrontController
     public function jsonResponse($data, $code = 200)
     {
         $response = (new JsonResponse())
-            ->setContent(json_encode(data));
+            ->setContent(json_encode($data));
 
         // TODO : Add more flexibility to CORS check
         $response->headers->set('Access-Control-Allow-Origin', '*');

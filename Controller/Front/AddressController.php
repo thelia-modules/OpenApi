@@ -49,16 +49,18 @@ class AddressController extends BaseFrontOpenApiController
     {
         $currentCustomer = $this->getCurrentCustomer();
 
-        $lang = $request->getSession()->getLang();
-
         $addresses = AddressQuery::create()
             ->filterByCustomerId($currentCustomer->getId())
-            ->find();
+            ->find()
+        ;
 
-        return new JsonResponse(
+        return $this->jsonResponse(
             array_map(
-                function (Address $address) use ($lang) {
-                    return (new OpenApiAddress())->createFromTheliaAddress($address, $lang->getLocale());
+                function (Address $address) {
+                    /** @var OpenApiAddress $openApiAddress */
+                    $openApiAddress = $this->getModelFactory()->buildModel('Address', $address);
+                    $openApiAddress->validate(self::GROUP_READ);
+                    return ($openApiAddress);
                 },
                 iterator_to_array($addresses)
             )
@@ -97,10 +99,11 @@ class AddressController extends BaseFrontOpenApiController
     {
         $currentCustomer = $this->getCurrentCustomer();
 
+        /** @var OpenApiAddress $openApiAddress */
         $openApiAddress = $this->getModelFactory()->buildModel('Address', $request->getContent());
+        $openApiAddress->validate(self::GROUP_CREATE);
 
-        $openApiAddress->validate('create');
-
+        /** @var Address $theliaAddress */
         $theliaAddress = $openApiAddress->toTheliaAddress();
         $theliaAddress
             ->setCustomer($currentCustomer)
@@ -151,20 +154,27 @@ class AddressController extends BaseFrontOpenApiController
             ->findOne();
 
         if (null === $address) {
-            throw new OpenApiException(
-                (new Error(
-                    Translator::getInstance()->trans("Invalid data", [], OpenApi::DOMAIN_NAME),
-                    Translator::getInstance()->trans("This address does not exist or does not belong to this customer", [], OpenApi::DOMAIN_NAME)
-                ))
+            /** @var Error $error */
+            $error = $this->getModelFactory()->buildModel(
+                'Error',
+                [
+                    'title' => Translator::getInstance()->trans('Invalid data', [], OpenApi::DOMAIN_NAME),
+                    'description' => Translator::getInstance()->trans("No address found for id $id", [], OpenApi::DOMAIN_NAME),
+                ]
             );
+
+            throw new OpenApiException($error);
         }
 
-        $openApiAddress = $this->getModelFactory()->buildModel('Address', $request->getContent())
-            ->setId($id);
+        /** @var OpenApiAddress $openApiAddress */
+        $openApiAddress = $this->getModelFactory()->buildModel('Address', $request->getContent());
+        $openApiAddress
+            ->setCustomer($this->getModelFactory()->buildModel('Customer', $currentCustomer))
+            ->validate(self::GROUP_UPDATE)
+        ;
 
-        $openApiAddress->validate('update');
-
-        $openApiAddress->toTheliaAddress()->save();
+        $openApiAddress->toTheliaModel();
+        $address->save();
 
         return new JsonResponse($openApiAddress);
     }

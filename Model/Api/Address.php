@@ -155,66 +155,34 @@ class Address extends BaseApiModel
      */
     protected $additionalData;
 
-//    public function createFromData($data)
-//    {
-//        parent::createFromData($data);
-//
-//        $address = json_decode($json, true);
-//        if (isset($address['civilityTitle'])) {
-//            $customerTitleId = $address['civilityTitle']['id'];
-//            $this->setCivilityTitle((new CivilityTitle())->setId($customerTitleId));
-//        }
-//
-//        return $this;
-//    }
-
-    public function createFromTheliaAddress(TheliaAddress $address, $locale = 'en_US')
+    /**
+     * @param TheliaAddress $address
+     * @param string $locale
+     * @return $this|Address
+     * @throws \Propel\Runtime\Exception\PropelException
+     */
+    public function createFromTheliaModel($address, $locale = 'en_US')
     {
+        parent::createFromTheliaModel($address, $locale);
+
         $customerTitle = $address->getCustomerTitle()
             ->setLocale($locale);
 
-        $this->setId($address->getId())
-            ->setLabel($address->getLabel())
-            ->setCivilityTitle((new CivilityTitle())
-                ->setId($customerTitle->getId())
-                ->setLong($customerTitle->getLong())
-                ->setShort($customerTitle->getShort())
-            )
-            ->setIsDefault($address->getIsDefault())
-            ->setFirstName($address->getFirstname())
-            ->setLastName($address->getLastname())
-            ->setCellphoneNumber($address->getCellphone())
-            ->setPhoneNumber($address->getPhone())
-            ->setCompany($address->getCompany())
-            ->setAddress1($address->getAddress1())
-            ->setAddress2($address->getAddress2())
-            ->setAddress3($address->getAddress3())
-            ->setZipCode($address->getZipcode())
-            ->setCity($address->getCity())
-            ->setCountryCode($address->getCountry()->getIsoalpha2());
+        $civ = $this->modelFactory->buildModel('Title', $customerTitle);
+
+        $this
+            ->setCivilityTitle($civ)
+            ->setCountryCode($address->getCountry()->getIsoalpha2())
+        ;
 
         return $this;
     }
 
-    public function toTheliaAddress()
+    public function toTheliaModel()
     {
-        $address = $this->id === null ? (new TheliaAddress()) : AddressQuery::create()->findPk($this->id);
-        $country = CountryQuery::create()->findOneByIsoalpha2($this->getCountryCode());
-
-        $address->setIsDefault($this->getIsDefault())
-            ->setLabel($this->getLabel())
-            ->setTitleId($this->getCivilityTitle()->getId())
-            ->setFirstname($this->getFirstName())
-            ->setLastname($this->getLastName())
-            ->setCellphone($this->getCellphoneNumber())
-            ->setPhone($this->getPhoneNumber())
-            ->setCompany($this->getCompany())
-            ->setAddress1($this->getAddress1())
-            ->setAddress2($this->getAddress2())
-            ->setAddress3($this->getAddress3())
-            ->setZipcode($this->getZipCode())
-            ->setCity($this->getCity())
-            ->setCountry($country);
+        /** @var TheliaAddress $address */
+        $address = parent::toTheliaModel();
+        $address->setNew(false);
 
         return $address;
     }
@@ -545,7 +513,9 @@ class Address extends BaseApiModel
 
     protected function getTheliaModel()
     {
-        return new TheliaAddress;
+        $this->getId() ? $address = AddressQuery::create()->findPk($this->getId()) : $address = new TheliaAddress();
+
+        return $address;
     }
 
     /**
@@ -561,6 +531,34 @@ class Address extends BaseApiModel
      */
     public function getCustomerId()
     {
-        return$this->getCustomer()->getId();
+        return $this->getCustomer()->getId();
     }
+
+    public function getCountryId()
+    {
+        return CountryQuery::create()->filterByIsoalpha2($this->getCountryCode())->findOne()->getId();
+    }
+
+    public function getPhone()
+    {
+        return $this->phoneNumber;
+    }
+
+    public function getCellPhone()
+    {
+        return $this->cellphoneNumber;
+    }
+
+    public function setPhone($phoneNumber)
+    {
+        $this->phoneNumber = $phoneNumber;
+        return $this;
+    }
+
+    public function setCellphone($cellphoneNumber)
+    {
+        $this->cellphoneNumber = $cellphoneNumber;
+        return $this;
+    }
+
 }

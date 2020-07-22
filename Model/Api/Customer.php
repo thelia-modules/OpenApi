@@ -87,7 +87,6 @@ class Customer extends BaseApiModel
      * @OA\Property(
      *    type="boolean",
      * )
-     * @Constraint\NotNull(groups={"update"})
      */
     protected $rememberMe;
 
@@ -106,7 +105,6 @@ class Customer extends BaseApiModel
      * @OA\Property(
      *    type="boolean",
      * )
-     * @Constraint\NotNull(groups={"create", "update"})
      */
     protected $reseller;
 
@@ -136,7 +134,7 @@ class Customer extends BaseApiModel
     /**
      * @return int
      */
-    public function getId(): int
+    public function getId()
     {
         return $this->id;
     }
@@ -342,6 +340,12 @@ class Customer extends BaseApiModel
     public function setTitle(CivilityTitle $civilityTitle)
     {
         $this->civilityTitle = $civilityTitle;
+        return $this;
+    }
+
+    public function setRef($ref)
+    {
+        $this->reference = $ref;
         return $this;
     }
 }

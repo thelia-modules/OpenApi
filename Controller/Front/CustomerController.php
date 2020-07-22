@@ -52,23 +52,13 @@ class CustomerController extends BaseFrontOpenApiController
      */
     public function getCustomer(Request $request)
     {
-        try {
-            $currentCustomer = $this->getCurrentCustomer();
+        $currentCustomer = $this->getCurrentCustomer();
 
-            /** @var OpenApiCustomer $openApiCustomer */
-            $openApiCustomer = $this->getModelFactory()->buildModel('Customer', $data['customer']);
-            $openApiCustomer->validate(self::GROUP_READ);
+        /** @var OpenApiCustomer $openApiCustomer */
+        $openApiCustomer = $this->getModelFactory()->buildModel('Customer', $currentCustomer);
+        $openApiCustomer->validate(self::GROUP_READ);
 
-            return new JsonResponse((new OpenApiCustomer())->createFromTheliaCustomer($currentCustomer)->validate(self::GROUP_READ), 200);
-        } catch (\Exception$exception) {
-            return new JsonResponse(
-                new Error(
-                    Translator::getInstance()->trans('Error while retrieving customer informations.', [], OpenApi::DOMAIN_NAME),
-                    $exception->getMessage()
-                ),
-                400
-            );
-        }
+        return $this->jsonResponse($openApiCustomer);
     }
 
     /**
@@ -118,39 +108,29 @@ class CustomerController extends BaseFrontOpenApiController
      */
     public function createCustomer(Request $request)
     {
-        try {
-            $data = json_decode($request->getContent(), true);
+        $data = json_decode($request->getContent(), true);
 
-            /** @var OpenApiCustomer $openApiCustomer */
-            $openApiCustomer = $this->getModelFactory()->buildModel('Customer', $data['customer']);
-            $openApiCustomer->validate(self::GROUP_CREATE);
+        /** @var OpenApiCustomer $openApiCustomer */
+        $openApiCustomer = $this->getModelFactory()->buildModel('Customer', $data['customer']);
+        $openApiCustomer->validate(self::GROUP_CREATE);
 
-            /** @var OpenApiAddress $openApiAddress */
-            $openApiAddress = $this->getModelFactory()->buildModel('Address', $data['address']);
-            $openApiAddress->setCustomer($openApiCustomer)->validate(self::GROUP_CREATE);
+        /** @var OpenApiAddress $openApiAddress */
+        $openApiAddress = $this->getModelFactory()->buildModel('Address', $data['address']);
+        $openApiAddress->setCustomer($openApiCustomer)->validate(self::GROUP_CREATE);
 
-            /** @var Customer $theliaCustomer */
-            $theliaCustomer = $openApiCustomer->toTheliaModel();
-            $theliaCustomer->setPassword($data['password'])->save();
+        /** @var Customer $theliaCustomer */
+        $theliaCustomer = $openApiCustomer->toTheliaModel();
+        $theliaCustomer->setPassword($data['password'])->save();
 
-            /** @var Address $theliaAddress */
-            $theliaAddress = $openApiAddress->toTheliaModel();
-            $theliaAddress
-                ->setLabel(Translator::getInstance()->trans('Main Address', [], OpenApi::DOMAIN_NAME))
-                ->setIsDefault(1)
-                ->save()
-            ;
+        /** @var Address $theliaAddress */
+        $theliaAddress = $openApiAddress->toTheliaModel();
+        $theliaAddress
+            ->setLabel(Translator::getInstance()->trans('Main Address', [], OpenApi::DOMAIN_NAME))
+            ->setIsDefault(1)
+            ->save()
+        ;
 
-            return $this->jsonResponse($openApiCustomer);
-        } catch (\Exception $exception) {
-            return new JsonResponse(
-                new Error(
-                    Translator::getInstance()->trans('Error while creating a new customer.', [], OpenApi::DOMAIN_NAME),
-                    $exception->getMessage()
-                ),
-                400
-            );
-        }
+        return $this->jsonResponse($openApiCustomer);
     }
 
     /**
@@ -195,116 +175,24 @@ class CustomerController extends BaseFrontOpenApiController
      */
     public function updateCustomer(Request $request)
     {
-        try {
-            $currentCustomer = $this->getCurrentCustomer();
+        $currentCustomer = $this->getCurrentCustomer();
 
-            $test = $this->getModelFactory()->buildModel('Customer', null);
-            $test->createFromTheliaModel($currentCustomer);
+        $data = json_decode($request->getContent(), true);
 
-            /** @var OpenApiCustomer $openApiCustomer */
-            $openApiCustomer = $this->getModelFactory()->buildModel('Customer', $request->getContent());
-            $openApiCustomer->validate(self::GROUP_UPDATE);
+        /** @var OpenApiCustomer $openApiCustomer */
+        $openApiCustomer = $this->getModelFactory()->buildModel('Customer', $currentCustomer);
+        $openApiCustomer->createOrUpdateFromData($data['customer'])->validate(self::GROUP_UPDATE);
 
-            /** @var Customer $theliaCustomer */
-            $theliaCustomer = $openApiCustomer->toTheliaModel();
-            $theliaCustomer->save();
+        /** @var Customer $theliaCustomer */
+        $theliaCustomer = $openApiCustomer->toTheliaModel();
+        $theliaCustomer->setNew(false);
 
-            return new JsonResponse((new OpenApiCustomer())->createFromTheliaCustomer($theliaCustomer), 200);
-
-            //todo
-            $event = $this->createCustomerUpdateEvent($request->getContent());
-            $event->setCustomer($currentCustomer);
-
-            $this->dispatch(TheliaEvents::CUSTOMER_UPDATEPROFILE, $event);
-
-            return new JsonResponse((new OpenApiCustomer())->createFromTheliaCustomer($event->getCustomer()), 200);
-        } catch (\Exception $exception) {
-            return new JsonResponse(
-                new Error(
-                    Translator::getInstance()->trans('Error while updating customer.', [], OpenApi::DOMAIN_NAME),
-                    $exception->getMessage()
-                ),
-                400
-            );
+        if ($newPassword = $data['password']) {
+            $theliaCustomer->setPassword($newPassword);
         }
-    }
 
-    protected function createCustomerUpdateEvent($json)
-    {
-        $data = json_decode($json, true);
+        $theliaCustomer->save();
 
-        return new CustomerCreateOrUpdateEvent(
-            isset($data['customer']['civilityTitle']['id']) ? $data['customer']['civilityTitle']['id'] : null,
-            isset($data['customer']['firstname']) ? $data['customer']['firstname'] : null,
-            isset($data['customer']['lastname']) ? $data['customer']['lastname'] : null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            isset($data['customer']['email']) ? $data['customer']['email'] : null,
-            isset($data['password']) ? $data['password'] : null,
-            isset($data['customer']['lang']['id']) ? $data['customer']['lang']['id'] : null,
-            isset($data['customer']['reseller']) ? $data['customer']['reseller'] : null,
-            null,
-            isset($data['customer']['discount']) ? $data['customer']['discount'] : null,
-            null,
-            null
-        );
-    }
-
-    protected function createCustomerCreateEvent(OpenApiCustomer $customer, $password)
-    {
-        return new CustomerCreateOrUpdateEvent(
-            $data['customer']['civilityTitle']['id'],
-            $customer->getFirstname(),
-            $customer->getLastname(),
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            $customer->getEmail(),
-            $password,
-            $data['customer']['lang']['id'],
-            $customer->getReseller(),
-            null,
-            $customer->getDiscount(),
-            null,
-            null
-        );
-    }
-
-    protected function OLDcreateCustomerCreateEvent($json)
-    {
-        $data = json_decode($json, true);
-
-        return new CustomerCreateOrUpdateEvent(
-            $data['customer']['civilityTitle']['id'],
-            $data['customer']['firstname'],
-            $data['customer']['lastname'],
-            $data['address']['address1'],
-            isset($data['address']['address2']) ? $data['address']['address2'] : null,
-            isset($data['address']['address3']) ? $data['address']['address3'] : null,
-            isset($data['address']['phoneNumber']) ? $data['address']['phoneNumber'] : null,
-            isset($data['address']['cellphoneNumber']) ? $data['address']['cellphoneNumber'] : null,
-            $data['address']['zipCode'],
-            $data['address']['city'],
-            $data['address']['countryCode']->getId,
-            $data['customer']['email'],
-            $data['password'],
-            $data['customer']['lang']['id'],
-            isset($data['customer']['reseller']) ? $data['customer']['reseller'] : null,
-            null,
-            isset($data['customer']['discount']) ? $data['customer']['discount'] : 0,
-            isset($data['address']['company']) ? $data['address']['company'] : null,
-            null
-        );
+        return $this->jsonResponse($openApiCustomer);
     }
 }

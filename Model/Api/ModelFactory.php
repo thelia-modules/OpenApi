@@ -4,22 +4,18 @@ namespace OpenApi\Model\Api;
 
 use OpenApi\OpenApi;
 use Symfony\Component\DependencyInjection\Container;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 class ModelFactory
 {
     /** @var Container  */
     protected $container;
 
-    protected $locale;
-
     public function __construct(Container $container)
     {
         $this->container = $container;
-        $this->locale = $container->get('request_stack')->getCurrentRequest()->getSession()->getLang()->getLocale();
     }
 
-    public function buildModel($modelName, $data)
+    public function buildModel($modelName, $data = null)
     {
         $openApiModels = $this->container->getParameter(OpenApi::OPEN_API_MODELS_PARAMETER_KEY);
 
@@ -32,8 +28,10 @@ class ModelFactory
 
         /** @var BaseApiModel $model */
         $model = $this->container->get($modelServiceId);
-        $model->createOrUpdateFromData($data, $this->locale);
-        //$model->createFromData($data);
+
+        if (null !== $data) {
+            $model->createOrUpdateFromData($data);
+        }
 
         return $model;
     }

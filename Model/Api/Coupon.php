@@ -42,21 +42,6 @@ class Coupon extends BaseApiModel
     protected $amount;
 
     /**
-     * Create an OpenApi Coupon from a Thelia Coupon
-     *
-     * @param \Thelia\Model\Coupon $coupon
-     * @return $this
-     */
-    public function createFromTheliaCoupon(\Thelia\Model\Coupon $coupon)
-    {
-        $this->id = $coupon->getId();
-        $this->code = $coupon->getCode();
-        $this->amount = $coupon->getAmount();
-
-        return $this;
-    }
-
-    /**
      * @return mixed
      */
     public function getId()

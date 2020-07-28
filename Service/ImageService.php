@@ -37,13 +37,13 @@ class ImageService
     /**
      * Returns an image URL
      *
-     * @param $imageFile
+     * @param $imageModel
      * @param $imageType
      * @return string
      */
-    public function getImageUrl($imageFile, $imageType)
+    public function getImageUrl($imageModel, $imageType = null)
     {
-        return $this->transformImage($imageFile, $imageType);
+        return $this->transformImage($imageModel, $imageType);
     }
 
     /**
@@ -52,7 +52,7 @@ class ImageService
      *
      * imageFile can be of type Thelia\Model\ProductImage, ContentImage etc
      *
-     * @param ProductImage|ContentImage|BrandImage|CategoryImage|FolderImage|ModuleImage $imageFile
+     * @param ProductImage|ContentImage|BrandImage|CategoryImage|FolderImage|ModuleImage $imageModel
      * @param $imageType
      * @param bool $allowZoom
      * @param string $resize
@@ -65,8 +65,8 @@ class ImageService
      * @return string The transformed Image URL
      */
     public function transformImage(
-        $imageFile,
-        $imageType,
+        $imageModel,
+        $imageType = null,
         $allowZoom = false,
         $resize = 'none',
         $width = null,
@@ -91,7 +91,7 @@ class ImageService
                 $resizeMode = \Thelia\Action\Image::KEEP_IMAGE_RATIO;
         }
 
-        $event = $this->createImageEvent($imageFile->getFile(), $imageType);
+        $event = $this->createImageEvent($imageModel->getFile(), $imageType);
         $event
             ->setAllowZoom($allowZoom)
             ->setResizeMode($resizeMode)
@@ -112,10 +112,14 @@ class ImageService
         return $event->getFileUrl();
     }
 
-    protected function createImageEvent($imageFile, $imageType)
+    protected function createImageEvent($imageModel, $imageType = null)
     {
         $imageEvent = new ImageEvent();
         $baseSourceFilePath = ConfigQuery::read('images_library_path');
+
+        if (null === $imageType) {
+            $imageType = str_replace('image', '', strtolower(get_class($imageModel)));
+        }
 
         if ($baseSourceFilePath === null) {
             $baseSourceFilePath = THELIA_LOCAL_DIR . 'media' . DS . 'images';
@@ -128,7 +132,7 @@ class ImageService
             '%s/%s/%s',
             $baseSourceFilePath,
             $imageType,
-            $imageFile
+            $imageModel
         );
 
         $imageEvent->setSourceFilepath($sourceFilePath);

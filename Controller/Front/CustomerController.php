@@ -1,24 +1,16 @@
 <?php
 
-
 namespace OpenApi\Controller\Front;
-
 
 use OpenApi\Model\Api\Address as OpenApiAddress;
 use OpenApi\Model\Api\Customer as OpenApiCustomer;
-use OpenApi\Model\Api\Error;
 use OpenApi\OpenApi;
-use Thelia\Core\Event\Customer\CustomerCreateOrUpdateEvent;
-use Thelia\Core\Event\TheliaEvents;
-use Thelia\Core\HttpFoundation\JsonResponse;
 use Thelia\Core\HttpFoundation\Request;
 use Thelia\Core\Translation\Translator;
 use Symfony\Component\Routing\Annotation\Route;
 use OpenApi\Annotations as OA;
 use Thelia\Model\Address;
-use Thelia\Model\CartItem;
 use Thelia\Model\Customer;
-use Thelia\Model\Product;
 
 /**
  * @Route("/customer", name="customer")

@@ -74,17 +74,29 @@ class ProductSaleElement extends BaseApiModel
      * @return $this
      * @throws \Propel\Runtime\Exception\PropelException
      */
-    public function createFromTheliaPseAndCountry(ProductSaleElements $pse, Country $country)
+    public function fillFromTheliaPseAndCountry(ProductSaleElements $pse, Country $country)
     {
-        $attributes = [];
-        foreach ($pse->getAttributeCombinations() as $attributeCombination) {
-            $attributes[] = (new Attribute())->createFromTheliaAttributeCombination($attributeCombination);
-        }
+        $modelFactory = $this->modelFactory;
+        $attributes = array_map(
+            function ($attributeCombination) use ($modelFactory){
+                return $modelFactory->buildModel('Attribute', $attributeCombination);
+            },
+            $pse->getAttributeCombinations()
+        );
 
         $this->id = $pse->getId();
         $this->isPromo = (bool)$pse->getPromo();
-        $this->price = (new Price())->createFromTheliaPseAndCountry($pse, $country);
-        $this->promoPrice = (new Price())->createFromTheliaPseAndCountry($pse, $country, true);
+
+        /** @var Price $price */
+        $price = $this->modelFactory->buildModel('Price');
+        $price->fillFromTheliaPseAndCountry($pse, $country);
+        $this->price = $price;
+
+        /** @var Price $price */
+        $promoPrice = $this->modelFactory->buildModel('Price');
+        $promoPrice->fillFromTheliaPseAndCountry($pse, $country);
+        $this->promoPrice = $price;
+
         $this->reference = $pse->getRef();
         $this->attributes = $attributes;
 

@@ -51,17 +51,15 @@ class Attribute extends BaseApiModel
      * @return $this
      * @throws \Propel\Runtime\Exception\PropelException
      */
-    public function createFromTheliaAttributeCombination(AttributeCombination $attributeCombination)
+    public function createFromTheliaModel($theliaModel, $locale = null)
     {
-        $values = [];
-        /** @var AttributeAv $attributeValue */
-        foreach ($attributeCombination->getAttributeAv() as $attributeValue) {
-            $values[] = $attributeValue->getTitle();
-        }
+        parent::createFromTheliaModel($theliaModel, $locale = null);
 
-        $this->id = $attributeCombination->getAttributeId();
-        $this->title = $attributeCombination->getAttribute()->getTitle();
-        $this->value = $values;
+        $this->value = array_map(
+            function (AttributeAv $attributeValue) {
+                return $attributeValue->getTitle();
+            },
+            $theliaModel->getAttributeAv());
 
         return $this;
     }

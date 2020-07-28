@@ -4,6 +4,7 @@ namespace OpenApi\Model\Api;
 
 use OpenApi\Exception\OpenApiException;
 use OpenApi\OpenApi;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Validator\Validation;
@@ -15,16 +16,19 @@ abstract class BaseApiModel implements \JsonSerializable
     /** @var ValidatorInterface  */
     protected $validator;
 
-    /** @var ModelFactory */
+    /** @var ModelFactory  */
     protected $modelFactory;
 
-    public function __construct(ModelFactory $modelFactory)
+    protected $locale;
+
+    public function __construct(ModelFactory $modelFactory, RequestStack $requestStack)
     {
         $this->validator = Validation::createValidatorBuilder()
             ->enableAnnotationMapping()
             ->getValidator();
 
         $this->modelFactory = $modelFactory;
+        $this->locale = $requestStack->getCurrentRequest()->getSession()->getLang()->getLocale();
     }
 
     /**
@@ -86,34 +90,7 @@ abstract class BaseApiModel implements \JsonSerializable
         return $serializer->normalize($this, null);
     }
 
-    /** todo : remove */
-    public function createFromData($data)
-    {
-        if (is_object($data)) {
-            $this->createFromTheliaModel($data, $locale);
-        }
-
-        if (is_string($data)) {
-            $data = json_decode($data, true);
-        }
-
-        if (is_iterable($data)) {
-            foreach ($data as $key => $value) {
-                $methodName = 'set'.ucfirst($key);
-                if (method_exists($this, $methodName)) {
-                    if (is_array($value)) {
-                        $openApiModel = $this->modelFactory->buildModel(ucfirst($key), $value);
-                        $value = null !== $openApiModel ? $openApiModel : $value;
-                    }
-                    $this->$methodName($value);
-                }
-            }
-        }
-
-        return $this;
-    }
-
-    public function createOrUpdateFromData($data, $locale)
+    public function createOrUpdateFromData($data, $locale = null)
     {
         if (is_object($data)) {
             $this->createFromTheliaModel($data, $locale);
@@ -151,42 +128,74 @@ abstract class BaseApiModel implements \JsonSerializable
      */
     protected function getTheliaModel()
     {
-        return null;
+        $theliaModelName = "Thelia\Model\\".basename(str_replace('\\', '/', get_class($this)));;
+        return class_exists($theliaModelName) ? (new $theliaModelName) : null;
     }
 
-    public function toTheliaModel()
+    public function toTheliaModel($locale = null)
     {
-        if (!$theliaModel = $this->getTheliaModel()) {
+        if (null === $theliaModel = $this->getTheliaModel()) {
             throw new \Exception(Translator::getInstance()->trans('You need to override the getTheliaModel method to use the toTheliaModel method.', [], OpenApi::DOMAIN_NAME));
         }
 
+        // If model need locale, set it
+        if (method_exists($theliaModel, "setLocale")) {
+            $theliaModel->setLocale($locale !== null ? $locale : $this->locale);
+        }
+
+        // Look all method of Open API model
         foreach (get_class_methods($this) as $methodName) {
+            // If it's not a getter skip it
             if (0 !== strncasecmp('get', $methodName, 3)) {
                 continue ;
             }
+            $getter = $methodName;
 
-            $theliaMethod = 'set' . substr($methodName, 3);
+            // Build thelia setter name
+            $setter = 'set' . substr($getter, 3);
 
-            if (!method_exists($theliaModel, $theliaMethod) || !method_exists($theliaModel, $methodName)) {
+            // Check if setter exist in Thelia model
+            if (!method_exists($theliaModel, $setter)) {
                 continue ;
             }
 
-            if ($theliaModel->$methodName() === $this->$methodName()) {
+            $value = $this->$getter();
+
+
+            // If Values are the same skip this property
+            if (method_exists($theliaModel, $getter) && $theliaModel->$getter() === $value) {
                 continue ;
             }
 
-            if ($this->$methodName() instanceof BaseApiModel && $this->$methodName()->getTheliaModel()) {
-                $theliaModel->$theliaMethod($this->$methodName()->toTheliaModel());
-                continue ;
+            // if the property is another Api model
+            if ($value instanceof BaseApiModel) {
+                // If it doesn't have a correspondant thelia model skip it
+                if (null === $value->getTheliaModel())
+                {
+                    continue;
+                }
+
+                // Else try to set the model id
+                $setModelIdMethod = $setter.'Id';
+                if (!method_exists($theliaModel, $setModelIdMethod)) {
+                    continue;
+                }
+                $setter = $setModelIdMethod;
+                $value = $value->getId();
             }
-            $theliaModel->$theliaMethod($this->$methodName());
+
+            $theliaModel->$setter($value);
         }
 
         return $theliaModel;
     }
 
-    public function createFromTheliaModel($theliaModel, $locale)
+    public function createFromTheliaModel($theliaModel, $locale = null)
     {
+        if (method_exists($theliaModel, "setLocale")) {
+            $theliaModel->setLocale($locale !== null ? $locale : $this->locale);
+        }
+
         foreach (get_class_methods($this) as $modelMethod) {
             if (0 === strncasecmp('set', $modelMethod, 3)) {
                 $property = ucfirst(substr($modelMethod, 3));
@@ -213,7 +222,7 @@ abstract class BaseApiModel implements \JsonSerializable
 
                     $theliaValue = $theliaModel->$theliaMethod();
 
-                    if ($this->modelFactory->modelExists($property)) {
+                    if (is_object($theliaValue) && $this->modelFactory->modelExists($property)) {
                         $theliaValue = $this->modelFactory->buildModel($property, $theliaValue);
                     }
                 }

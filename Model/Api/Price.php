@@ -42,7 +42,7 @@ class Price extends BaseApiModel
      * @return $this
      * @throws \Propel\Runtime\Exception\PropelException
      */
-    public function createFromTheliaPseAndCountry(ProductSaleElements $pse, Country $country, $isPromo = false)
+    public function fillFromTheliaPseAndCountry(ProductSaleElements $pse, Country $country, $isPromo = false)
     {
         $price = ProductPriceQuery::create()->filterByProductSaleElements($pse)->findOne();
         $pse->setVirtualColumn('price_PRICE', (float)$price->getPrice());

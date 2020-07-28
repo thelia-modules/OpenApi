@@ -4,7 +4,6 @@ namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
 use OpenApi\Constraint as Constraint;
-use Thelia\Model\AddressQuery;
 use Thelia\Model\CountryQuery;
 use Thelia\Model\Address as TheliaAddress;
 
@@ -178,10 +177,10 @@ class Address extends BaseApiModel
         return $this;
     }
 
-    public function toTheliaModel()
+    public function toTheliaModel($locale = null)
     {
         /** @var TheliaAddress $address */
-        $address = parent::toTheliaModel();
+        $address = parent::toTheliaModel($locale);
         $address->setNew(false);
 
         return $address;
@@ -500,7 +499,7 @@ class Address extends BaseApiModel
     }
 
     /**
-     * @param Customer $customer
+     * @param Customer|BaseApiModel $customer
      * @return Address
      */
     public function setCustomer($customer)
@@ -511,12 +510,13 @@ class Address extends BaseApiModel
 
     /** Thelia model creation functions */
 
-    protected function getTheliaModel()
-    {
-        $this->getId() ? $address = AddressQuery::create()->findPk($this->getId()) : $address = new TheliaAddress();
-
-        return $address;
-    }
+//    protected function getTheliaModel()
+//    {
+//        return parent::getTheliaModel();
+//        $this->getId() ? $address = AddressQuery::create()->findPk($this->getId()) : $address = new TheliaAddress();
+//
+//        return $address;
+//    }
 
     /**
      * @return int

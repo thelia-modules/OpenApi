@@ -63,47 +63,37 @@ class AuthController extends BaseFrontOpenApiController
      */
     public function customerLogin(Request $request)
     {
-        try {
-            if ($this->getSecurityContext()->hasCustomerUser()) {
-                throw new \Exception(Translator::getInstance()->trans('A user is already connected. Please disconnect before trying to login in another account.'));
-            }
+        if ($this->getSecurityContext()->hasCustomerUser()) {
+            throw new \Exception(Translator::getInstance()->trans('A user is already connected. Please disconnect before trying to login in another account.'));
+        }
 
-            $data = json_decode($request->getContent(), true);
+        $data = json_decode($request->getContent(), true);
 
-            $customer = CustomerQuery::create()
-                ->filterByEmail($data['email'])
-                ->findOne()
-            ;
+        $customer = CustomerQuery::create()
+            ->filterByEmail($data['email'])
+            ->findOne()
+        ;
 
-            if (null === $customer) {
-                throw new \Exception(Translator::getInstance()->trans('No customer found for this email.', [], OpenApi::DOMAIN_NAME));
-            }
+        if (null === $customer) {
+            throw new \Exception(Translator::getInstance()->trans('No customer found for this email.', [], OpenApi::DOMAIN_NAME));
+        }
 
-            if (!$customer->checkPassword($data['password'])) {
-                throw new \Exception(Translator::getInstance()->trans('Password incorrect.', [], OpenApi::DOMAIN_NAME));
-            }
+        if (!$customer->checkPassword($data['password'])) {
+            throw new \Exception(Translator::getInstance()->trans('Password incorrect.', [], OpenApi::DOMAIN_NAME));
+        }
 
-            $this->dispatch(TheliaEvents::CUSTOMER_LOGIN, new CustomerLoginEvent($customer));
+        $this->dispatch(TheliaEvents::CUSTOMER_LOGIN, new CustomerLoginEvent($customer));
 
-            /** If the rememberMe property is set to true, we create a new cookie to store the information */
-            if (true === (bool)$data['rememberMe']) {
-                (new CookieTokenProvider())->createCookie(
-                    $customer,
-                    ConfigQuery::read('customer_remember_me_cookie_name', 'crmcn'),
-                    ConfigQuery::read('customer_remember_me_cookie_expiration', 2592000 /* 1 month */)
-                );
-            }
-
-            return new JsonResponse((new Customer())->createFromTheliaCustomer($customer), 200);
-        } catch (\Exception $exception) {
-            return new JsonResponse(
-                new Error(
-                    Translator::getInstance()->trans('Error while trying to login customer', [], OpenApi::DOMAIN_NAME),
-                    $exception->getMessage()
-                ),
-                400
+        /** If the rememberMe property is set to true, we create a new cookie to store the information */
+        if (true === (bool)$data['rememberMe']) {
+            (new CookieTokenProvider())->createCookie(
+                $customer,
+                ConfigQuery::read('customer_remember_me_cookie_name', 'crmcn'),
+                ConfigQuery::read('customer_remember_me_cookie_expiration', 2592000 /* 1 month */)
             );
         }
+
+        return $this->jsonResponse($this->getModelFactory()->buildModel('Customer', $customer));
     }
 
     /**
@@ -127,23 +117,13 @@ class AuthController extends BaseFrontOpenApiController
      */
     public function customerLogout(Request $request)
     {
-        try {
-            if (!$this->getSecurityContext()->hasCustomerUser()) {
-                throw new \Exception(Translator::getInstance()->trans('No user is currently logged in.'));
-            }
-
-            $this->dispatch(TheliaEvents::CUSTOMER_LOGOUT);
-            (new CookieTokenProvider())->clearCookie(ConfigQuery::read('customer_remember_me_cookie_name', 'crmcn'));
-
-            return new JsonResponse('Success', 204);
-        } catch (\Exception $exception) {
-            return new JsonResponse(
-                new Error(
-                    Translator::getInstance()->trans('Error while trying to logout customer', [], OpenApi::DOMAIN_NAME),
-                    $exception->getMessage()
-                ),
-                400
-            );
+        if (!$this->getSecurityContext()->hasCustomerUser()) {
+            throw new \Exception(Translator::getInstance()->trans('No user is currently logged in.'));
         }
+
+        $this->dispatch(TheliaEvents::CUSTOMER_LOGOUT);
+        (new CookieTokenProvider())->clearCookie(ConfigQuery::read('customer_remember_me_cookie_name', 'crmcn'));
+
+        return $this->jsonResponse("Success");
     }
 }

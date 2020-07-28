@@ -6,6 +6,7 @@ use OpenApi\Annotations as OA;
 use Symfony\Component\Validator\Constraints as Assert;
 use Thelia\Model\CustomerTitle;
 use OpenApi\Constraint as Constraint;
+use Thelia\Model\Lang as TheliaLang;
 
 /**
  * @OA\Schema(
@@ -40,21 +41,6 @@ class CivilityTitle extends BaseApiModel
      * )
      */
     protected $long;
-
-    /**
-     * Create an OpenApi CivilityTitle from a Thelia CustomerTitle, then returns it
-     *
-     * @param CustomerTitle $title
-     * @return $this
-     */
-    public function createFromTheliaCustomerTitle(CustomerTitle $title)
-    {
-        $this->id = $title->getId();
-        $this->short = $title->getShort();
-        $this->long = $title->getLong();
-
-        return $this;
-    }
 
     /**
      * @return int
@@ -108,5 +94,13 @@ class CivilityTitle extends BaseApiModel
     {
         $this->long = $long;
         return $this;
+    }
+
+    /**
+     * @return CustomerTitle
+     */
+    protected function getCustomerTitle()
+    {
+        return new CustomerTitle();
     }
 }

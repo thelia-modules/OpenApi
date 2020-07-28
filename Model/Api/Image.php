@@ -5,6 +5,7 @@ namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
 use OpenApi\Service\ImageService;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Thelia\Model\BrandImage;
 use Thelia\Model\CategoryImage;
 use Thelia\Model\ContentImage;
@@ -22,6 +23,15 @@ use OpenApi\Constraint as Constraint;
  */
 class Image extends BaseApiModel
 {
+    /** @var ImageService */
+    protected $imageService;
+
+    public function __construct(ModelFactory $modelFactory, RequestStack $requestStack, ImageService $imageService)
+    {
+        parent::__construct($modelFactory, $requestStack);
+        $this->imageService = $imageService;
+    }
+
     /**
      * @OA\Property(
      *     type="string",
@@ -38,15 +48,13 @@ class Image extends BaseApiModel
     protected $title;
 
     /**
-     * @param ProductImage|ContentImage|BrandImage|CategoryImage|FolderImage|ModuleImage $image
-     * @param $imageType
      * @param ImageService $imageService
      * @return $this
      */
-    public function createFromTheliaImage($image, $imageType, ImageService $imageService)
+    public function createFromTheliaModel($theliaModel, $locale = null, $type = null)
     {
-        $this->title = $image->getTitle();
-        $this->url = $imageService->getImageUrl($image, $imageType);
+        parent::createFromTheliaModel($theliaModel, $locale);
+        $this->url = $this->imageService->getImageUrl($theliaModel, $type);
 
         return $this;
     }

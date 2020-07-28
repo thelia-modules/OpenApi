@@ -37,6 +37,7 @@ abstract class BaseFrontOpenApiController extends BaseFrontController
 
         // Used to identify all routes as "OPEN API ROUTES" (e.g for json exception)
         $this->getRequest()->attributes->set(OpenApi::OPEN_API_ROUTE_REQUEST_KEY, true);
+        $this->modelFactory = $container->get('open_api.model.factory');
     }
 
     public function jsonResponse($data, $code = 200)

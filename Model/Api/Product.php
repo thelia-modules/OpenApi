@@ -66,43 +66,16 @@ class Product extends BaseApiModel
      * @return $this
      * @throws \Propel\Runtime\Exception\PropelException
      */
-    public function createFromTheliaCartItemAndCountry(\Thelia\Model\CartItem $cartItem, Country $country, ImageService $imageService)
+    public function fillFromTheliaCartItemAndCountry(\Thelia\Model\CartItem $cartItem, Country $country)
     {
         $product = $cartItem->getProduct();
         $images = [];
 
         foreach ($product->getProductImages() as $productImage) {
-            $images[] = (new Image())->createFromTheliaImage($productImage, 'product', $imageService);
+            $images[] = (new Image())->createFromTheliaImage($productImage, 'product');
         }
 
         $this->id = $cartItem->getProductId();
-        $this->reference = $product->getRef();
-        $this->url = $product->getUrl();
-        $this->title = $product->getTitle();
-        $this->images = $images;
-
-        return $this;
-    }
-
-    /**
-     * Create an OpenApi Product from a Thelia Pse and a Country
-     *
-     * @param ProductSaleElements $pse
-     * @param Country $country
-     * @param ImageService $imageService
-     * @return $this
-     * @throws \Propel\Runtime\Exception\PropelException
-     */
-    public function createFromTheliaPseAndCountry(ProductSaleElements $pse, Country $country, ImageService $imageService)
-    {
-        $product = $pse->getProduct();
-        $images = [];
-
-        foreach ($product->getProductImages() as $productImage) {
-            $images[] = (new Image())->createFromTheliaImage($productImage, 'product', $imageService);
-        }
-
-        $this->id = $product->getId();
         $this->reference = $product->getRef();
         $this->url = $product->getUrl();
         $this->title = $product->getTitle();

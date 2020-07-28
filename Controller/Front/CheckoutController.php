@@ -49,40 +49,28 @@ class CheckoutController extends BaseFrontOpenApiController
      */
     public function setCheckout(Request $request)
     {
-        try {
-            if ($this->getSecurityContext()->hasCustomerUser() === false) {
-                throw new \Exception(Translator::getInstance()->trans('You must be logged in to access this route', [], OpenApi::DOMAIN_NAME));
-            }
-
-            $cart = $this->getSession()->getSessionCart($this->getDispatcher());
-            if ($cart === null || $cart->countCartItems() == 0) {
-                throw new \Exception(Translator::getInstance()->trans('Cart is empty', [], OpenApi::DOMAIN_NAME));
-            }
-
-            $checkout = (new Checkout())
-                ->createFromData($request->getContent());
-
-            $order = $this->getOrder($this->getRequest());
-            $orderEvent = new OrderEvent($order);
-
-            $this->setOrderDeliveryPart($checkout, $orderEvent);
-            $this->setOrderInvoicePart($checkout, $orderEvent);
-
-            $responseCheckout = $checkout
-                ->createFormOrder($orderEvent->getOrder());
-
-            return new JsonResponse($responseCheckout);
-        } catch (\Exception $e) {
-            $error = new Error(
-                Translator::getInstance()->trans('Error for setting checkout', [], OpenApi::DOMAIN_NAME),
-                $e->getMessage()
-            );
-
-            return new JsonResponse(
-                $error,
-                400
-            );
+        if ($this->getSecurityContext()->hasCustomerUser() === false) {
+            throw new \Exception(Translator::getInstance()->trans('You must be logged in to access this route', [], OpenApi::DOMAIN_NAME));
         }
+
+        $cart = $this->getSession()->getSessionCart($this->getDispatcher());
+        if ($cart === null || $cart->countCartItems() == 0) {
+            throw new \Exception(Translator::getInstance()->trans('Cart is empty', [], OpenApi::DOMAIN_NAME));
+        }
+
+        /** @var Checkout $checkout */
+        $checkout = $this->getModelFactory()->buildModel('Checkout', $request->getContent());
+
+        $order = $this->getOrder($this->getRequest());
+        $orderEvent = new OrderEvent($order);
+
+        $this->setOrderDeliveryPart($checkout, $orderEvent);
+        $this->setOrderInvoicePart($checkout, $orderEvent);
+
+        $responseCheckout = $checkout
+            ->createFormOrder($orderEvent->getOrder());
+
+        return $this->jsonResponse($responseCheckout);
     }
 
     /**
@@ -102,12 +90,12 @@ class CheckoutController extends BaseFrontOpenApiController
     {
         $order = $this->getOrder($request);
 
-        $checkout = (new Checkout())
+        $checkout = $this->getModelFactory()->buildModel('Checkout')
             ->createFormOrder($order);
 
         $checkout->setPickupAddress($request->getSession()->get(OpenApi::PICKUP_ADDRESS_SESSION_KEY));
 
-        return new JsonResponse($checkout);
+        return $this->jsonResponse($checkout);
     }
 
     protected function setOrderDeliveryPart(Checkout $checkout, OrderEvent $orderEvent)

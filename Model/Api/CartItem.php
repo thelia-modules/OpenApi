@@ -96,61 +96,32 @@ class CartItem extends BaseApiModel
      * @return $this
      * @throws \Propel\Runtime\Exception\PropelException
      */
-    public function createFromTheliaCartItemAndCountry(TheliaCartItem $cartItem, Country $country, ImageService $imageService)
+    public function fillFromTheliaCartItemAndCountry(TheliaCartItem $cartItem, Country $country)
     {
-        $pse = $cartItem->getProductSaleElements();
-
         $this->id = $cartItem->getId();
-        $this->product = (new Product())->createFromTheliaCartItemAndCountry($cartItem, $country, $imageService);
-        $this->productSaleElement = (new ProductSaleElement())->createFromTheliaPseAndCountry($pse, $country);
+        /** @var Product $product */
+        $product = $this->modelFactory->buildModel('Product');
+        $product->fillFromTheliaCartItemAndCountry($cartItem, $country);
+        $this->product = $product;
+
+        /** @var ProductSaleElement $productSaleElements */
+        $productSaleElements = $this->modelFactory->buildModel('ProductSaleElement');
+        $productSaleElements->fillFromTheliaPseAndCountry($cartItem->getProductSaleElements(), $country);
+        $this->productSaleElement = $productSaleElements;
+
         $this->isPromo = (bool)$cartItem->getPromo();
-        $this->price = (new Price())->setTaxed($cartItem->getPrice());
-        $this->promoPrice = (new Price())->setTaxed($cartItem->getPromoPrice());
+        $this->price = $this->modelFactory->buildModel('Price', ['taxed' => $cartItem->getPrice()]);;
+        $this->promoPrice = $this->modelFactory->buildModel('Price', ['taxed' => $cartItem->getPromoPrice()]);;
         $this->quantity = $cartItem->getQuantity();
 
         /** If there are PSE specific images, we use them. Otherwise, we just use the product images */
-        $images = [];
-        $pseImages = $pse->getProductSaleElementsProductImages();
-        if (!empty($pseImages->getData())) {
-            foreach ($pseImages as $pseImage) {
-                $images[] = (new Image())->createFromTheliaImage($pseImage->getProductImage(), 'product', $imageService);
-            }
-        }
-
-        $this->images = !empty($images) ? $images : $this->product->getImages();
-
-        return $this;
-    }
-
-    public function createFromJsonAndCountry($json, Country $country, ImageService $imageService)
-    {
-        $this->createFromData($json);
-
-        $cartItem = json_decode($json, true);
-        if (!isset($cartItem['pseId'])) {
-            throw new \Exception(Translator::getInstance()->trans('A PSE is needed in the POST request to add an item to the cart.'));
-        }
-        if (!isset($cartItem['quantity'])) {
-            throw new \Exception(Translator::getInstance()->trans('A PSE is needed in the POST request to add an item to the cart.'));
-        }
-
-        $pse = ProductSaleElementsQuery::create()->findPk($cartItem['pseId']);
-
-        $this->product = (new Product())->createFromTheliaPseAndCountry($pse, $country, $imageService);
-        $this->productSaleElement = (new ProductSaleElement())->createFromTheliaPseAndCountry($pse, $country);
-        $this->isPromo = $cartItem['isPromo'];
-        $this->price = (new Price())->setTaxed($cartItem['price']);
-        $this->promoPrice = (new Price())->setTaxed($cartItem['promoPrice']);
-        $this->quantity = $cartItem['quantity'];
-
-        /** If there are PSE specific images, we use them. Otherwise, we just use the product images */
-        $images = [];
-        $pseImages = $pse->getProductSaleElementsProductImages();
-        if (!empty($pseImages->getData())) {
-            foreach ($pseImages as $pseImage) {
-                $images[] = (new Image())->createFromTheliaImage($pseImage->getProductImage(), 'product', $imageService);
-            }
-        }
+        $modelFactory = $this->modelFactory;
+        $images = array_map(
+            function ($productSaleElementsImage) use ($modelFactory) {
+                return $modelFactory->buildModel('Image', $productSaleElementsImage->getProductImage());
+            },
+            $cartItem->getProductSaleElements()->getProductSaleElementsProductImages()
+        );
 
         $this->images = !empty($images) ? $images : $this->product->getImages();
 

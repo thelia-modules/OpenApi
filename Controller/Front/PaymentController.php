@@ -76,7 +76,7 @@ class PaymentController extends BaseFrontOpenApiController
         $class = $this;
 
         // Return formatted valid payment
-        return new JsonResponse(
+        return $this->jsonResponse(
             array_map(
                 function ($module) use ($class, $cart, $lang)  {
                     return $class->getPaymentModule($module, $cart, $lang);

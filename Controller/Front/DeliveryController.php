@@ -129,43 +129,31 @@ class DeliveryController extends BaseFrontOpenApiController
      */
     public function getPickupLocations(Request $request)
     {
-        try {
-            $state = $request->get('stateId') ? (StateQuery::create())->filterById($request->get('stateId'))->findOne() : null;
-            $country = $request->get('countryId') ? (CountryQuery::create())->filterById($request->get('countryId'))->findOne() : null;
-            $pickupLocationEvent = new PickupLocationEvent(
-                null,
-                $request->get('radius'),
-                $request->get('maxRelays'),
-                $request->get('address'),
-                $request->get('city'),
-                $request->get('zipCode'),
-                $request->get('orderWeight'),
-                $state,
-                $country,
-                $request->get('moduleIds')
-            );
+        $state = $request->get('stateId') ? (StateQuery::create())->filterById($request->get('stateId'))->findOne() : null;
+        $country = $request->get('countryId') ? (CountryQuery::create())->filterById($request->get('countryId'))->findOne() : null;
+        $pickupLocationEvent = new PickupLocationEvent(
+            null,
+            $request->get('radius'),
+            $request->get('maxRelays'),
+            $request->get('address'),
+            $request->get('city'),
+            $request->get('zipCode'),
+            $request->get('orderWeight'),
+            $state,
+            $country,
+            $request->get('moduleIds')
+        );
 
-            $this->getDispatcher()->dispatch(TheliaEvents::MODULE_DELIVERY_GET_PICKUP_LOCATIONS, $pickupLocationEvent);
+        $this->getDispatcher()->dispatch(TheliaEvents::MODULE_DELIVERY_GET_PICKUP_LOCATIONS, $pickupLocationEvent);
 
-            return new JsonResponse(
-                array_map(
-                    function (PickupLocation $pickupLocation) {
-                        return $pickupLocation->toArray();
-                    },
-                    $pickupLocationEvent->getLocations()
-                )
-            );
-        } catch (\Exception $e) {
-            $error = new Error(
-                Translator::getInstance()->trans('Error for retrieving pickup locations', [], OpenApi::DOMAIN_NAME),
-                $e->getMessage()
-            );
-
-            return new JsonResponse(
-                $error,
-                400
-            );
-        }
+        return $this->jsonResponse(
+            array_map(
+                function (PickupLocation $pickupLocation) {
+                    return $pickupLocation->toArray();
+                },
+                $pickupLocationEvent->getLocations()
+            )
+        );
     }
 
     /**
@@ -229,7 +217,7 @@ class DeliveryController extends BaseFrontOpenApiController
         $modules = $moduleQuery->find();
 
         $class = $this;
-        return new JsonResponse(
+        return $this->jsonResponse(
             array_map(
                 function ($module) use ($class, $cart, $deliveryAddress, $country, $state)  {
                     return $class->getDeliveryModule($module, $cart, $deliveryAddress, $country, $state);

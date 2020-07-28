@@ -4,6 +4,7 @@
 namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
+use Thelia\Model\Customer as TheliaCustomer;
 use Thelia\Model\Lang as TheliaLang;
 use OpenApi\Constraint as Constraint;
 
@@ -116,32 +117,6 @@ class Lang extends BaseApiModel
     protected $byDefault;
 
     /**
-     * Creates an OpenApi Lang from a Thelia Lang model, then returns it
-     *
-     * @param TheliaLang $lang
-     * @return $this
-     */
-    public function createFromTheliaLang(TheliaLang $lang)
-    {
-        $this->id = $lang->getId();
-        $this->title = $lang->getTitle();
-        $this->code = $lang->getCode();
-        $this->locale = $lang->getLocale();
-        $this->url = $lang->getUrl();
-        $this->dateFormat = $lang->getDateFormat();
-        $this->timeFormat = $lang->getTimeFormat();
-        $this->datetimeFormat = $lang->getDatetimeFormat();
-        $this->decimalSeparator = $lang->getDecimalSeparator();
-        $this->thousandsSeparator = $lang->getThousandsSeparator();
-        $this->active = $lang->getActive();
-        $this->visible = $lang->getVisible();
-        $this->decimals = $lang->getDecimals();
-        $this->byDefault = $lang->getByDefault();
-
-        return $this;
-    }
-
-    /**
      * @return mixed
      */
     public function getId()
@@ -151,6 +126,7 @@ class Lang extends BaseApiModel
 
     /**
      * @param mixed $id
+     *
      * @return Lang
      */
     public function setId($id)
@@ -169,6 +145,7 @@ class Lang extends BaseApiModel
 
     /**
      * @param mixed $title
+     *
      * @return Lang
      */
     public function setTitle($title)
@@ -187,6 +164,7 @@ class Lang extends BaseApiModel
 
     /**
      * @param mixed $code
+     *
      * @return Lang
      */
     public function setCode($code)
@@ -205,6 +183,7 @@ class Lang extends BaseApiModel
 
     /**
      * @param mixed $locale
+     *
      * @return Lang
      */
     public function setLocale($locale)
@@ -223,6 +202,7 @@ class Lang extends BaseApiModel
 
     /**
      * @param mixed $url
+     *
      * @return Lang
      */
     public function setUrl($url)
@@ -241,6 +221,7 @@ class Lang extends BaseApiModel
 
     /**
      * @param mixed $dateFormat
+     *
      * @return Lang
      */
     public function setDateFormat($dateFormat)
@@ -259,6 +240,7 @@ class Lang extends BaseApiModel
 
     /**
      * @param mixed $timeFormat
+     *
      * @return Lang
      */
     public function setTimeFormat($timeFormat)
@@ -277,6 +259,7 @@ class Lang extends BaseApiModel
 
     /**
      * @param mixed $datetimeFormat
+     *
      * @return Lang
      */
     public function setDatetimeFormat($datetimeFormat)
@@ -295,6 +278,7 @@ class Lang extends BaseApiModel
 
     /**
      * @param mixed $decimalSeparator
+     *
      * @return Lang
      */
     public function setDecimalSeparator($decimalSeparator)
@@ -313,6 +297,7 @@ class Lang extends BaseApiModel
 
     /**
      * @param mixed $thousandsSeparator
+     *
      * @return Lang
      */
     public function setThousandsSeparator($thousandsSeparator)
@@ -331,6 +316,7 @@ class Lang extends BaseApiModel
 
     /**
      * @param mixed $active
+     *
      * @return Lang
      */
     public function setActive($active)
@@ -349,6 +335,7 @@ class Lang extends BaseApiModel
 
     /**
      * @param mixed $visible
+     *
      * @return Lang
      */
     public function setVisible($visible)
@@ -367,6 +354,7 @@ class Lang extends BaseApiModel
 
     /**
      * @param mixed $decimals
+     *
      * @return Lang
      */
     public function setDecimals($decimals)
@@ -385,6 +373,7 @@ class Lang extends BaseApiModel
 
     /**
      * @param mixed $byDefault
+     *
      * @return Lang
      */
     public function setByDefault($byDefault)
@@ -392,6 +381,4 @@ class Lang extends BaseApiModel
         $this->byDefault = $byDefault;
         return $this;
     }
-
-
 }

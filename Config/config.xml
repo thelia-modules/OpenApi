@@ -49,31 +49,32 @@
         <service id="open_api.model.factory" class="OpenApi\Model\Api\ModelFactory" >
             <argument type="service" id="service_container"/>
         </service>
-        <service id="open_api.model.error" class="OpenApi\Model\Api\Error" >
+        <service id="open_api.base.model" abstract="true">
             <argument type="service" id="open_api.model.factory"/>
+            <argument type="service" id="request_stack"/>
+        </service>
+        <service id="open_api.model.error" class="OpenApi\Model\Api\Error" parent="open_api.base.model">
             <tag name="open_api.model" alias="Error"/>
         </service>
-        <service id="open_api.model.address" class="OpenApi\Model\Api\Address" >
-            <argument type="service" id="open_api.model.factory"/>
+        <service id="open_api.model.address" class="OpenApi\Model\Api\Address" parent="open_api.base.model">
             <tag name="open_api.model" alias="Address"/>
         </service>
-        <service id="open_api.model.civility_title" class="OpenApi\Model\Api\CivilityTitle" >
-            <argument type="service" id="open_api.model.factory"/>
+        <service id="open_api.model.civility_title" class="OpenApi\Model\Api\CivilityTitle" parent="open_api.base.model">
             <tag name="open_api.model" alias="CivilityTitle"/>
             <tag name="open_api.model" alias="Title"/>
         </service>
-        <service id="open_api.model.customer" class="OpenApi\Model\Api\Customer" >
-            <argument type="service" id="open_api.model.factory"/>
+        <service id="open_api.model.customer" class="OpenApi\Model\Api\Customer" parent="open_api.base.model">
             <tag name="open_api.model" alias="Customer"/>
         </service>
-        <service id="open_api.model.language" class="OpenApi\Model\Api\Language" >
-            <argument type="service" id="open_api.model.factory"/>
+        <service id="open_api.model.language" class="OpenApi\Model\Api\Lang" parent="open_api.base.model">
             <tag name="open_api.model" alias="Language"/>
             <tag name="open_api.model" alias="Lang"/>
         </service>
+        <service id="open_api.model.image" class="OpenApi\Model\Api\Image" parent="open_api.base.model">
+            <argument type="service" id="open_api.image.service"/>
+            <tag name="open_api.model" alias="Image"/>
+        </service>
     </services>
-
-
     <!--
     <hooks>
         <hook id="openapi.hook" class="OpenApi\Hook\MySuperHook">

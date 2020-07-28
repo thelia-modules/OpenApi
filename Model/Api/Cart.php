@@ -2,7 +2,6 @@
 
 namespace OpenApi\Model\Api;
 
-use OpenApi\Service\ImageService;
 use Thelia\Model\Country;
 use OpenApi\Annotations as OA;
 use OpenApi\Constraint as Constraint;
@@ -91,23 +90,29 @@ class Cart extends BaseApiModel
     protected $items;
 
     /**
-     * Create a new OpenApi Cart from a Thelia Cart in session, a Country, an array
+     * Fill the model from a Thelia Cart in session, a Country, an array
      * of OpenApi coupons, and an estimated postage, then returns it
      *
      * @param \Thelia\Model\Cart $cart
      * @param Country $deliveryCountry
      * @param $coupons
      * @param $estimatedPostage
-     * @param ImageService $imageService
      * @return $this
      * @throws \Propel\Runtime\Exception\PropelException
      */
-    public function createFromSessionCart(\Thelia\Model\Cart $cart, Country $deliveryCountry, $coupons, $estimatedPostage, ImageService $imageService)
+    public function fillFromSessionCart(\Thelia\Model\Cart $cart, Country $deliveryCountry, $coupons, $estimatedPostage)
     {
-        $cartItems = [];
-        foreach ($cart->getCartItems() as $theliaCartItem) {
-            $cartItems[] = (new CartItem())->createFromTheliaCartItemAndCountry($theliaCartItem, $deliveryCountry, $imageService);
-        }
+        $modelFactory = $this->modelFactory;
+        $cartItems = array_map(
+            function ($theliaCartItem) use ($modelFactory, $deliveryCountry) {
+                /** @var CartItem $cartItem */
+                $cartItem = $modelFactory->buildModel('CartItem');
+                $cartItem->fillFromTheliaCartItemAndCountry($theliaCartItem, $deliveryCountry);
+
+                return $cartItem;
+            },
+            $cart->getCartItems()
+        );
 
         $this
             ->setId($cart->getId())

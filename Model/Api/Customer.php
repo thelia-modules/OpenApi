@@ -6,7 +6,6 @@ namespace OpenApi\Model\Api;
 use OpenApi\Annotations as OA;
 use OpenApi\Constraint as Constraint;
 use Thelia\Model\Customer as TheliaCustomer;
-use Thelia\Model\CustomerTitle;
 
 /**
  * @OA\Schema(
@@ -109,29 +108,6 @@ class Customer extends BaseApiModel
     protected $reseller;
 
     /**
-     * Creates an OpenApi customer from a Thelia Customer, then returns it
-     *
-     * @param TheliaCustomer $customer
-     * @return $this
-     * @throws \Propel\Runtime\Exception\PropelException
-     */
-    public function createFromTheliaCustomer(TheliaCustomer $customer)
-    {
-        $this->id = $customer->getId();
-        $this->civilityTitle = (new CivilityTitle())->createFromTheliaCustomerTitle($customer->getCustomerTitle());
-        $this->lang = (new Lang())->createFromTheliaLang($customer->getCustomerLang());
-        $this->reference = $customer->getRef();
-        $this->firstname = $customer->getFirstname();
-        $this->lastname = $customer->getLastname();
-        $this->email = $customer->getEmail();
-        $this->rememberMe = $customer->getRememberMeToken() ? true : false;
-        $this->discount = (float)$customer->getDiscount();
-        $this->reseller = $customer->getReseller();
-
-        return $this;
-    }
-
-    /**
      * @return int
      */
     public function getId()
@@ -177,6 +153,7 @@ class Customer extends BaseApiModel
 
     /**
      * @param Lang $lang
+     *
      * @return Customer
      */
     public function setLang($lang)
@@ -309,16 +286,6 @@ class Customer extends BaseApiModel
     {
         $this->reseller = $reseller;
         return $this;
-    }
-
-    /** Thelia model creation functions */
-
-    /**
-     * @return TheliaCustomer
-     */
-    protected function getTheliaModel()
-    {
-        return new TheliaCustomer();
     }
 
     /**

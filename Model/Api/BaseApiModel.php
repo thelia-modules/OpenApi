@@ -4,12 +4,14 @@ namespace OpenApi\Model\Api;
 
 use OpenApi\Exception\OpenApiException;
 use OpenApi\OpenApi;
+use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Thelia\Core\Translation\Translator;
+use Thelia\Model\AddressQuery;
 
 abstract class BaseApiModel implements \JsonSerializable
 {
@@ -128,8 +130,22 @@ abstract class BaseApiModel implements \JsonSerializable
      */
     protected function getTheliaModel()
     {
-        $theliaModelName = "Thelia\Model\\".basename(str_replace('\\', '/', get_class($this)));;
-        return class_exists($theliaModelName) ? (new $theliaModelName) : null;
+        $theliaModelName = "Thelia\Model\\".basename(str_replace('\\', '/', get_class($this)));
+
+        if (!class_exists($theliaModelName)) {
+            return null;
+        }
+
+        if (null !== $id = $this->getId()) {
+            $theliaModelQueryName = $theliaModelName . 'Query';
+            return $theliaModelQueryName::create()->filterById($id)->findOne();
+        }
+
+        /** @var ActiveRecordInterface $newTheliaModel */
+        $newTheliaModel = new $theliaModelName;
+        $newTheliaModel->setNew(true);
+
+        return $newTheliaModel;
     }
 
     public function toTheliaModel($locale = null)

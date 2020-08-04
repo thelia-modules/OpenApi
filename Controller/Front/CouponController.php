@@ -54,19 +54,19 @@ class CouponController extends BaseFrontOpenApiController
      */
     public function submitCoupon(Request $request)
     {
-        $cart = $request->getSession()->getSessionCart();
+        $cart = $request->getSession()->getSessionCart($this->getDispatcher());
         if (null === $cart) {
             throw new \Exception(Translator::getInstance()->trans('No cart found', [], OpenApi::DOMAIN_NAME));
         }
 
+        /** @var Coupon $openApiCoupon */
         $openApiCoupon = $this->getModelFactory()->buildModel('Coupon', $request->getContent());
-
         if (null === $openApiCoupon->getCode()) {
             throw new \Exception(Translator::getInstance()->trans('Coupon code cannot be null', [], OpenApi::DOMAIN_NAME));
         }
 
+        /** We verify that the given coupon actually exists in the base */
         $theliaCoupon = CouponQuery::create()->filterByCode($openApiCoupon->getCode())->findOne();
-
         if (null === $theliaCoupon) {
             throw new \Exception(Translator::getInstance()->trans('No coupons were found for this coupon code.', [], OpenApi::DOMAIN_NAME));
         }

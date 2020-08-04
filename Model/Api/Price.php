@@ -18,6 +18,7 @@ use Thelia\Model\ProductSaleElements;
 class Price extends BaseApiModel
 {
     /**
+     * @var float
      * @OA\Property(
      *    type="number",
      *    format="float",
@@ -26,6 +27,7 @@ class Price extends BaseApiModel
     protected $untaxed;
 
     /**
+     * @var float
      * @OA\Property(
      *    type="number",
      *    format="float",
@@ -54,7 +56,7 @@ class Price extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return float
      */
     public function getUntaxed()
     {
@@ -62,7 +64,7 @@ class Price extends BaseApiModel
     }
 
     /**
-     * @param mixed $untaxed
+     * @param float $untaxed
      * @return Price
      */
     public function setUntaxed($untaxed)
@@ -72,7 +74,7 @@ class Price extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return float
      */
     public function getTaxed()
     {
@@ -80,7 +82,7 @@ class Price extends BaseApiModel
     }
 
     /**
-     * @param mixed $taxed
+     * @param float $taxed
      * @return Price
      */
     public function setTaxed($taxed)

@@ -21,32 +21,36 @@ class Checkout extends BaseApiModel
     protected $isComplete = false;
 
     /**
-     *  @OA\Property(
-     *     type="integer",
-     *     description="id of the delivery module used by this checkout"
-     *  )
+     * @var integer
+     * @OA\Property(
+     *    type="integer",
+     *    description="id of the delivery module used by this checkout"
+     * )
      */
     protected $deliveryModuleId;
 
     /**
-     *  @OA\Property(
-     *     type="integer",
-     *     description="id of the payment module used by this checkout"
-     *  )
+     * @var integer
+     * @OA\Property(
+     *    type="integer",
+     *    description="id of the payment module used by this checkout"
+     * )
      */
     protected $paymentModuleId;
 
     /**
-     *  @OA\Property(
-     *     type="integer"
-     *  )
+     * @var integer
+     * @OA\Property(
+     *    type="integer"
+     * )
      */
     protected $billingAddressId;
 
     /**
-     *  @OA\Property(
-     *     type="integer"
-     *  )
+     * @var integer
+     * @OA\Property(
+     *    type="integer"
+     * )
      */
     protected $deliveryAddressId;
 
@@ -112,7 +116,7 @@ class Checkout extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getDeliveryModuleId()
     {
@@ -120,8 +124,7 @@ class Checkout extends BaseApiModel
     }
 
     /**
-     * @param mixed $deliveryModuleId
-     *
+     * @param int $deliveryModuleId
      * @return Checkout
      */
     public function setDeliveryModuleId($deliveryModuleId)
@@ -131,7 +134,7 @@ class Checkout extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getPaymentModuleId()
     {
@@ -139,8 +142,7 @@ class Checkout extends BaseApiModel
     }
 
     /**
-     * @param mixed $paymentModuleId
-     *
+     * @param int $paymentModuleId
      * @return Checkout
      */
     public function setPaymentModuleId($paymentModuleId)
@@ -150,7 +152,7 @@ class Checkout extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getBillingAddressId()
     {
@@ -158,8 +160,7 @@ class Checkout extends BaseApiModel
     }
 
     /**
-     * @param mixed $billingAddressId
-     *
+     * @param int $billingAddressId
      * @return Checkout
      */
     public function setBillingAddressId($billingAddressId)
@@ -169,7 +170,7 @@ class Checkout extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getDeliveryAddressId()
     {
@@ -177,8 +178,7 @@ class Checkout extends BaseApiModel
     }
 
     /**
-     * @param mixed $deliveryAddressId
-     *
+     * @param int $deliveryAddressId
      * @return Checkout
      */
     public function setDeliveryAddressId($deliveryAddressId)
@@ -197,7 +197,6 @@ class Checkout extends BaseApiModel
 
     /**
      * @param Address $pickupAddress
-     *
      * @return Checkout
      */
     public function setPickupAddress($pickupAddress)

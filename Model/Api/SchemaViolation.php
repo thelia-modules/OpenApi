@@ -14,6 +14,7 @@ use OpenApi\Annotations as OA;
 class SchemaViolation extends BaseApiModel
 {
     /**
+     * @var string
      * @OA\Property(
      *    type="string"
      * )
@@ -21,6 +22,7 @@ class SchemaViolation extends BaseApiModel
     protected $key;
 
     /**
+     * @var string
      * @OA\Property(
      *    type="string"
      * )
@@ -28,7 +30,7 @@ class SchemaViolation extends BaseApiModel
     protected $error;
 
     /**
-     * @return null
+     * @return string
      */
     public function getKey()
     {
@@ -36,8 +38,7 @@ class SchemaViolation extends BaseApiModel
     }
 
     /**
-     * @param null $key
-     *
+     * @param string $key
      * @return SchemaViolation
      */
     public function setKey($key)
@@ -47,7 +48,7 @@ class SchemaViolation extends BaseApiModel
     }
 
     /**
-     * @return null
+     * @return string
      */
     public function getError()
     {
@@ -55,8 +56,7 @@ class SchemaViolation extends BaseApiModel
     }
 
     /**
-     * @param null $error
-     *
+     * @param string $error
      * @return SchemaViolation
      */
     public function setError($error)

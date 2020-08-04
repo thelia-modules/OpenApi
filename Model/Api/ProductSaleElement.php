@@ -18,6 +18,7 @@ use OpenApi\Constraint as Constraint;
 class ProductSaleElement extends BaseApiModel
 {
     /**
+     * @var integer
      * @OA\Property(
      *    type="integer",
      * )
@@ -26,6 +27,7 @@ class ProductSaleElement extends BaseApiModel
     protected $id;
 
     /**
+     * @var boolean
      * @OA\Property(
      *    type="boolean",
      * )
@@ -33,6 +35,7 @@ class ProductSaleElement extends BaseApiModel
     protected $isPromo;
 
     /**
+     * @var string
      * @OA\Property(
      *     type="string",
      * )
@@ -40,6 +43,7 @@ class ProductSaleElement extends BaseApiModel
     protected $reference;
 
     /**
+     * @var array
      * @OA\Property(
      *    description="List of the attributes used by this pse",
      *    type="array",
@@ -51,6 +55,7 @@ class ProductSaleElement extends BaseApiModel
     protected $attributes;
 
     /**
+     * @var Price
      * @OA\Property(
      *    type="object",
      *    ref="#/components/schemas/Price"
@@ -59,6 +64,7 @@ class ProductSaleElement extends BaseApiModel
     protected $price;
 
     /**
+     * @var Price
      * @OA\Property(
      *    type="object",
      *    ref="#/components/schemas/Price"
@@ -81,7 +87,7 @@ class ProductSaleElement extends BaseApiModel
             function ($attributeCombination) use ($modelFactory){
                 return $modelFactory->buildModel('Attribute', $attributeCombination);
             },
-            $pse->getAttributeCombinations()
+            iterator_to_array($pse->getAttributeCombinations())
         );
 
         $this->id = $pse->getId();
@@ -92,7 +98,7 @@ class ProductSaleElement extends BaseApiModel
         $price->fillFromTheliaPseAndCountry($pse, $country);
         $this->price = $price;
 
-        /** @var Price $price */
+        /** @var Price $promoPrice */
         $promoPrice = $this->modelFactory->buildModel('Price');
         $promoPrice->fillFromTheliaPseAndCountry($pse, $country);
         $this->promoPrice = $price;
@@ -104,7 +110,7 @@ class ProductSaleElement extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getId()
     {
@@ -112,7 +118,7 @@ class ProductSaleElement extends BaseApiModel
     }
 
     /**
-     * @param mixed $id
+     * @param int $id
      * @return ProductSaleElement
      */
     public function setId($id)
@@ -122,51 +128,15 @@ class ProductSaleElement extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return bool
      */
-    public function getReference()
-    {
-        return $this->reference;
-    }
-
-    /**
-     * @param mixed $reference
-     * @return ProductSaleElement
-     */
-    public function setReference($reference)
-    {
-        $this->reference = $reference;
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getAttributes()
-    {
-        return $this->attributes;
-    }
-
-    /**
-     * @param mixed $attributes
-     * @return ProductSaleElement
-     */
-    public function setAttributes($attributes)
-    {
-        $this->attributes = $attributes;
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getIsPromo()
+    public function isPromo()
     {
         return $this->isPromo;
     }
 
     /**
-     * @param mixed $isPromo
+     * @param bool $isPromo
      * @return ProductSaleElement
      */
     public function setIsPromo($isPromo)
@@ -176,7 +146,43 @@ class ProductSaleElement extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
+     */
+    public function getReference()
+    {
+        return $this->reference;
+    }
+
+    /**
+     * @param string $reference
+     * @return ProductSaleElement
+     */
+    public function setReference($reference)
+    {
+        $this->reference = $reference;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getAttributes()
+    {
+        return $this->attributes;
+    }
+
+    /**
+     * @param array $attributes
+     * @return ProductSaleElement
+     */
+    public function setAttributes($attributes)
+    {
+        $this->attributes = $attributes;
+        return $this;
+    }
+
+    /**
+     * @return Price
      */
     public function getPrice()
     {
@@ -184,7 +190,7 @@ class ProductSaleElement extends BaseApiModel
     }
 
     /**
-     * @param mixed $price
+     * @param Price $price
      * @return ProductSaleElement
      */
     public function setPrice($price)
@@ -194,7 +200,7 @@ class ProductSaleElement extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return Price
      */
     public function getPromoPrice()
     {
@@ -202,7 +208,7 @@ class ProductSaleElement extends BaseApiModel
     }
 
     /**
-     * @param mixed $promoPrice
+     * @param Price $promoPrice
      * @return ProductSaleElement
      */
     public function setPromoPrice($promoPrice)

@@ -227,10 +227,10 @@ class DeliveryController extends BaseFrontOpenApiController
         );
     }
 
-    protected function getDeliveryModule(Module $deliveryModule, Cart $cart, $address, $country, $state)
+    protected function getDeliveryModule(Module $theliaDeliveryModule, Cart $cart, $address, $country, $state)
     {
         $areaDeliveryModule = AreaDeliveryModuleQuery::create()
-            ->findByCountryAndModule($country, $deliveryModule, $state);
+            ->findByCountryAndModule($country, $theliaDeliveryModule, $state);
         $isCartVirtual = $cart->isVirtual();
 
         $isValid = true;
@@ -238,7 +238,7 @@ class DeliveryController extends BaseFrontOpenApiController
             $isValid = false;
         }
 
-        $moduleInstance = $deliveryModule->getDeliveryModuleInstance($this->container);
+        $moduleInstance = $theliaDeliveryModule->getDeliveryModuleInstance($this->container);
 
         if (true === $isCartVirtual && false === $moduleInstance->handleVirtualProductDelivery()) {
             $isValid = false;
@@ -258,25 +258,19 @@ class DeliveryController extends BaseFrontOpenApiController
             $isValid = false;
         }
 
-        $deliveryModuleOptionEvent = new DeliveryModuleOptionEvent($deliveryModule, $address, $cart, $country, $state);
-
-        $deliveryModule = (new DeliveryModule())
-            ->setDeliveryMode($deliveryPostageEvent->getDeliveryMode())
-            ->setId($deliveryModule->getId())
-            ->setValid($isValid)
-            ->setCode($deliveryModule->getCode())
-            ->setTitle($deliveryModule->getTitle())
-            ->setDescription($deliveryModule->getDescription())
-            ->setChapo($deliveryModule->getChapo())
-            ->setPostscriptum($deliveryModule->getPostscriptum())
-        ;
+        $deliveryModuleOptionEvent = new DeliveryModuleOptionEvent($theliaDeliveryModule, $address, $cart, $country, $state);
 
         $this->getDispatcher()->dispatch(
             OpenApiEvents::MODULE_DELIVERY_GET_OPTIONS,
             $deliveryModuleOptionEvent
         );
 
+        /** @var DeliveryModule $deliveryModule */
+        $deliveryModule = $this->getModelFactory()->buildModel('DeliveryModule', $theliaDeliveryModule);
+
         $deliveryModule
+            ->setDeliveryMode($deliveryPostageEvent->getDeliveryMode())
+            ->setValid($isValid)
             ->setOptions($deliveryModuleOptionEvent->getDeliveryModuleOptions())
         ;
 

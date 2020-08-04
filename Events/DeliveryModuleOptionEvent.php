@@ -69,12 +69,22 @@ class DeliveryModuleOptionEvent extends ActionEvent
     }
 
     /**
-     * @param DeliveryModuleOption $deliveryModuleOptions
+     * @param array $deliveryModuleOptions
      * @return DeliveryModuleOptionEvent
      */
     public function setDeliveryModuleOptions($deliveryModuleOptions)
     {
-        $this->deliveryModuleOptions[] = $deliveryModuleOptions;
+        $this->deliveryModuleOptions = $deliveryModuleOptions;
+        return $this;
+    }
+
+    /**
+     * @param DeliveryModuleOption $deliveryModuleOption
+     * @return DeliveryModuleOptionEvent
+     */
+    public function appendDeliveryModuleOptions($deliveryModuleOption)
+    {
+        $this->deliveryModuleOptions[] = $deliveryModuleOption;
         return $this;
     }
 

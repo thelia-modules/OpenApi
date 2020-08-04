@@ -15,6 +15,7 @@ use OpenApi\Constraint as Constraint;
 class Error extends BaseApiModel
 {
     /**
+     * @var string
      * @OA\Property(
      *    type="string"
      * )
@@ -22,6 +23,7 @@ class Error extends BaseApiModel
     protected $title;
 
     /**
+     * @var string
      * @OA\Property(
      *    type="string"
      * )
@@ -29,6 +31,7 @@ class Error extends BaseApiModel
     protected $description;
 
     /**
+     * @var array
      * @OA\Property(
      *    type="array",
      *     @OA\Items(
@@ -39,7 +42,7 @@ class Error extends BaseApiModel
     protected $schemaViolations;
 
     /**
-     * @return null
+     * @return string
      */
     public function getTitle()
     {
@@ -47,8 +50,7 @@ class Error extends BaseApiModel
     }
 
     /**
-     * @param null $title
-     *
+     * @param string $title
      * @return Error
      */
     public function setTitle($title)
@@ -58,7 +60,7 @@ class Error extends BaseApiModel
     }
 
     /**
-     * @return null
+     * @return string
      */
     public function getDescription()
     {
@@ -66,8 +68,7 @@ class Error extends BaseApiModel
     }
 
     /**
-     * @param null $description
-     *
+     * @param string $description
      * @return Error
      */
     public function setDescription($description)
@@ -76,21 +77,21 @@ class Error extends BaseApiModel
         return $this;
     }
 
-    /** @return array */
+    /**
+     * @return array
+     */
     public function getSchemaViolations()
     {
         return $this->schemaViolations;
     }
 
     /**
-     * @param $schemaViolations SchemaViolation[]
-     *
+     * @param array $schemaViolations
      * @return Error
      */
     public function setSchemaViolations($schemaViolations)
     {
         $this->schemaViolations = $schemaViolations;
-
         return $this;
     }
 

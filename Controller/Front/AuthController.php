@@ -124,6 +124,6 @@ class AuthController extends BaseFrontOpenApiController
         $this->dispatch(TheliaEvents::CUSTOMER_LOGOUT);
         (new CookieTokenProvider())->clearCookie(ConfigQuery::read('customer_remember_me_cookie_name', 'crmcn'));
 
-        return $this->jsonResponse("Success");
+        return $this->jsonResponse("Success", 204);
     }
 }

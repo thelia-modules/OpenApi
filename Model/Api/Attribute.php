@@ -18,6 +18,7 @@ use OpenApi\Constraint as Constraint;
 class Attribute extends BaseApiModel
 {
     /**
+     * @var integer
      * @OA\Property(
      *    type="integer",
      * )
@@ -26,6 +27,7 @@ class Attribute extends BaseApiModel
     protected $id;
 
     /**
+     * @var string
      * @OA\Property(
      *     type="string",
      * )
@@ -33,6 +35,7 @@ class Attribute extends BaseApiModel
     protected $title;
 
     /**
+     * @var array
      * @OA\Property(
      *     type="array",
      *     @OA\Items(
@@ -65,7 +68,7 @@ class Attribute extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getId()
     {
@@ -73,7 +76,7 @@ class Attribute extends BaseApiModel
     }
 
     /**
-     * @param mixed $id
+     * @param int $id
      * @return Attribute
      */
     public function setId($id)
@@ -83,7 +86,7 @@ class Attribute extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getTitle()
     {
@@ -91,7 +94,7 @@ class Attribute extends BaseApiModel
     }
 
     /**
-     * @param mixed $title
+     * @param string $title
      * @return Attribute
      */
     public function setTitle($title)
@@ -101,7 +104,7 @@ class Attribute extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return array
      */
     public function getValue()
     {
@@ -109,7 +112,7 @@ class Attribute extends BaseApiModel
     }
 
     /**
-     * @param mixed $value
+     * @param array $value
      * @return Attribute
      */
     public function setValue($value)
@@ -117,6 +120,4 @@ class Attribute extends BaseApiModel
         $this->value = $value;
         return $this;
     }
-
-
 }

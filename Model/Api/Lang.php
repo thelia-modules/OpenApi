@@ -4,8 +4,6 @@
 namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
-use Thelia\Model\Customer as TheliaCustomer;
-use Thelia\Model\Lang as TheliaLang;
 use OpenApi\Constraint as Constraint;
 
 /**
@@ -18,6 +16,7 @@ use OpenApi\Constraint as Constraint;
 class Lang extends BaseApiModel
 {
     /**
+     * @var integer
      * @OA\Property(
      *    type="integer",
      * )
@@ -26,6 +25,7 @@ class Lang extends BaseApiModel
     protected $id;
 
     /**
+     * @var string
      * @OA\Property(
      *    type="string"
      * )
@@ -33,6 +33,7 @@ class Lang extends BaseApiModel
     protected $title;
 
     /**
+     * @var string
      * @OA\Property(
      *    type="string"
      * )
@@ -40,6 +41,7 @@ class Lang extends BaseApiModel
     protected $code;
 
     /**
+     * @var string
      * @OA\Property(
      *    type="string"
      * )
@@ -47,6 +49,7 @@ class Lang extends BaseApiModel
     protected $locale;
 
     /**
+     * @var string
      * @OA\Property(
      *    type="string"
      * )
@@ -54,6 +57,7 @@ class Lang extends BaseApiModel
     protected $url;
 
     /**
+     * @var string
      * @OA\Property(
      *    type="string"
      * )
@@ -61,6 +65,7 @@ class Lang extends BaseApiModel
     protected $dateFormat;
 
     /**
+     * @var string
      * @OA\Property(
      *    type="string"
      * )
@@ -68,6 +73,7 @@ class Lang extends BaseApiModel
     protected $timeFormat;
 
     /**
+     * @var string
      * @OA\Property(
      *    type="string"
      * )
@@ -75,6 +81,7 @@ class Lang extends BaseApiModel
     protected $datetimeFormat;
 
     /**
+     * @var string
      * @OA\Property(
      *    type="string"
      * )
@@ -82,6 +89,7 @@ class Lang extends BaseApiModel
     protected $decimalSeparator;
 
     /**
+     * @var string
      * @OA\Property(
      *    type="string"
      * )
@@ -89,6 +97,7 @@ class Lang extends BaseApiModel
     protected $thousandsSeparator;
 
     /**
+     * @var boolean
      * @OA\Property(
      *    type="boolean",
      * )
@@ -96,6 +105,7 @@ class Lang extends BaseApiModel
     protected $active;
 
     /**
+     * @var boolean
      * @OA\Property(
      *    type="boolean",
      * )
@@ -103,6 +113,7 @@ class Lang extends BaseApiModel
     protected $visible;
 
     /**
+     * @var string
      * @OA\Property(
      *    type="string"
      * )
@@ -110,6 +121,7 @@ class Lang extends BaseApiModel
     protected $decimals;
 
     /**
+     * @var boolean
      * @OA\Property(
      *    type="boolean",
      * )
@@ -117,7 +129,7 @@ class Lang extends BaseApiModel
     protected $byDefault;
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getId()
     {
@@ -125,8 +137,7 @@ class Lang extends BaseApiModel
     }
 
     /**
-     * @param mixed $id
-     *
+     * @param int $id
      * @return Lang
      */
     public function setId($id)
@@ -136,7 +147,7 @@ class Lang extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getTitle()
     {
@@ -144,8 +155,7 @@ class Lang extends BaseApiModel
     }
 
     /**
-     * @param mixed $title
-     *
+     * @param string $title
      * @return Lang
      */
     public function setTitle($title)
@@ -155,7 +165,7 @@ class Lang extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getCode()
     {
@@ -163,8 +173,7 @@ class Lang extends BaseApiModel
     }
 
     /**
-     * @param mixed $code
-     *
+     * @param string $code
      * @return Lang
      */
     public function setCode($code)
@@ -174,7 +183,7 @@ class Lang extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getLocale()
     {
@@ -182,8 +191,7 @@ class Lang extends BaseApiModel
     }
 
     /**
-     * @param mixed $locale
-     *
+     * @param string $locale
      * @return Lang
      */
     public function setLocale($locale)
@@ -193,7 +201,7 @@ class Lang extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getUrl()
     {
@@ -201,8 +209,7 @@ class Lang extends BaseApiModel
     }
 
     /**
-     * @param mixed $url
-     *
+     * @param string $url
      * @return Lang
      */
     public function setUrl($url)
@@ -212,7 +219,7 @@ class Lang extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getDateFormat()
     {
@@ -220,8 +227,7 @@ class Lang extends BaseApiModel
     }
 
     /**
-     * @param mixed $dateFormat
-     *
+     * @param string $dateFormat
      * @return Lang
      */
     public function setDateFormat($dateFormat)
@@ -231,7 +237,7 @@ class Lang extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getTimeFormat()
     {
@@ -239,8 +245,7 @@ class Lang extends BaseApiModel
     }
 
     /**
-     * @param mixed $timeFormat
-     *
+     * @param string $timeFormat
      * @return Lang
      */
     public function setTimeFormat($timeFormat)
@@ -250,7 +255,7 @@ class Lang extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getDatetimeFormat()
     {
@@ -258,8 +263,7 @@ class Lang extends BaseApiModel
     }
 
     /**
-     * @param mixed $datetimeFormat
-     *
+     * @param string $datetimeFormat
      * @return Lang
      */
     public function setDatetimeFormat($datetimeFormat)
@@ -269,7 +273,7 @@ class Lang extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getDecimalSeparator()
     {
@@ -277,8 +281,7 @@ class Lang extends BaseApiModel
     }
 
     /**
-     * @param mixed $decimalSeparator
-     *
+     * @param string $decimalSeparator
      * @return Lang
      */
     public function setDecimalSeparator($decimalSeparator)
@@ -288,7 +291,7 @@ class Lang extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getThousandsSeparator()
     {
@@ -296,8 +299,7 @@ class Lang extends BaseApiModel
     }
 
     /**
-     * @param mixed $thousandsSeparator
-     *
+     * @param string $thousandsSeparator
      * @return Lang
      */
     public function setThousandsSeparator($thousandsSeparator)
@@ -307,16 +309,15 @@ class Lang extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return bool
      */
-    public function getActive()
+    public function isActive()
     {
         return $this->active;
     }
 
     /**
-     * @param mixed $active
-     *
+     * @param bool $active
      * @return Lang
      */
     public function setActive($active)
@@ -326,16 +327,15 @@ class Lang extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return bool
      */
-    public function getVisible()
+    public function isVisible()
     {
         return $this->visible;
     }
 
     /**
-     * @param mixed $visible
-     *
+     * @param bool $visible
      * @return Lang
      */
     public function setVisible($visible)
@@ -345,7 +345,7 @@ class Lang extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getDecimals()
     {
@@ -353,8 +353,7 @@ class Lang extends BaseApiModel
     }
 
     /**
-     * @param mixed $decimals
-     *
+     * @param string $decimals
      * @return Lang
      */
     public function setDecimals($decimals)
@@ -364,16 +363,15 @@ class Lang extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return bool
      */
-    public function getByDefault()
+    public function isByDefault()
     {
         return $this->byDefault;
     }
 
     /**
-     * @param mixed $byDefault
-     *
+     * @param bool $byDefault
      * @return Lang
      */
     public function setByDefault($byDefault)

@@ -15,77 +15,86 @@ use OpenApi\Constraint as Constraint;
 class DeliveryModuleOption extends BaseApiModel
 {
     /**
-     *  @OA\Property(
-     *     type="string",
-     *  )
+     * @var string
+     * @OA\Property(
+     *    type="string",
+     * )
      * @Constraint\NotBlank(groups={"read"})
      */
     protected $code;
 
     /**
-     *  @OA\Property(
-     *     type="boolean",
-     *  )
+     * @var boolean
+     * @OA\Property(
+     *    type="boolean",
+     * )
      */
     protected $valid;
 
     /**
-     *  @OA\Property(
-     *     type="string",
-     *  )
+     * @var string
+     * @OA\Property(
+     *    type="string",
+     * )
      */
     protected $title;
 
     /**
-     *  @OA\Property(
-     *     type="string",
-     *     description="Delivery logo url",
-     *  )
+     * @var string
+     * @OA\Property(
+     *    type="string",
+     *    description="Delivery logo url",
+     * )
      */
     protected $image;
 
     /**
-     *  @OA\Property(
-     *     type="string",
-     *     format="date-time",
-     *  )
+     * @var string
+     * @OA\Property(
+     *    type="string",
+     *    format="date-time",
+     * )
      */
     protected $minimumDeliveryDate;
 
     /**
-     *  @OA\Property(
-     *     type="string",
-     *     format="date-time",
-     *  )
+     * @var string
+     * @OA\Property(
+     *    type="string",
+     *    format="date-time",
+     * )
      */
     protected $maximumDeliveryDate;
 
     /**
-     *  @OA\Property(
-     *     type="number",
-     *     format="float",
-     *  )
+     * @var float
+     * @OA\Property(
+     *    type="number",
+     *    format="float",
+     * )
      */
     protected $postage;
 
     /**
-     *  @OA\Property(
-     *     type="number",
-     *     format="float",
-     *  )
+     * @var float
+     * @OA\Property(
+     *    type="number",
+     *    format="float",
+     * )
      */
     protected $postageTax;
 
     /**
-     *  @OA\Property(
-     *     type="number",
-     *     format="float",
-     *  )
+     * @var float
+     * @OA\Property(
+     *    type="number",
+     *    format="float",
+     * )
      */
     protected $postageUntaxed;
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getCode()
     {
@@ -93,7 +102,7 @@ class DeliveryModuleOption extends BaseApiModel
     }
 
     /**
-     * @param mixed $code
+     * @param string $code
      * @return DeliveryModuleOption
      */
     public function setCode($code)
@@ -103,15 +112,15 @@ class DeliveryModuleOption extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return bool
      */
-    public function getValid()
+    public function isValid()
     {
         return $this->valid;
     }
 
     /**
-     * @param mixed $valid
+     * @param bool $valid
      * @return DeliveryModuleOption
      */
     public function setValid($valid)
@@ -121,7 +130,7 @@ class DeliveryModuleOption extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getTitle()
     {
@@ -129,7 +138,7 @@ class DeliveryModuleOption extends BaseApiModel
     }
 
     /**
-     * @param mixed $title
+     * @param string $title
      * @return DeliveryModuleOption
      */
     public function setTitle($title)
@@ -138,10 +147,8 @@ class DeliveryModuleOption extends BaseApiModel
         return $this;
     }
 
-
-
     /**
-     * @return mixed
+     * @return string
      */
     public function getImage()
     {
@@ -149,8 +156,7 @@ class DeliveryModuleOption extends BaseApiModel
     }
 
     /**
-     * @param mixed $image
-     *
+     * @param string $image
      * @return DeliveryModuleOption
      */
     public function setImage($image)
@@ -160,7 +166,7 @@ class DeliveryModuleOption extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getMinimumDeliveryDate()
     {
@@ -168,8 +174,7 @@ class DeliveryModuleOption extends BaseApiModel
     }
 
     /**
-     * @param mixed $minimumDeliveryDate
-     *
+     * @param string $minimumDeliveryDate
      * @return DeliveryModuleOption
      */
     public function setMinimumDeliveryDate($minimumDeliveryDate)
@@ -179,7 +184,7 @@ class DeliveryModuleOption extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getMaximumDeliveryDate()
     {
@@ -187,8 +192,7 @@ class DeliveryModuleOption extends BaseApiModel
     }
 
     /**
-     * @param mixed $maximumDeliveryDate
-     *
+     * @param string $maximumDeliveryDate
      * @return DeliveryModuleOption
      */
     public function setMaximumDeliveryDate($maximumDeliveryDate)
@@ -198,7 +202,7 @@ class DeliveryModuleOption extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return float
      */
     public function getPostage()
     {
@@ -206,8 +210,7 @@ class DeliveryModuleOption extends BaseApiModel
     }
 
     /**
-     * @param mixed $postage
-     *
+     * @param float $postage
      * @return DeliveryModuleOption
      */
     public function setPostage($postage)
@@ -217,7 +220,7 @@ class DeliveryModuleOption extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return float
      */
     public function getPostageTax()
     {
@@ -225,8 +228,7 @@ class DeliveryModuleOption extends BaseApiModel
     }
 
     /**
-     * @param mixed $postageTax
-     *
+     * @param float $postageTax
      * @return DeliveryModuleOption
      */
     public function setPostageTax($postageTax)
@@ -236,7 +238,7 @@ class DeliveryModuleOption extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return float
      */
     public function getPostageUntaxed()
     {
@@ -244,8 +246,7 @@ class DeliveryModuleOption extends BaseApiModel
     }
 
     /**
-     * @param mixed $postageUntaxed
-     *
+     * @param float $postageUntaxed
      * @return DeliveryModuleOption
      */
     public function setPostageUntaxed($postageUntaxed)

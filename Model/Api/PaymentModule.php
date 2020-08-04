@@ -15,81 +15,91 @@ use OpenApi\Constraint as Constraint;
 class PaymentModule extends BaseApiModel
 {
     /**
-     *  @OA\Property(
-     *     type="integer"
-     *  )
+     * @var integer
+     * @OA\Property(
+     *    type="integer"
+     * )
      * @Constraint\NotBlank(groups={"read"})
      */
     protected $id;
 
     /**
-     *  @OA\Property(
-     *     type="boolean"
-     *  )
+     * @var boolean
+     * @OA\Property(
+     *    type="boolean"
+     * )
      */
     protected $valid;
 
     /**
-     *  @OA\Property(
-     *     type="integer"
-     *  )
+     * @var integer
+     * @OA\Property(
+     *    type="integer"
+     * )
      */
     protected $code;
 
     /**
-     *  @OA\Property(
-     *     type="string"
-     *  )
+     * @var string
+     * @OA\Property(
+     *    type="string"
+     * )
      */
     protected $title;
 
     /**
-     *  @OA\Property(
-     *     type="string"
-     *  )
+     * @var string
+     * @OA\Property(
+     *    type="string"
+     * )
      */
     protected $description;
 
     /**
-     *  @OA\Property(
-     *     type="string"
-     *  )
+     * @var string
+     * @OA\Property(
+     *    type="string"
+     * )
      */
     protected $chapo;
 
     /**
-     *  @OA\Property(
-     *     type="string"
-     *  )
+     * @var string
+     * @OA\Property(
+     *    type="string"
+     * )
      */
     protected $postscriptum;
 
     /**
-     *  @OA\Property(
-     *     type="number",
-     *     format="float"
-     *  )
+     * @var float
+     * @OA\Property(
+     *    type="number",
+     *    format="float"
+     * )
      */
     protected $minimumAmount;
 
     /**
-     *  @OA\Property(
-     *     type="number",
-     *     format="float"
-     *  )
+     * @var float
+     * @OA\Property(
+     *    type="number",
+     *    format="float"
+     * )
      */
     protected $maximumAmount;
 
     /**
-     *  @OA\Property(
-     *     type="string",
-     *     description="Payment logo url"
-     *  )
+     * @var string
+     * @OA\Property(
+     *    type="string",
+     *    description="Payment logo url"
+     * )
      */
     protected $image;
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getId()
     {
@@ -97,8 +107,7 @@ class PaymentModule extends BaseApiModel
     }
 
     /**
-     * @param mixed $id
-     *
+     * @param int $id
      * @return PaymentModule
      */
     public function setId($id)
@@ -108,16 +117,15 @@ class PaymentModule extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return bool
      */
-    public function getValid()
+    public function isValid()
     {
         return $this->valid;
     }
 
     /**
-     * @param mixed $valid
-     *
+     * @param bool $valid
      * @return PaymentModule
      */
     public function setValid($valid)
@@ -127,7 +135,7 @@ class PaymentModule extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getCode()
     {
@@ -135,8 +143,7 @@ class PaymentModule extends BaseApiModel
     }
 
     /**
-     * @param mixed $code
-     *
+     * @param int $code
      * @return PaymentModule
      */
     public function setCode($code)
@@ -146,7 +153,7 @@ class PaymentModule extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getTitle()
     {
@@ -154,8 +161,7 @@ class PaymentModule extends BaseApiModel
     }
 
     /**
-     * @param mixed $title
-     *
+     * @param string $title
      * @return PaymentModule
      */
     public function setTitle($title)
@@ -165,7 +171,7 @@ class PaymentModule extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getDescription()
     {
@@ -173,8 +179,7 @@ class PaymentModule extends BaseApiModel
     }
 
     /**
-     * @param mixed $description
-     *
+     * @param string $description
      * @return PaymentModule
      */
     public function setDescription($description)
@@ -184,7 +189,7 @@ class PaymentModule extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getChapo()
     {
@@ -192,8 +197,7 @@ class PaymentModule extends BaseApiModel
     }
 
     /**
-     * @param mixed $chapo
-     *
+     * @param string $chapo
      * @return PaymentModule
      */
     public function setChapo($chapo)
@@ -203,7 +207,7 @@ class PaymentModule extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getPostscriptum()
     {
@@ -211,8 +215,7 @@ class PaymentModule extends BaseApiModel
     }
 
     /**
-     * @param mixed $postscriptum
-     *
+     * @param string $postscriptum
      * @return PaymentModule
      */
     public function setPostscriptum($postscriptum)
@@ -222,7 +225,7 @@ class PaymentModule extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return float
      */
     public function getMinimumAmount()
     {
@@ -230,8 +233,7 @@ class PaymentModule extends BaseApiModel
     }
 
     /**
-     * @param mixed $minimumAmount
-     *
+     * @param float $minimumAmount
      * @return PaymentModule
      */
     public function setMinimumAmount($minimumAmount)
@@ -241,7 +243,7 @@ class PaymentModule extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return float
      */
     public function getMaximumAmount()
     {
@@ -249,8 +251,7 @@ class PaymentModule extends BaseApiModel
     }
 
     /**
-     * @param mixed $maximumAmount
-     *
+     * @param float $maximumAmount
      * @return PaymentModule
      */
     public function setMaximumAmount($maximumAmount)
@@ -260,7 +261,7 @@ class PaymentModule extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getImage()
     {
@@ -268,8 +269,7 @@ class PaymentModule extends BaseApiModel
     }
 
     /**
-     * @param mixed $image
-     *
+     * @param string $image
      * @return PaymentModule
      */
     public function setImage($image)

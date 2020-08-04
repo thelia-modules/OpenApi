@@ -18,6 +18,7 @@ use Thelia\Model\Address as TheliaAddress;
 class Address extends BaseApiModel
 {
     /**
+     * @var integer
      * @OA\Property(
      *    type="integer"
      * )
@@ -26,6 +27,7 @@ class Address extends BaseApiModel
     protected $id;
 
     /**
+     * @var boolean
      * @OA\Property(
      *    type="boolean"
      * )
@@ -33,11 +35,13 @@ class Address extends BaseApiModel
      */
     protected $isDefault;
 
-    /**
+    /***
+     * @var string
      * @OA\Property(
      *     type="string",
      *     description="The name for this address",
      * )
+     * @Constraint\NotBlank(groups={"create","update"})
      */
     protected $label;
 
@@ -60,6 +64,7 @@ class Address extends BaseApiModel
     protected $civilityTitle;
 
     /**
+     * @var string
      * @OA\Property(
      *     type="string",
      * ),
@@ -68,6 +73,7 @@ class Address extends BaseApiModel
     protected $firstName;
 
     /**
+     * @var string
      * @OA\Property(
      *     type="string",
      * )
@@ -76,6 +82,7 @@ class Address extends BaseApiModel
     protected $lastName;
 
     /**
+     * @var string
      * @OA\Property(
      *     type="string",
      * )
@@ -83,6 +90,7 @@ class Address extends BaseApiModel
     protected $cellphoneNumber;
 
     /**
+     * @var string
      * @OA\Property(
      *     type="string",
      * )
@@ -90,6 +98,7 @@ class Address extends BaseApiModel
     protected $phoneNumber;
 
     /**
+     * @var string
      * @OA\Property(
      *     type="string",
      * )
@@ -97,6 +106,7 @@ class Address extends BaseApiModel
     protected $company;
 
     /**
+     * @var string
      * @OA\Property(
      *     type="string",
      * )
@@ -105,6 +115,7 @@ class Address extends BaseApiModel
     protected $address1;
 
     /**
+     * @var string
      * @OA\Property(
      *     type="string",
      * )
@@ -112,6 +123,7 @@ class Address extends BaseApiModel
     protected $address2;
 
     /**
+     * @var string
      * @OA\Property(
      *     type="string",
      * )
@@ -119,6 +131,7 @@ class Address extends BaseApiModel
     protected $address3;
 
     /**
+     * @var string
      * @OA\Property(
      *     type="string",
      * ),
@@ -127,6 +140,7 @@ class Address extends BaseApiModel
     protected $zipCode;
 
     /**
+     * @var string
      * @OA\Property(
      *     type="string",
      * )
@@ -135,6 +149,7 @@ class Address extends BaseApiModel
     protected $city;
 
     /**
+     * @var string
      * @OA\Property(
      *     type="string",
      *     description="Country ISO 3166-1 alpha-2 code"
@@ -148,6 +163,7 @@ class Address extends BaseApiModel
     protected $countryCode;
 
     /**
+     * @var object
      * @OA\Property(
      *     type="object"
      * )
@@ -167,6 +183,7 @@ class Address extends BaseApiModel
         $customerTitle = $address->getCustomerTitle()
             ->setLocale($locale);
 
+        /** @var CivilityTitle $civ */
         $civ = $this->modelFactory->buildModel('Title', $customerTitle);
 
         $this
@@ -177,17 +194,8 @@ class Address extends BaseApiModel
         return $this;
     }
 
-    public function toTheliaModel($locale = null)
-    {
-        /** @var TheliaAddress $address */
-        $address = parent::toTheliaModel($locale);
-        $address->setNew(false);
-
-        return $address;
-    }
-
     /**
-     * @return mixed
+     * @return int
      */
     public function getId()
     {
@@ -195,8 +203,7 @@ class Address extends BaseApiModel
     }
 
     /**
-     * @param mixed $id
-     *
+     * @param int $id
      * @return Address
      */
     public function setId($id)
@@ -206,16 +213,15 @@ class Address extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return bool
      */
-    public function getIsDefault()
+    public function isDefault()
     {
         return $this->isDefault;
     }
 
     /**
-     * @param mixed $isDefault
-     *
+     * @param bool $isDefault
      * @return Address
      */
     public function setIsDefault($isDefault)
@@ -225,7 +231,7 @@ class Address extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getLabel()
     {
@@ -233,13 +239,30 @@ class Address extends BaseApiModel
     }
 
     /**
-     * @param mixed $label
-     *
+     * @param string $label
      * @return Address
      */
     public function setLabel($label)
     {
         $this->label = $label;
+        return $this;
+    }
+
+    /**
+     * @return Customer
+     */
+    public function getCustomer()
+    {
+        return $this->customer;
+    }
+
+    /**
+     * @param Customer $customer
+     * @return Address
+     */
+    public function setCustomer($customer)
+    {
+        $this->customer = $customer;
         return $this;
     }
 
@@ -253,7 +276,6 @@ class Address extends BaseApiModel
 
     /**
      * @param CivilityTitle $civilityTitle
-     *
      * @return Address
      */
     public function setCivilityTitle($civilityTitle)
@@ -263,7 +285,7 @@ class Address extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getFirstName()
     {
@@ -271,8 +293,7 @@ class Address extends BaseApiModel
     }
 
     /**
-     * @param mixed $firstName
-     *
+     * @param string $firstName
      * @return Address
      */
     public function setFirstName($firstName)
@@ -282,7 +303,7 @@ class Address extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getLastName()
     {
@@ -290,8 +311,7 @@ class Address extends BaseApiModel
     }
 
     /**
-     * @param mixed $lastName
-     *
+     * @param string $lastName
      * @return Address
      */
     public function setLastName($lastName)
@@ -301,7 +321,7 @@ class Address extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getCellphoneNumber()
     {
@@ -309,8 +329,7 @@ class Address extends BaseApiModel
     }
 
     /**
-     * @param mixed $cellphoneNumber
-     *
+     * @param string $cellphoneNumber
      * @return Address
      */
     public function setCellphoneNumber($cellphoneNumber)
@@ -320,7 +339,7 @@ class Address extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getPhoneNumber()
     {
@@ -328,8 +347,7 @@ class Address extends BaseApiModel
     }
 
     /**
-     * @param mixed $phoneNumber
-     *
+     * @param string $phoneNumber
      * @return Address
      */
     public function setPhoneNumber($phoneNumber)
@@ -339,7 +357,7 @@ class Address extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getCompany()
     {
@@ -347,8 +365,7 @@ class Address extends BaseApiModel
     }
 
     /**
-     * @param mixed $company
-     *
+     * @param string $company
      * @return Address
      */
     public function setCompany($company)
@@ -358,7 +375,7 @@ class Address extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getAddress1()
     {
@@ -366,8 +383,7 @@ class Address extends BaseApiModel
     }
 
     /**
-     * @param mixed $address1
-     *
+     * @param string $address1
      * @return Address
      */
     public function setAddress1($address1)
@@ -377,7 +393,7 @@ class Address extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getAddress2()
     {
@@ -385,8 +401,7 @@ class Address extends BaseApiModel
     }
 
     /**
-     * @param mixed $address2
-     *
+     * @param string $address2
      * @return Address
      */
     public function setAddress2($address2)
@@ -396,7 +411,7 @@ class Address extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getAddress3()
     {
@@ -404,8 +419,7 @@ class Address extends BaseApiModel
     }
 
     /**
-     * @param mixed $address3
-     *
+     * @param string $address3
      * @return Address
      */
     public function setAddress3($address3)
@@ -415,7 +429,7 @@ class Address extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getZipCode()
     {
@@ -423,8 +437,7 @@ class Address extends BaseApiModel
     }
 
     /**
-     * @param mixed $zipCode
-     *
+     * @param string $zipCode
      * @return Address
      */
     public function setZipCode($zipCode)
@@ -434,7 +447,7 @@ class Address extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getCity()
     {
@@ -442,8 +455,7 @@ class Address extends BaseApiModel
     }
 
     /**
-     * @param mixed $city
-     *
+     * @param string $city
      * @return Address
      */
     public function setCity($city)
@@ -453,7 +465,7 @@ class Address extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getCountryCode()
     {
@@ -461,8 +473,7 @@ class Address extends BaseApiModel
     }
 
     /**
-     * @param mixed $countryCode
-     *
+     * @param string $countryCode
      * @return Address
      */
     public function setCountryCode($countryCode)
@@ -472,7 +483,7 @@ class Address extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return object
      */
     public function getAdditionalData()
     {
@@ -480,8 +491,7 @@ class Address extends BaseApiModel
     }
 
     /**
-     * @param mixed $additionalData
-     *
+     * @param object $additionalData
      * @return Address
      */
     public function setAdditionalData($additionalData)
@@ -490,33 +500,7 @@ class Address extends BaseApiModel
         return $this;
     }
 
-    /**
-     * @return Customer
-     */
-    public function getCustomer()
-    {
-        return $this->customer;
-    }
-
-    /**
-     * @param Customer|BaseApiModel $customer
-     * @return Address
-     */
-    public function setCustomer($customer)
-    {
-        $this->customer = $customer;
-        return $this;
-    }
-
     /** Thelia model creation functions */
-
-//    protected function getTheliaModel()
-//    {
-//        return parent::getTheliaModel();
-//        $this->getId() ? $address = AddressQuery::create()->findPk($this->getId()) : $address = new TheliaAddress();
-//
-//        return $address;
-//    }
 
     /**
      * @return int

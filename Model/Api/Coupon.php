@@ -17,6 +17,7 @@ use OpenApi\Constraint as Constraint;
 class Coupon extends BaseApiModel
 {
     /**
+     * @var integer
      * @OA\Property(
      *    type="integer",
      * )
@@ -25,6 +26,7 @@ class Coupon extends BaseApiModel
     protected $id;
 
     /**
+     * @var string
      * @OA\Property(
      *     type="string",
      * )
@@ -33,6 +35,7 @@ class Coupon extends BaseApiModel
     protected $code;
 
     /**
+     * @var float
      * @OA\Property(
      *    type="number",
      *    format="float",
@@ -42,7 +45,7 @@ class Coupon extends BaseApiModel
     protected $amount;
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getId()
     {
@@ -50,7 +53,7 @@ class Coupon extends BaseApiModel
     }
 
     /**
-     * @param mixed $id
+     * @param int $id
      * @return Coupon
      */
     public function setId($id)
@@ -60,7 +63,7 @@ class Coupon extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getCode()
     {
@@ -68,7 +71,7 @@ class Coupon extends BaseApiModel
     }
 
     /**
-     * @param mixed $code
+     * @param string $code
      * @return Coupon
      */
     public function setCode($code)
@@ -78,7 +81,7 @@ class Coupon extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return float
      */
     public function getAmount()
     {
@@ -86,7 +89,7 @@ class Coupon extends BaseApiModel
     }
 
     /**
-     * @param mixed $amount
+     * @param float $amount
      * @return Coupon
      */
     public function setAmount($amount)
@@ -94,6 +97,4 @@ class Coupon extends BaseApiModel
         $this->amount = $amount;
         return $this;
     }
-
-
 }

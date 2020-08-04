@@ -16,6 +16,7 @@ use OpenApi\Constraint as Constraint;
 class Cart extends BaseApiModel
 {
     /**
+     * @var integer
      * @OA\Property(
      *    type="integer",
      * )
@@ -24,6 +25,7 @@ class Cart extends BaseApiModel
     protected $id;
 
     /**
+     * @var float
      * @OA\Property(
      *    type="number",
      *    format="float",
@@ -33,6 +35,7 @@ class Cart extends BaseApiModel
     protected $taxes;
 
     /**
+     * @var float
      * @OA\Property(
      *    type="number",
      *    format="float",
@@ -43,6 +46,7 @@ class Cart extends BaseApiModel
     protected $delivery;
 
     /**
+     * @var array
      * @OA\Property(
      *    type="array",
      *     @OA\Items(
@@ -53,6 +57,7 @@ class Cart extends BaseApiModel
     protected $coupons;
 
     /**
+     * @var float
      * @OA\Property(
      *    type="number",
      *    format="float",
@@ -61,6 +66,7 @@ class Cart extends BaseApiModel
     protected $discount;
 
     /**
+     * @var float
      * @OA\Property(
      *    type="number",
      *    format="float",
@@ -70,6 +76,7 @@ class Cart extends BaseApiModel
     protected $total;
 
     /**
+     * @var string
      * @OA\Property(
      *     description="Symbol of the currently used currency",
      *     type="string",
@@ -79,6 +86,7 @@ class Cart extends BaseApiModel
     protected $currency;
 
     /**
+     * @var array
      * @OA\Property(
      *    type="array",
      *     @OA\Items(
@@ -111,7 +119,7 @@ class Cart extends BaseApiModel
 
                 return $cartItem;
             },
-            $cart->getCartItems()
+            iterator_to_array($cart->getCartItems())
         );
 
         $this
@@ -129,7 +137,7 @@ class Cart extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getId()
     {
@@ -137,7 +145,7 @@ class Cart extends BaseApiModel
     }
 
     /**
-     * @param mixed $id
+     * @param int $id
      * @return Cart
      */
     public function setId($id)
@@ -147,7 +155,7 @@ class Cart extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return float
      */
     public function getTaxes()
     {
@@ -155,7 +163,7 @@ class Cart extends BaseApiModel
     }
 
     /**
-     * @param mixed $taxes
+     * @param float $taxes
      * @return Cart
      */
     public function setTaxes($taxes)
@@ -165,7 +173,7 @@ class Cart extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return float
      */
     public function getDelivery()
     {
@@ -173,7 +181,7 @@ class Cart extends BaseApiModel
     }
 
     /**
-     * @param mixed $delivery
+     * @param float $delivery
      * @return Cart
      */
     public function setDelivery($delivery)
@@ -183,7 +191,7 @@ class Cart extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return array
      */
     public function getCoupons()
     {
@@ -191,7 +199,7 @@ class Cart extends BaseApiModel
     }
 
     /**
-     * @param mixed $coupons
+     * @param array $coupons
      * @return Cart
      */
     public function setCoupons($coupons)
@@ -201,7 +209,7 @@ class Cart extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return float
      */
     public function getDiscount()
     {
@@ -209,7 +217,7 @@ class Cart extends BaseApiModel
     }
 
     /**
-     * @param mixed $discount
+     * @param float $discount
      * @return Cart
      */
     public function setDiscount($discount)
@@ -219,7 +227,7 @@ class Cart extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return float
      */
     public function getTotal()
     {
@@ -227,7 +235,7 @@ class Cart extends BaseApiModel
     }
 
     /**
-     * @param mixed $total
+     * @param float $total
      * @return Cart
      */
     public function setTotal($total)
@@ -237,7 +245,7 @@ class Cart extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getCurrency()
     {
@@ -245,7 +253,7 @@ class Cart extends BaseApiModel
     }
 
     /**
-     * @param mixed $currency
+     * @param string $currency
      * @return Cart
      */
     public function setCurrency($currency)
@@ -255,7 +263,7 @@ class Cart extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return array
      */
     public function getItems()
     {
@@ -263,7 +271,7 @@ class Cart extends BaseApiModel
     }
 
     /**
-     * @param mixed $items
+     * @param array $items
      * @return Cart
      */
     public function setItems($items)
@@ -271,6 +279,4 @@ class Cart extends BaseApiModel
         $this->items = $items;
         return $this;
     }
-
-
 }

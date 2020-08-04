@@ -19,6 +19,7 @@ use OpenApi\Constraint as Constraint;
 class Product extends BaseApiModel
 {
     /**
+     * @var integer
      * @OA\Property(
      *    type="integer",
      * )
@@ -27,6 +28,7 @@ class Product extends BaseApiModel
     protected $id;
 
     /**
+     * @var string
      * @OA\Property(
      *     type="string",
      * )
@@ -34,6 +36,7 @@ class Product extends BaseApiModel
     protected $reference;
 
     /**
+     * @var string
      * @OA\Property(
      *     type="string",
      * )
@@ -41,6 +44,7 @@ class Product extends BaseApiModel
     protected $url;
 
     /**
+     * @var string
      * @OA\Property(
      *     type="string",
      * )
@@ -48,6 +52,7 @@ class Product extends BaseApiModel
     protected $title;
 
     /**
+     * @var array
      * @OA\Property(
      *    type="array",
      *     @OA\Items(
@@ -69,11 +74,14 @@ class Product extends BaseApiModel
     public function fillFromTheliaCartItemAndCountry(\Thelia\Model\CartItem $cartItem, Country $country)
     {
         $product = $cartItem->getProduct();
-        $images = [];
 
-        foreach ($product->getProductImages() as $productImage) {
-            $images[] = (new Image())->createFromTheliaImage($productImage, 'product');
-        }
+        $modelFactory = $this->modelFactory;
+        $images = array_map(
+            function ($productImage) use ($modelFactory) {
+                return $modelFactory->buildModel('Image', $productImage);
+            },
+            iterator_to_array($product->getProductImages())
+        );
 
         $this->id = $cartItem->getProductId();
         $this->reference = $product->getRef();
@@ -85,7 +93,7 @@ class Product extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getId()
     {
@@ -93,7 +101,7 @@ class Product extends BaseApiModel
     }
 
     /**
-     * @param mixed $id
+     * @param int $id
      * @return Product
      */
     public function setId($id)
@@ -103,7 +111,7 @@ class Product extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getReference()
     {
@@ -111,7 +119,7 @@ class Product extends BaseApiModel
     }
 
     /**
-     * @param mixed $reference
+     * @param string $reference
      * @return Product
      */
     public function setReference($reference)
@@ -121,7 +129,7 @@ class Product extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getUrl()
     {
@@ -129,7 +137,7 @@ class Product extends BaseApiModel
     }
 
     /**
-     * @param mixed $url
+     * @param string $url
      * @return Product
      */
     public function setUrl($url)
@@ -139,7 +147,7 @@ class Product extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getTitle()
     {
@@ -147,7 +155,7 @@ class Product extends BaseApiModel
     }
 
     /**
-     * @param mixed $title
+     * @param string $title
      * @return Product
      */
     public function setTitle($title)
@@ -157,7 +165,7 @@ class Product extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return array
      */
     public function getImages()
     {
@@ -165,10 +173,10 @@ class Product extends BaseApiModel
     }
 
     /**
-     * @param mixed $images
+     * @param array $images
      * @return Product
      */
-    public function setImage($images)
+    public function setImages($images)
     {
         $this->images = $images;
         return $this;

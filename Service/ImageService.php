@@ -91,7 +91,7 @@ class ImageService
                 $resizeMode = \Thelia\Action\Image::KEEP_IMAGE_RATIO;
         }
 
-        $event = $this->createImageEvent($imageModel->getFile(), $imageType);
+        $event = $this->createImageEvent($imageModel, $imageType);
         $event
             ->setAllowZoom($allowZoom)
             ->setResizeMode($resizeMode)
@@ -112,13 +112,18 @@ class ImageService
         return $event->getFileUrl();
     }
 
+    /**
+     * @param ProductImage|ContentImage|BrandImage|CategoryImage|FolderImage|ModuleImage $imageModel
+     * @param null $imageType
+     * @return ImageEvent
+     */
     protected function createImageEvent($imageModel, $imageType = null)
     {
         $imageEvent = new ImageEvent();
         $baseSourceFilePath = ConfigQuery::read('images_library_path');
 
         if (null === $imageType) {
-            $imageType = str_replace('image', '', strtolower(get_class($imageModel)));
+            $imageType = str_replace(array('image', 'thelia\\model\\'), '', strtolower(get_class($imageModel)));
         }
 
         if ($baseSourceFilePath === null) {
@@ -132,7 +137,7 @@ class ImageService
             '%s/%s/%s',
             $baseSourceFilePath,
             $imageType,
-            $imageModel
+            $imageModel->getFile()
         );
 
         $imageEvent->setSourceFilepath($sourceFilePath);

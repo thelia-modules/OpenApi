@@ -33,6 +33,7 @@ class Image extends BaseApiModel
     }
 
     /**
+     * @var string
      * @OA\Property(
      *     type="string",
      *     description="The image url",
@@ -41,6 +42,7 @@ class Image extends BaseApiModel
     protected $url;
 
     /**
+     * @var string
      * @OA\Property(
      *     type="string",
      * )
@@ -48,7 +50,9 @@ class Image extends BaseApiModel
     protected $title;
 
     /**
-     * @param ImageService $imageService
+     * @param $theliaModel
+     * @param null $locale
+     * @param null $type
      * @return $this
      */
     public function createFromTheliaModel($theliaModel, $locale = null, $type = null)
@@ -60,7 +64,25 @@ class Image extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return ImageService
+     */
+    public function getImageService()
+    {
+        return $this->imageService;
+    }
+
+    /**
+     * @param ImageService $imageService
+     * @return Image
+     */
+    public function setImageService($imageService)
+    {
+        $this->imageService = $imageService;
+        return $this;
+    }
+
+    /**
+     * @return string
      */
     public function getUrl()
     {
@@ -68,7 +90,7 @@ class Image extends BaseApiModel
     }
 
     /**
-     * @param mixed $url
+     * @param string $url
      * @return Image
      */
     public function setUrl($url)
@@ -78,7 +100,7 @@ class Image extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getTitle()
     {
@@ -86,7 +108,7 @@ class Image extends BaseApiModel
     }
 
     /**
-     * @param mixed $title
+     * @param string $title
      * @return Image
      */
     public function setTitle($title)
@@ -94,4 +116,6 @@ class Image extends BaseApiModel
         $this->title = $title;
         return $this;
     }
+
+
 }

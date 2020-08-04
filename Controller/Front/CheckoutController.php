@@ -49,15 +49,15 @@ class CheckoutController extends BaseFrontOpenApiController
      */
     public function setCheckout(Request $request)
     {
-        if ($this->getSecurityContext()->hasCustomerUser() === false) {
-            throw new \Exception(Translator::getInstance()->trans('You must be logged in to access this route', [], OpenApi::DOMAIN_NAME));
-        }
+        $this->getCurrentCustomer();
 
         $cart = $this->getSession()->getSessionCart($this->getDispatcher());
-        if ($cart === null || $cart->countCartItems() == 0) {
+        if ($cart === null || $cart->countCartItems() === 0) {
             throw new \Exception(Translator::getInstance()->trans('Cart is empty', [], OpenApi::DOMAIN_NAME));
         }
 
+        $test = $request->getContent();
+        $test2 = json_decode($test, true);
         /** @var Checkout $checkout */
         $checkout = $this->getModelFactory()->buildModel('Checkout', $request->getContent());
 
@@ -90,7 +90,8 @@ class CheckoutController extends BaseFrontOpenApiController
     {
         $order = $this->getOrder($request);
 
-        $checkout = $this->getModelFactory()->buildModel('Checkout')
+        /** @var Checkout $checkout */
+        $checkout = ($this->getModelFactory()->buildModel('Checkout'))
             ->createFormOrder($order);
 
         $checkout->setPickupAddress($request->getSession()->get(OpenApi::PICKUP_ADDRESS_SESSION_KEY));
@@ -104,6 +105,7 @@ class CheckoutController extends BaseFrontOpenApiController
         $deliveryAddress = AddressQuery::create()->findPk($checkout->getDeliveryAddressId());
         $deliveryModule = ModuleQuery::create()->findPk($checkout->getDeliveryModuleId());
 
+        /** In case of pickup point delivery, we cannot use a Thelia address since it won't exist, so we get one from the request */
         $pickupAddress = $checkout->getPickupAddress();
 
         if (null !== $deliveryAddress) {

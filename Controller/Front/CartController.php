@@ -49,12 +49,7 @@ class CartController extends BaseFrontOpenApiController
      */
     public function getCart(Request $request)
     {
-        $cart = $request->getSession()->getSessionCart();
-        if (null === $cart) {
-            throw new \Exception(Translator::getInstance()->trans('No cart found', [], OpenApi::DOMAIN_NAME));
-        }
-
-        return $this->createResponseFromCart($cart);
+        return $this->createResponseFromCart($request->getSession()->getSessionCart($this->getDispatcher()));
     }
 
     /**
@@ -141,7 +136,7 @@ class CartController extends BaseFrontOpenApiController
      */
     public function cartDeleteCartItem(Request $request, $cartItemId)
     {
-        $cart = $request->getSession()->getSessionCart();
+        $cart = $request->getSession()->getSessionCart($this->getDispatcher());
         if (null === $cart) {
             throw new \Exception(Translator::getInstance()->trans('No cart found', [], OpenApi::DOMAIN_NAME));
         }
@@ -204,38 +199,28 @@ class CartController extends BaseFrontOpenApiController
      */
     public function cartUpdateCartItem(Request $request, $cartItemId)
     {
-        try {
-            $cart = $request->getSession()->getSessionCart();
-            if (null === $cart) {
-                throw new \Exception(Translator::getInstance()->trans('No cart found', [], OpenApi::DOMAIN_NAME));
-            }
-
-            $cartItem = CartItemQuery::create()->filterById($cartItemId)->findOne();
-
-            if (null === $cartItem) {
-                throw new \Exception(Translator::getInstance()->trans("Modification impossible : this cart item does not exists.", [], OpenApi::DOMAIN_NAME));
-            }
-
-            /** Check if cart item belongs to user's cart */
-            if (!$cartItem || $cartItem->getCartId() !== $cart->getId()) {
-                throw new \Exception(Translator::getInstance()->trans("This cartItem doesn't belong to this cart.", [], OpenApi::DOMAIN_NAME));
-            }
-
-            $event = new CartEvent($cart);
-            $event->setCartItemId($cartItemId);
-            $this->updateCartEventFromJson($request->getContent(), $event);
-            $this->dispatch(TheliaEvents::CART_UPDATEITEM, $event);
-
-            return $this->createResponseFromCart($cart);
-        } catch (\Exception $exception) {
-            return new JsonResponse(
-                new Error(
-                    Translator::getInstance()->trans('Error while trying to retrieve customer cart', [], OpenApi::DOMAIN_NAME),
-                    $exception->getMessage()
-                ),
-                400
-            );
+        $cart = $request->getSession()->getSessionCart($this->getDispatcher());
+        if (null === $cart) {
+            throw new \Exception(Translator::getInstance()->trans('No cart found', [], OpenApi::DOMAIN_NAME));
         }
+
+        $cartItem = CartItemQuery::create()->filterById($cartItemId)->findOne();
+
+        if (null === $cartItem) {
+            throw new \Exception(Translator::getInstance()->trans("Modification impossible : this cart item does not exists.", [], OpenApi::DOMAIN_NAME));
+        }
+
+        /** Check if cart item belongs to user's cart */
+        if (!$cartItem || $cartItem->getCartId() !== $cart->getId()) {
+            throw new \Exception(Translator::getInstance()->trans("This cartItem doesn't belong to this cart.", [], OpenApi::DOMAIN_NAME));
+        }
+
+        $event = new CartEvent($cart);
+        $event->setCartItemId($cartItemId);
+        $this->updateCartEventFromJson($request->getContent(), $event);
+        $this->dispatch(TheliaEvents::CART_UPDATEITEM, $event);
+
+        return $this->createResponseFromCart($cart);
     }
 
     /**
@@ -296,7 +281,7 @@ class CartController extends BaseFrontOpenApiController
             throw new \Exception(Translator::getInstance()->trans('You need to set the append value in the POST request to add an item to the cart.'));
         }
 
-        $availableQuantity = \Thelia\Model\Base\ProductSaleElementsQuery::create()
+        $availableQuantity = ProductSaleElementsQuery::create()
             ->filterById($data['pseId'])
             ->findOne()
             ->getQuantity()
@@ -329,7 +314,7 @@ class CartController extends BaseFrontOpenApiController
             function ($coupon) use ($factory) {
                 return $factory->buildModel('Coupon', $coupon);
             },
-            $coupons
+            iterator_to_array($coupons)
         );
     }
 

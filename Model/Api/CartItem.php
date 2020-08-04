@@ -5,9 +5,7 @@ namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
 use OpenApi\Service\ImageService;
-use Thelia\Core\Translation\Translator;
 use Thelia\Model\Country;
-use Thelia\Model\ProductSaleElementsQuery;
 use \Thelia\Model\CartItem as TheliaCartItem;
 use OpenApi\Constraint as Constraint;
 
@@ -21,16 +19,18 @@ use OpenApi\Constraint as Constraint;
 class CartItem extends BaseApiModel
 {
     /**
+     * @var integer
      * @OA\Property(
      *    type="integer",
      *    description="cartItemId, not to be confused with the productId or pseId",
      * )
-     * @Constraint\NotBlank(groups={"read"})
+     * @Constraint\NotBlank(groups={"read, update"})
      */
     protected $id;
 
 
     /**
+     * @var boolean
      * @OA\Property(
      *    type="boolean",
      * )
@@ -38,6 +38,7 @@ class CartItem extends BaseApiModel
     protected $isPromo;
 
     /**
+     * @var Product
      * @OA\Property(
      *    type="object",
      *    ref="#/components/schemas/Product",
@@ -46,6 +47,7 @@ class CartItem extends BaseApiModel
     protected $product;
 
     /**
+     * @var ProductSaleElement
      * @OA\Property(
      *    type="object",
      *    ref="#/components/schemas/ProductSaleElement",
@@ -54,6 +56,7 @@ class CartItem extends BaseApiModel
     protected $productSaleElement;
 
     /**
+     * @var array
      * @OA\Property(
      *    description="The pse images if they're present, the product images otherwise",
      *    type="array",
@@ -65,6 +68,7 @@ class CartItem extends BaseApiModel
     protected $images;
 
     /**
+     * @var Price
      * @OA\Property(
      *    type="object",
      *    ref="#/components/schemas/Price",
@@ -73,6 +77,7 @@ class CartItem extends BaseApiModel
     protected $price;
 
     /**
+     * @var Price
      * @OA\Property(
      *    type="object",
      *    ref="#/components/schemas/Price"
@@ -81,6 +86,7 @@ class CartItem extends BaseApiModel
     protected $promoPrice;
 
     /**
+     * @var integer
      * @OA\Property(
      *    type="integer",
      * )
@@ -120,7 +126,7 @@ class CartItem extends BaseApiModel
             function ($productSaleElementsImage) use ($modelFactory) {
                 return $modelFactory->buildModel('Image', $productSaleElementsImage->getProductImage());
             },
-            $cartItem->getProductSaleElements()->getProductSaleElementsProductImages()
+            iterator_to_array($cartItem->getProductSaleElements()->getProductSaleElementsProductImages())
         );
 
         $this->images = !empty($images) ? $images : $this->product->getImages();
@@ -129,7 +135,7 @@ class CartItem extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getId()
     {
@@ -137,7 +143,7 @@ class CartItem extends BaseApiModel
     }
 
     /**
-     * @param mixed $id
+     * @param int $id
      * @return CartItem
      */
     public function setId($id)
@@ -147,87 +153,15 @@ class CartItem extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return bool
      */
-    public function getProduct()
-    {
-        return $this->product;
-    }
-
-    /**
-     * @param mixed $product
-     * @return CartItem
-     */
-    public function setProduct($product)
-    {
-        $this->product = $product;
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getProductSaleElement()
-    {
-        return $this->productSaleElement;
-    }
-
-    /**
-     * @param mixed $productSaleElement
-     * @return CartItem
-     */
-    public function setProductSaleElement($productSaleElement)
-    {
-        $this->productSaleElement = $productSaleElement;
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getImages()
-    {
-        return $this->images;
-    }
-
-    /**
-     * @param mixed $images
-     * @return CartItem
-     */
-    public function setImages($images)
-    {
-        $this->images = $images;
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getPrice()
-    {
-        return $this->price;
-    }
-
-    /**
-     * @param mixed $price
-     * @return CartItem
-     */
-    public function setPrice($price)
-    {
-        $this->price = $price;
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getIsPromo()
+    public function isPromo()
     {
         return $this->isPromo;
     }
 
     /**
-     * @param mixed $isPromo
+     * @param bool $isPromo
      * @return CartItem
      */
     public function setIsPromo($isPromo)
@@ -237,25 +171,79 @@ class CartItem extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return Product
      */
-    public function getQuantity()
+    public function getProduct()
     {
-        return $this->quantity;
+        return $this->product;
     }
 
     /**
-     * @param mixed $quantity
+     * @param Product $product
      * @return CartItem
      */
-    public function setQuantity($quantity)
+    public function setProduct($product)
     {
-        $this->quantity = $quantity;
+        $this->product = $product;
         return $this;
     }
 
     /**
-     * @return mixed
+     * @return ProductSaleElement
+     */
+    public function getProductSaleElement()
+    {
+        return $this->productSaleElement;
+    }
+
+    /**
+     * @param ProductSaleElement $productSaleElement
+     * @return CartItem
+     */
+    public function setProductSaleElement($productSaleElement)
+    {
+        $this->productSaleElement = $productSaleElement;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getImages()
+    {
+        return $this->images;
+    }
+
+    /**
+     * @param array $images
+     * @return CartItem
+     */
+    public function setImages($images)
+    {
+        $this->images = $images;
+        return $this;
+    }
+
+    /**
+     * @return Price
+     */
+    public function getPrice()
+    {
+        return $this->price;
+    }
+
+    /**
+     * @param Price $price
+     * @return CartItem
+     */
+    public function setPrice($price)
+    {
+        $this->price = $price;
+        return $this;
+    }
+
+    /**
+     * @return Price
      */
     public function getPromoPrice()
     {
@@ -263,12 +251,30 @@ class CartItem extends BaseApiModel
     }
 
     /**
-     * @param mixed $promoPrice
+     * @param Price $promoPrice
      * @return CartItem
      */
     public function setPromoPrice($promoPrice)
     {
         $this->promoPrice = $promoPrice;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getQuantity()
+    {
+        return $this->quantity;
+    }
+
+    /**
+     * @param int $quantity
+     * @return CartItem
+     */
+    public function setQuantity($quantity)
+    {
+        $this->quantity = $quantity;
         return $this;
     }
 }

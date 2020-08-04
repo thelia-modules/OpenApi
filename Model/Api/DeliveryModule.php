@@ -3,6 +3,7 @@
 namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
+use OpenApi\Exception\OpenApiException;
 use OpenApi\OpenApi;
 use Thelia\Core\Translation\Translator;
 use OpenApi\Constraint as Constraint;
@@ -17,64 +18,73 @@ use OpenApi\Constraint as Constraint;
 class DeliveryModule extends BaseApiModel
 {
     /**
-     *  @OA\Property(
-     *     type="string",
-     *     enum={"pickup", "delivery"}
-     *  )
+     * @var string
+     * @OA\Property(
+     *    type="string",
+     *    enum={"pickup", "delivery"}
+     * )
      */
     protected $deliveryMode;
 
     /**
-     *  @OA\Property(
-     *     type="integer"
-     *  )
+     * @var integer
+     * @OA\Property(
+     *    type="integer"
+     * )
      * @Constraint\NotBlank(groups={"read"})
      */
     protected $id;
 
     /**
-     *  @OA\Property(
-     *     type="boolean"
-     *  )
+     * @var boolean
+     * @OA\Property(
+     *    type="boolean"
+     * )
      */
     protected $valid;
 
     /**
-     *  @OA\Property(
-     *     type="string"
-     *  )
+     * @var string
+     * @OA\Property(
+     *    type="string"
+     * )
      */
     protected $code;
 
     /**
-     *  @OA\Property(
-     *     type="string"
-     *  )
+     * @var string
+     * @OA\Property(
+     *    type="string"
+     * )
      */
     protected $title;
 
     /**
-     *  @OA\Property(
-     *     type="string"
-     *  )
+     * @var string
+     * @OA\Property(
+     *    type="string"
+     * )
      */
     protected $description;
 
     /**
-     *  @OA\Property(
-     *     type="string"
-     *  )
+     * @var string
+     * @OA\Property(
+     *    type="string"
+     * )
      */
     protected $chapo;
 
     /**
-     *  @OA\Property(
-     *     type="string"
-     *  )
+     * @var string
+     * @OA\Property(
+     *    type="string"
+     * )
      */
     protected $postscriptum;
 
     /**
+     * @var array
      * @OA\Property(
      *    type="array",
      *     @OA\Items(
@@ -85,7 +95,7 @@ class DeliveryModule extends BaseApiModel
     protected $options;
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getDeliveryMode()
     {
@@ -93,7 +103,7 @@ class DeliveryModule extends BaseApiModel
     }
 
     /**
-     * @param mixed $deliveryMode
+     * @param string $deliveryMode
      *
      * @return DeliveryModule
      * @throws \Exception
@@ -101,15 +111,25 @@ class DeliveryModule extends BaseApiModel
     public function setDeliveryMode($deliveryMode)
     {
         if (!in_array($deliveryMode, ['pickup', 'delivery'])) {
-            throw new \Exception(Translator::getInstance()->trans('A delivery module can only be of type pickup or delivery', [], OpenApi::DOMAIN_NAME));
+            /** @var Error $error */
+            $error = $this->modelFactory->buildModel(
+                'Error',
+                [
+                    'title' => Translator::getInstance()->trans('Invalid data', [], OpenApi::DOMAIN_NAME),
+                    'description' => Translator::getInstance()->trans("Delivery mode can only be 'pickup' or 'delivery'", [], OpenApi::DOMAIN_NAME),
+                ]
+            );
+
+            throw new OpenApiException($error);
         }
 
         $this->deliveryMode = $deliveryMode;
+
         return $this;
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getId()
     {
@@ -117,8 +137,7 @@ class DeliveryModule extends BaseApiModel
     }
 
     /**
-     * @param mixed $id
-     *
+     * @param int $id
      * @return DeliveryModule
      */
     public function setId($id)
@@ -128,16 +147,15 @@ class DeliveryModule extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return bool
      */
-    public function getValid()
+    public function isValid()
     {
         return $this->valid;
     }
 
     /**
-     * @param mixed $valid
-     *
+     * @param bool $valid
      * @return DeliveryModule
      */
     public function setValid($valid)
@@ -147,7 +165,7 @@ class DeliveryModule extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getCode()
     {
@@ -155,8 +173,7 @@ class DeliveryModule extends BaseApiModel
     }
 
     /**
-     * @param mixed $code
-     *
+     * @param string $code
      * @return DeliveryModule
      */
     public function setCode($code)
@@ -166,7 +183,7 @@ class DeliveryModule extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getTitle()
     {
@@ -174,8 +191,7 @@ class DeliveryModule extends BaseApiModel
     }
 
     /**
-     * @param mixed $title
-     *
+     * @param string $title
      * @return DeliveryModule
      */
     public function setTitle($title)
@@ -185,7 +201,7 @@ class DeliveryModule extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getDescription()
     {
@@ -193,8 +209,7 @@ class DeliveryModule extends BaseApiModel
     }
 
     /**
-     * @param mixed $description
-     *
+     * @param string $description
      * @return DeliveryModule
      */
     public function setDescription($description)
@@ -204,7 +219,7 @@ class DeliveryModule extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getChapo()
     {
@@ -212,8 +227,7 @@ class DeliveryModule extends BaseApiModel
     }
 
     /**
-     * @param mixed $chapo
-     *
+     * @param string $chapo
      * @return DeliveryModule
      */
     public function setChapo($chapo)
@@ -223,7 +237,7 @@ class DeliveryModule extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getPostscriptum()
     {
@@ -231,8 +245,7 @@ class DeliveryModule extends BaseApiModel
     }
 
     /**
-     * @param mixed $postscriptum
-     *
+     * @param string $postscriptum
      * @return DeliveryModule
      */
     public function setPostscriptum($postscriptum)
@@ -242,7 +255,7 @@ class DeliveryModule extends BaseApiModel
     }
 
     /**
-     * @return mixed
+     * @return array
      */
     public function getOptions()
     {
@@ -250,7 +263,7 @@ class DeliveryModule extends BaseApiModel
     }
 
     /**
-     * @param mixed $options
+     * @param array $options
      * @return DeliveryModule
      */
     public function setOptions($options)

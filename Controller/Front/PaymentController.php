@@ -5,10 +5,8 @@ namespace OpenApi\Controller\Front;
 use OpenApi\Annotations as OA;
 use OpenApi\Model\Api\PaymentModule;
 use Symfony\Component\Routing\Annotation\Route;
-use Thelia\Controller\Front\BaseFrontController;
 use Thelia\Core\Event\Payment\IsValidPaymentEvent;
 use Thelia\Core\Event\TheliaEvents;
-use Thelia\Core\HttpFoundation\JsonResponse;
 use Thelia\Core\HttpFoundation\Request;
 use Thelia\Model\Cart;
 use Thelia\Model\Lang;
@@ -97,15 +95,13 @@ class PaymentController extends BaseFrontOpenApiController
             $isValidPaymentEvent
         );
 
-        return (new PaymentModule())
-            ->setValid($isValidPaymentEvent->isValidModule())
-            ->setId($paymentModule->getId())
-            ->setTitle($paymentModule->getTitle())
-            ->setDescription($paymentModule->getDescription())
-            ->setChapo($paymentModule->getChapo())
-            ->setPostscriptum($paymentModule->getPostscriptum())
+        /** @var PaymentModule $paymentModule */
+        $paymentModule = $this->getModelFactory()->buildModel('PaymentModule', $paymentModule);
+        $paymentModule->setValid($isValidPaymentEvent->isValidModule())
             ->setCode($moduleInstance->getCode())
             ->setMinimumAmount($isValidPaymentEvent->getMinimumAmount())
             ->setMaximumAmount($isValidPaymentEvent->getMaximumAmount());
+
+        return $paymentModule;
     }
 }

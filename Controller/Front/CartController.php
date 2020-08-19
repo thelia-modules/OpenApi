@@ -2,7 +2,6 @@
 
 namespace OpenApi\Controller\Front;
 
-use OpenApi\Model\Api\Error;
 use OpenApi\OpenApi;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Thelia\Core\Event\Cart\CartEvent;

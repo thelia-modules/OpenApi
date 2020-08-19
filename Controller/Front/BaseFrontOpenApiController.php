@@ -14,9 +14,6 @@ use Thelia\Core\Translation\Translator;
 
 abstract class BaseFrontOpenApiController extends BaseFrontController
 {
-    /** @var ModelFactory */
-    private $modelFactory;
-
     const GROUP_CREATE = 'create';
 
     const GROUP_READ = 'read';
@@ -24,6 +21,11 @@ abstract class BaseFrontOpenApiController extends BaseFrontController
     const GROUP_UPDATE = 'update';
 
     const GROUP_DELETE = 'delete';
+
+    /** @var ModelFactory */
+    private $modelFactory;
+
+    protected $requestData = null;
 
     public function __construct()
     {
@@ -37,6 +39,7 @@ abstract class BaseFrontOpenApiController extends BaseFrontController
 
         // Used to identify all routes as "OPEN API ROUTES" (e.g for json exception)
         $this->getRequest()->attributes->set(OpenApi::OPEN_API_ROUTE_REQUEST_KEY, true);
+        $this->requestData = json_decode($this->getRequest()->getContent(), true);
         $this->modelFactory = $container->get('open_api.model.factory');
     }
 
@@ -107,5 +110,14 @@ abstract class BaseFrontOpenApiController extends BaseFrontController
         }
 
         return $this->modelFactory;
+    }
+
+    protected function getRequestValue($key, $default = null)
+    {
+        if (!isset($this->requestData[$key]) || null === $this->requestData[$key]) {
+            return $default;
+        }
+
+        return $this->requestData[$key];
     }
 }

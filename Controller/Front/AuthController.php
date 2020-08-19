@@ -29,7 +29,7 @@ class AuthController extends BaseFrontOpenApiController
      *     path="/login",
      *     tags={"customer"},
      *     summary="Log in a customer",
-     *
+     *     security={},
      *     @OA\RequestBody(
      *         @OA\MediaType(
      *             mediaType="application/json",

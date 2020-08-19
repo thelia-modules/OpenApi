@@ -118,6 +118,7 @@ class CustomerController extends BaseFrontOpenApiController
             /** @var Customer $theliaCustomer */
             $theliaCustomer = $openApiCustomer->toTheliaModel();
             $theliaCustomer->setPassword($data['password'])->save();
+            $openApiCustomer->setId($theliaCustomer->getId());
 
             /** We must catch the validation exception if it is thrown to rollback the Propel transaction before throwing the exception again */
             /** @var OpenApiAddress $openApiAddress */
@@ -199,6 +200,8 @@ class CustomerController extends BaseFrontOpenApiController
         if (array_key_exists('password', $data) && null !== $newPassword = $data['password']) {
             $theliaCustomer->setPassword($newPassword);
         }
+        
+        $theliaCustomer->save();
 
         $this->getSecurityContext()->setCustomerUser($theliaCustomer);
 

@@ -16,17 +16,6 @@ use function OpenApi\scan;
 
 /**
  * @OA\Info(title="Thelia Open Api", version="0.1")
- * @OA\SecurityScheme(
- *          securityScheme="cookieAuth",
- *          type="apiKey",
- *          in="cookie",
- *          name="PHPSESSID"
- * )
- * @OA\OpenApi(
- *      security={
- *         {"cookieAuth": {}}
- *      }
- * )
  */
 class OpenApiController extends BaseFrontController
 {
@@ -37,14 +26,13 @@ class OpenApiController extends BaseFrontController
     {
         header("Access-Control-Allow-Origin: *");
 
-        $controllerApi = scan([__DIR__.'/../Controller', __DIR__.'/../Model']);
+        $annotations = scan([__DIR__.'/../Controller', __DIR__.'/../Model']);
+        $annotations = json_decode($annotations->toJson(), true);
 
-        $annotations = json_decode($controllerApi->toJson(), true);
-
-
+        $host = $this->getRequest()->getSchemeAndHttpHost();
         $annotations['servers'] = [
-            ["url" => "http://localhost:8080/open_api"],
-            ["url" => "http://localhost:8080/index_dev.php/open_api"]
+            ["url" => $host."/open_api"],
+            ["url" => $host."/index_dev.php/open_api"]
         ];
 
         return new JsonResponse($annotations);

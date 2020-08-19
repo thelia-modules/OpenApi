@@ -21,7 +21,7 @@ class Customer extends BaseApiModel
      * @OA\Property(
      *    type="integer",
      * )
-     * @Constraint\NotBlank(groups={"read", "update"})
+     * @Constraint\NotBlank(groups={"read"})
      */
     protected $id;
 

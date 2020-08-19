@@ -5,6 +5,7 @@ namespace OpenApi\Model\Api;
 use OpenApi\Exception\OpenApiException;
 use OpenApi\OpenApi;
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
+use Propel\Runtime\Collection\Collection;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
@@ -226,17 +227,24 @@ abstract class BaseApiModel implements \JsonSerializable
                     'get' . substr(get_class($theliaModel), strrpos(get_class($theliaModel), "\\") + 1) . $lowercaseProperty
                 ];
 
-                $availableMethods = array_intersect($theliaPossibleMethods, get_class_methods($theliaModel));
+                $availableMethods = array_filter(array_intersect($theliaPossibleMethods, get_class_methods($theliaModel)));
 
                 if (empty($availableMethods)) {
                     continue;
                 }
 
                 $theliaValue = null;
-                while (!empty($availableMethods) && $theliaValue === null) {
+                while (!empty($availableMethods) && ($theliaValue === null || empty($theliaValue))) {
                     $theliaMethod = array_pop($availableMethods);
 
                     $theliaValue = $theliaModel->$theliaMethod();
+
+                    if ($theliaValue instanceof  Collection) {
+                        $theliaValue = array_filter(array_map(function ($value) use ($property) {
+                            return $this->modelFactory->buildModel($property, $value);
+                        }, iterator_to_array($theliaValue)));
+                        continue;
+                    }
 
                     if (is_object($theliaValue) && $this->modelFactory->modelExists($property)) {
                         $theliaValue = $this->modelFactory->buildModel($property, $theliaValue);

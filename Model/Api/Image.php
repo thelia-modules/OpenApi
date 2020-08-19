@@ -33,6 +33,14 @@ class Image extends BaseApiModel
     }
 
     /**
+     * @var integer
+     * @OA\Property(
+     *     type="integer",
+     * )
+     */
+    protected $id;
+
+    /**
      * @var string
      * @OA\Property(
      *     type="string",
@@ -42,12 +50,53 @@ class Image extends BaseApiModel
     protected $url;
 
     /**
+     * @var integer
+     * @OA\Property(
+     *     type="integer",
+     * )
+     */
+    protected $position;
+
+
+    /**
+     * @var boolean
+     * @OA\Property(
+     *     type="boolean",
+     * )
+     */
+    protected $visible;
+
+    /**
      * @var string
      * @OA\Property(
      *     type="string",
      * )
      */
     protected $title;
+
+    /**
+     * @var string
+     * @OA\Property(
+     *     type="string",
+     * )
+     */
+    protected $description;
+
+    /**
+     * @var string
+     * @OA\Property(
+     *     type="string",
+     * )
+     */
+    protected $chapo;
+
+    /**
+     * @var string
+     * @OA\Property(
+     *     type="string",
+     * )
+     */
+    protected $postscriptum;
 
     /**
      * @param $theliaModel
@@ -64,20 +113,21 @@ class Image extends BaseApiModel
     }
 
     /**
-     * @return ImageService
+     * @return int
      */
-    public function getImageService()
+    public function getId()
     {
-        return $this->imageService;
+        return $this->id;
     }
 
     /**
-     * @param ImageService $imageService
+     * @param int $id
+     *
      * @return Image
      */
-    public function setImageService($imageService)
+    public function setId($id)
     {
-        $this->imageService = $imageService;
+        $this->id = $id;
         return $this;
     }
 
@@ -100,6 +150,44 @@ class Image extends BaseApiModel
     }
 
     /**
+     * @return int
+     */
+    public function getPosition()
+    {
+        return $this->position;
+    }
+
+    /**
+     * @param int $position
+     *
+     * @return Image
+     */
+    public function setPosition($position)
+    {
+        $this->position = $position;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isVisible()
+    {
+        return $this->visible;
+    }
+
+    /**
+     * @param bool $visible
+     *
+     * @return Image
+     */
+    public function setVisible($visible)
+    {
+        $this->visible = $visible;
+        return $this;
+    }
+
+    /**
      * @return string
      */
     public function getTitle()
@@ -114,6 +202,63 @@ class Image extends BaseApiModel
     public function setTitle($title)
     {
         $this->title = $title;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * @param string $description
+     *
+     * @return Image
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getChapo()
+    {
+        return $this->chapo;
+    }
+
+    /**
+     * @param string $chapo
+     *
+     * @return Image
+     */
+    public function setChapo($chapo)
+    {
+        $this->chapo = $chapo;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPostscriptum()
+    {
+        return $this->postscriptum;
+    }
+
+    /**
+     * @param string $postscriptum
+     *
+     * @return Image
+     */
+    public function setPostscriptum($postscriptum)
+    {
+        $this->postscriptum = $postscriptum;
         return $this;
     }
 

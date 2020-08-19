@@ -35,7 +35,7 @@ class Address extends BaseApiModel
      */
     protected $isDefault;
 
-    /***
+    /**
      * @var string
      * @OA\Property(
      *     type="string",

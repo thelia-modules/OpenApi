@@ -63,6 +63,30 @@ class Product extends BaseApiModel
     protected $images;
 
     /**
+     * @var string
+     * @OA\Property(
+     *     type="string",
+     * )
+     */
+    protected $description;
+
+    /**
+     * @var string
+     * @OA\Property(
+     *     type="string",
+     * )
+     */
+    protected $chapo;
+
+    /**
+     * @var string
+     * @OA\Property(
+     *     type="string",
+     * )
+     */
+    protected $postscriptum;
+
+    /**
      * Create an OpenApi Product from a Thelia CartItem and a Country
      *
      * @param \Thelia\Model\CartItem $cartItem
@@ -71,17 +95,22 @@ class Product extends BaseApiModel
      * @return $this
      * @throws \Propel\Runtime\Exception\PropelException
      */
-    public function fillFromTheliaCartItemAndCountry(\Thelia\Model\CartItem $cartItem, Country $country)
+    public function fillFromTheliaCartItemAndCountry(\Thelia\Model\CartItem $cartItem)
     {
         $product = $cartItem->getProduct();
 
         $modelFactory = $this->modelFactory;
-        $images = array_map(
-            function ($productImage) use ($modelFactory) {
-                return $modelFactory->buildModel('Image', $productImage);
-            },
-            iterator_to_array($product->getProductImages())
-        );
+
+        try {
+            $images = array_map(
+                function ($productImage) use ($modelFactory) {
+                    return $modelFactory->buildModel('Image', $productImage);
+                },
+                iterator_to_array($product->getProductImages())
+            );
+        } catch (\Exception $e) {
+            $images = [];
+        }
 
         $this->id = $cartItem->getProductId();
         $this->reference = $product->getRef();
@@ -161,6 +190,63 @@ class Product extends BaseApiModel
     public function setTitle($title)
     {
         $this->title = $title;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * @param string $description
+     *
+     * @return Product
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getChapo()
+    {
+        return $this->chapo;
+    }
+
+    /**
+     * @param string $chapo
+     *
+     * @return Product
+     */
+    public function setChapo($chapo)
+    {
+        $this->chapo = $chapo;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPostscriptum()
+    {
+        return $this->postscriptum;
+    }
+
+    /**
+     * @param string $postscriptum
+     *
+     * @return Product
+     */
+    public function setPostscriptum($postscriptum)
+    {
+        $this->postscriptum = $postscriptum;
         return $this;
     }
 

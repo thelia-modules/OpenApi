@@ -122,12 +122,17 @@ class CartItem extends BaseApiModel
 
         /** If there are PSE specific images, we use them. Otherwise, we just use the product images */
         $modelFactory = $this->modelFactory;
-        $images = array_map(
-            function ($productSaleElementsImage) use ($modelFactory) {
-                return $modelFactory->buildModel('Image', $productSaleElementsImage->getProductImage());
-            },
-            iterator_to_array($cartItem->getProductSaleElements()->getProductSaleElementsProductImages())
-        );
+
+        try {
+            $images = array_map(
+                function ($productSaleElementsImage) use ($modelFactory) {
+                    return $modelFactory->buildModel('Image', $productSaleElementsImage->getProductImage());
+                },
+                iterator_to_array($cartItem->getProductSaleElements()->getProductSaleElementsProductImages())
+            );
+        } catch (\Exception $exception) {
+            $images = [];
+        }
 
         $this->images = !empty($images) ? $images : $this->product->getImages();
 

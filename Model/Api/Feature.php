@@ -5,18 +5,16 @@ namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
 use OpenApi\Model\Api\ModelTrait\translatable;
-use Thelia\Model\AttributeAv;
-use Thelia\Model\AttributeCombination;
 use OpenApi\Constraint as Constraint;
 
 /**
- * Class Attribute
+ * Class Feature
  * @package OpenApi\Model\Api
  * @OA\Schema(
- *     description="An attribute"
+ *     description="A feature"
  * )
  */
-class Attribute extends BaseApiModel
+class Feature extends BaseApiModel
 {
     use translatable;
 
@@ -42,26 +40,6 @@ class Attribute extends BaseApiModel
      */
     protected $values;
 
-//    /**
-//     * Create an OpenApi attribute from a Thelia AttributeCombination, then returns it
-//     *
-//     * @param AttributeCombination $attributeCombination
-//     * @return $this
-//     * @throws \Propel\Runtime\Exception\PropelException
-//     */
-//    public function createFromTheliaModel($theliaModel, $locale = null)
-//    {
-//        parent::createFromTheliaModel($theliaModel, $locale = null);
-//
-//        $this->value = array_map(
-//            function (AttributeAv $attributeValue) {
-//                return $attributeValue->getTitle();
-//            },
-//            $theliaModel->getAttributeAv());
-//
-//        return $this;
-//    }
-
     /**
      * @return int
      */
@@ -72,7 +50,7 @@ class Attribute extends BaseApiModel
 
     /**
      * @param int $id
-     * @return Attribute
+     * @return Feature
      */
     public function setId($id)
     {
@@ -90,7 +68,7 @@ class Attribute extends BaseApiModel
 
     /**
      * @param array $values
-     * @return Attribute
+     * @return Feature
      */
     public function setValues($values)
     {

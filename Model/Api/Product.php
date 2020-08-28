@@ -1,9 +1,9 @@
 <?php
 
-
 namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
+use OpenApi\Model\Api\ModelTrait\translatable;
 use OpenApi\Service\ImageService;
 use Thelia\Model\Country;
 use Thelia\Model\ProductSaleElements;
@@ -18,6 +18,8 @@ use OpenApi\Constraint as Constraint;
  */
 class Product extends BaseApiModel
 {
+    use translatable;
+
     /**
      * @var integer
      * @OA\Property(
@@ -44,47 +46,102 @@ class Product extends BaseApiModel
     protected $url;
 
     /**
-     * @var string
+     * @var boolean
      * @OA\Property(
-     *     type="string",
+     *     type="boolean",
      * )
      */
-    protected $title;
+    protected $virtual;
+
+    /**
+     * @var boolean
+     * @OA\Property(
+     *     type="boolean",
+     * )
+     */
+    protected $visible;
+
+    /**
+     * @var Brand
+     * @OA\Property(
+     *     ref="#/components/schemas/Brand"
+     * )
+     */
+    protected $brand;
+
+    /**
+     * @var Category
+     * @OA\Property(
+     *     ref="#/components/schemas/Category"
+     * )
+     */
+    protected $defaultCategory;
+
+    /**
+     * @var Category
+     * @OA\Property(
+     *     type="array",
+     *     @OA\Items(
+     *          ref="#/components/schemas/Category"
+     *     )
+     * )
+     */
+    protected $categories;
+
+    /**
+     * @var Content
+     * @OA\Property(
+     *     type="array",
+     *     @OA\Items(
+     *          ref="#/components/schemas/Content"
+     *     )
+     * )
+     */
+    protected $contents;
 
     /**
      * @var array
      * @OA\Property(
      *    type="array",
      *     @OA\Items(
-     *          ref="#/components/schemas/Image"
+     *          ref="#/components/schemas/File"
      *     )
      * )
      */
     protected $images;
 
     /**
-     * @var string
+     * @var array
      * @OA\Property(
-     *     type="string",
+     *    type="array",
+     *     @OA\Items(
+     *          ref="#/components/schemas/File"
+     *     )
      * )
      */
-    protected $description;
+    protected $documents;
 
     /**
-     * @var string
+     * @var array
      * @OA\Property(
-     *     type="string",
+     *    type="array",
+     *     @OA\Items(
+     *          ref="#/components/schemas/Feature"
+     *     )
      * )
      */
-    protected $chapo;
+    protected $features;
 
     /**
-     * @var string
+     * @var array
      * @OA\Property(
-     *     type="string",
+     *    type="array",
+     *     @OA\Items(
+     *          ref="#/components/schemas/ProductSaleElement"
+     *     )
      * )
      */
-    protected $postscriptum;
+    protected $productSaleElements;
 
     /**
      * Create an OpenApi Product from a Thelia CartItem and a Country
@@ -115,7 +172,10 @@ class Product extends BaseApiModel
         $this->id = $cartItem->getProductId();
         $this->reference = $product->getRef();
         $this->url = $product->getUrl();
-        $this->title = $product->getTitle();
+
+        $i18n = $modelFactory
+            ->buildModel('I18n', $product);
+        $this->i18n = $i18n;
         $this->images = $images;
 
         return $this;
@@ -172,81 +232,6 @@ class Product extends BaseApiModel
     public function setUrl($url)
     {
         $this->url = $url;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getTitle()
-    {
-        return $this->title;
-    }
-
-    /**
-     * @param string $title
-     * @return Product
-     */
-    public function setTitle($title)
-    {
-        $this->title = $title;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDescription()
-    {
-        return $this->description;
-    }
-
-    /**
-     * @param string $description
-     *
-     * @return Product
-     */
-    public function setDescription($description)
-    {
-        $this->description = $description;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getChapo()
-    {
-        return $this->chapo;
-    }
-
-    /**
-     * @param string $chapo
-     *
-     * @return Product
-     */
-    public function setChapo($chapo)
-    {
-        $this->chapo = $chapo;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getPostscriptum()
-    {
-        return $this->postscriptum;
-    }
-
-    /**
-     * @param string $postscriptum
-     *
-     * @return Product
-     */
-    public function setPostscriptum($postscriptum)
-    {
-        $this->postscriptum = $postscriptum;
         return $this;
     }
 

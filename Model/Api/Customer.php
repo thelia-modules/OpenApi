@@ -61,7 +61,7 @@ class Customer extends BaseApiModel
      * )
      * @Constraint\NotBlank(groups={"create", "update"})
      */
-    protected $firstname;
+    protected $firstName;
 
     /**
      * @var string
@@ -70,7 +70,7 @@ class Customer extends BaseApiModel
      * )
      * @Constraint\NotBlank(groups={"create", "update"})
      */
-    protected $lastname;
+    protected $lastName;
 
     /**
      * @var string
@@ -183,36 +183,36 @@ class Customer extends BaseApiModel
     /**
      * @return string
      */
-    public function getFirstname()
+    public function getFirstName()
     {
-        return $this->firstname;
+        return $this->firstName;
     }
 
     /**
-     * @param string $firstname
+     * @param string $firstName
      * @return Customer
      */
-    public function setFirstname($firstname)
+    public function setFirstname($firstName)
     {
-        $this->firstname = $firstname;
+        $this->firstName = $firstName;
         return $this;
     }
 
     /**
      * @return string
      */
-    public function getLastname()
+    public function getLastName()
     {
-        return $this->lastname;
+        return $this->lastName;
     }
 
     /**
-     * @param string $lastname
+     * @param string $lastName
      * @return Customer
      */
-    public function setLastname($lastname)
+    public function setLastname($lastName)
     {
-        $this->lastname = $lastname;
+        $this->lastName = $lastName;
         return $this;
     }
 

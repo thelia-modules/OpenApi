@@ -99,6 +99,9 @@
             <tag name="open_api.model" alias="Language"/>
             <tag name="open_api.model" alias="Lang"/>
         </service>
+        <service id="open_api.model.i18n" class="OpenApi\Model\Api\I18n" parent="open_api.base.model"  shared="false">
+            <tag name="open_api.model" alias="I18n"/>
+        </service>
         <service id="open_api.model.price" class="OpenApi\Model\Api\Price" parent="open_api.base.model"  shared="false">
             <tag name="open_api.model" alias="Price"/>
         </service>
@@ -107,6 +110,20 @@
         </service>
         <service id="open_api.model.product_sale_element" class="OpenApi\Model\Api\ProductSaleElement" parent="open_api.base.model"  shared="false">
             <tag name="open_api.model" alias="ProductSaleElement"/>
+        </service>
+        <service id="open_api.model.attribute" class="OpenApi\Model\Api\Attribute" parent="open_api.base.model"  shared="false">
+            <tag name="open_api.model" alias="Attribute"/>
+        </service>
+        <service id="open_api.model.attribute_value" class="OpenApi\Model\Api\AttributeValue" parent="open_api.base.model"  shared="false">
+            <tag name="open_api.model" alias="AttributeValue"/>
+            <tag name="open_api.model" alias="AttributeAv"/>
+        </service>
+        <service id="open_api.model.feature" class="OpenApi\Model\Api\Feature" parent="open_api.base.model"  shared="false">
+            <tag name="open_api.model" alias="Feature"/>
+        </service>
+        <service id="open_api.model.feature_value" class="OpenApi\Model\Api\FeatureValue" parent="open_api.base.model"  shared="false">
+            <tag name="open_api.model" alias="FeatureValue"/>
+            <tag name="open_api.model" alias="FeatureAv"/>
         </service>
     </services>
     <!--

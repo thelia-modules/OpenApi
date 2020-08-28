@@ -61,7 +61,7 @@ class CartItem extends BaseApiModel
      *    description="The pse images if they're present, the product images otherwise",
      *    type="array",
      *     @OA\Items(
-     *          ref="#/components/schemas/Image"
+     *          ref="#/components/schemas/File"
      *     )
      * )
      */

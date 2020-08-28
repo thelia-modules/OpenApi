@@ -12,7 +12,6 @@ use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Thelia\Core\Translation\Translator;
-use Thelia\Model\AddressQuery;
 
 abstract class BaseApiModel implements \JsonSerializable
 {
@@ -32,6 +31,9 @@ abstract class BaseApiModel implements \JsonSerializable
 
         $this->modelFactory = $modelFactory;
         $this->locale = $requestStack->getCurrentRequest()->getSession()->getLang()->getLocale();
+        if (method_exists($this, 'initI18n')) {
+            $this->initI18n($modelFactory);
+        }
     }
 
     /**

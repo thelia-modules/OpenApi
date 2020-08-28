@@ -4,6 +4,7 @@ namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
 use OpenApi\Exception\OpenApiException;
+use OpenApi\Model\Api\ModelTrait\translatable;
 use OpenApi\OpenApi;
 use Thelia\Core\Translation\Translator;
 use OpenApi\Constraint as Constraint;
@@ -17,6 +18,8 @@ use OpenApi\Constraint as Constraint;
  */
 class DeliveryModule extends BaseApiModel
 {
+    use translatable;
+
     /**
      * @var string
      * @OA\Property(
@@ -50,38 +53,6 @@ class DeliveryModule extends BaseApiModel
      * )
      */
     protected $code;
-
-    /**
-     * @var string
-     * @OA\Property(
-     *    type="string"
-     * )
-     */
-    protected $title;
-
-    /**
-     * @var string
-     * @OA\Property(
-     *    type="string"
-     * )
-     */
-    protected $description;
-
-    /**
-     * @var string
-     * @OA\Property(
-     *    type="string"
-     * )
-     */
-    protected $chapo;
-
-    /**
-     * @var string
-     * @OA\Property(
-     *    type="string"
-     * )
-     */
-    protected $postscriptum;
 
     /**
      * @var array
@@ -179,78 +150,6 @@ class DeliveryModule extends BaseApiModel
     public function setCode($code)
     {
         $this->code = $code;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getTitle()
-    {
-        return $this->title;
-    }
-
-    /**
-     * @param string $title
-     * @return DeliveryModule
-     */
-    public function setTitle($title)
-    {
-        $this->title = $title;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDescription()
-    {
-        return $this->description;
-    }
-
-    /**
-     * @param string $description
-     * @return DeliveryModule
-     */
-    public function setDescription($description)
-    {
-        $this->description = $description;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getChapo()
-    {
-        return $this->chapo;
-    }
-
-    /**
-     * @param string $chapo
-     * @return DeliveryModule
-     */
-    public function setChapo($chapo)
-    {
-        $this->chapo = $chapo;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getPostscriptum()
-    {
-        return $this->postscriptum;
-    }
-
-    /**
-     * @param string $postscriptum
-     * @return DeliveryModule
-     */
-    public function setPostscriptum($postscriptum)
-    {
-        $this->postscriptum = $postscriptum;
         return $this;
     }
 

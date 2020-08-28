@@ -45,7 +45,7 @@ class ProductSaleElement extends BaseApiModel
     /**
      * @var array
      * @OA\Property(
-     *    description="List of the attributes used by this pse",
+     *    description="List of the attributes and its value used by this pse",
      *    type="array",
      *     @OA\Items(
      *          ref="#/components/schemas/Attribute"
@@ -53,6 +53,70 @@ class ProductSaleElement extends BaseApiModel
      * )
      */
     protected $attributes;
+
+    /**
+     * @var float
+     * @OA\Property(
+     *     type="number",
+     *     format="float"
+     * )
+     */
+    protected $quantity;
+
+    /**
+     * @var boolean
+     * @OA\Property(
+     *     type="boolean"
+     * )
+     */
+    protected $newness;
+
+    /**
+     * @var float
+     * @OA\Property(
+     *     type="number",
+     *     format="float"
+     * )
+     */
+    protected $weight;
+
+    /**
+     * @var boolean
+     * @OA\Property(
+     *     type="boolean"
+     * )
+     */
+    protected $isDefault;
+
+    /**
+     * @var string
+     * @OA\Property(
+     *     type="string"
+     * )
+     */
+    protected $ean;
+
+    /**
+     * @var array
+     * @OA\Property(
+     *    type="array",
+     *     @OA\Items(
+     *          ref="#/components/schemas/File"
+     *     )
+     * )
+     */
+    protected $images;
+
+    /**
+     * @var array
+     * @OA\Property(
+     *    type="array",
+     *     @OA\Items(
+     *          ref="#/components/schemas/File"
+     *     )
+     * )
+     */
+    protected $documents;
 
     /**
      * @var Price
@@ -119,6 +183,7 @@ class ProductSaleElement extends BaseApiModel
 
     /**
      * @param int $id
+     *
      * @return ProductSaleElement
      */
     public function setId($id)
@@ -137,6 +202,7 @@ class ProductSaleElement extends BaseApiModel
 
     /**
      * @param bool $isPromo
+     *
      * @return ProductSaleElement
      */
     public function setIsPromo($isPromo)
@@ -155,6 +221,7 @@ class ProductSaleElement extends BaseApiModel
 
     /**
      * @param string $reference
+     *
      * @return ProductSaleElement
      */
     public function setReference($reference)
@@ -173,11 +240,145 @@ class ProductSaleElement extends BaseApiModel
 
     /**
      * @param array $attributes
+     *
      * @return ProductSaleElement
      */
     public function setAttributes($attributes)
     {
         $this->attributes = $attributes;
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getQuantity()
+    {
+        return $this->quantity;
+    }
+
+    /**
+     * @param float $quantity
+     *
+     * @return ProductSaleElement
+     */
+    public function setQuantity($quantity)
+    {
+        $this->quantity = $quantity;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isNewness()
+    {
+        return $this->newness;
+    }
+
+    /**
+     * @param bool $newness
+     *
+     * @return ProductSaleElement
+     */
+    public function setNewness($newness)
+    {
+        $this->newness = $newness;
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getWeight()
+    {
+        return $this->weight;
+    }
+
+    /**
+     * @param float $weight
+     *
+     * @return ProductSaleElement
+     */
+    public function setWeight($weight)
+    {
+        $this->weight = $weight;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDefault()
+    {
+        return $this->isDefault;
+    }
+
+    /**
+     * @param bool $isDefault
+     *
+     * @return ProductSaleElement
+     */
+    public function setIsDefault($isDefault)
+    {
+        $this->isDefault = $isDefault;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEan()
+    {
+        return $this->ean;
+    }
+
+    /**
+     * @param string $ean
+     *
+     * @return ProductSaleElement
+     */
+    public function setEan($ean)
+    {
+        $this->ean = $ean;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getImages()
+    {
+        return $this->images;
+    }
+
+    /**
+     * @param array $images
+     *
+     * @return ProductSaleElement
+     */
+    public function setImages($images)
+    {
+        $this->images = $images;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getDocuments()
+    {
+        return $this->documents;
+    }
+
+    /**
+     * @param array $documents
+     *
+     * @return ProductSaleElement
+     */
+    public function setDocuments($documents)
+    {
+        $this->documents = $documents;
         return $this;
     }
 
@@ -191,6 +392,7 @@ class ProductSaleElement extends BaseApiModel
 
     /**
      * @param Price $price
+     *
      * @return ProductSaleElement
      */
     public function setPrice($price)
@@ -209,6 +411,7 @@ class ProductSaleElement extends BaseApiModel
 
     /**
      * @param Price $promoPrice
+     *
      * @return ProductSaleElement
      */
     public function setPromoPrice($promoPrice)

@@ -4,6 +4,7 @@ namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
 use OpenApi\Constraint as Constraint;
+use OpenApi\Model\Api\ModelTrait\translatable;
 
 /**
  * Class PaymentModule
@@ -14,6 +15,7 @@ use OpenApi\Constraint as Constraint;
  */
 class PaymentModule extends BaseApiModel
 {
+    use translatable;
     /**
      * @var integer
      * @OA\Property(
@@ -38,38 +40,6 @@ class PaymentModule extends BaseApiModel
      * )
      */
     protected $code;
-
-    /**
-     * @var string
-     * @OA\Property(
-     *    type="string"
-     * )
-     */
-    protected $title;
-
-    /**
-     * @var string
-     * @OA\Property(
-     *    type="string"
-     * )
-     */
-    protected $description;
-
-    /**
-     * @var string
-     * @OA\Property(
-     *    type="string"
-     * )
-     */
-    protected $chapo;
-
-    /**
-     * @var string
-     * @OA\Property(
-     *    type="string"
-     * )
-     */
-    protected $postscriptum;
 
     /**
      * @var float
@@ -149,78 +119,6 @@ class PaymentModule extends BaseApiModel
     public function setCode($code)
     {
         $this->code = $code;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getTitle()
-    {
-        return $this->title;
-    }
-
-    /**
-     * @param string $title
-     * @return PaymentModule
-     */
-    public function setTitle($title)
-    {
-        $this->title = $title;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDescription()
-    {
-        return $this->description;
-    }
-
-    /**
-     * @param string $description
-     * @return PaymentModule
-     */
-    public function setDescription($description)
-    {
-        $this->description = $description;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getChapo()
-    {
-        return $this->chapo;
-    }
-
-    /**
-     * @param string $chapo
-     * @return PaymentModule
-     */
-    public function setChapo($chapo)
-    {
-        $this->chapo = $chapo;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getPostscriptum()
-    {
-        return $this->postscriptum;
-    }
-
-    /**
-     * @param string $postscriptum
-     * @return PaymentModule
-     */
-    public function setPostscriptum($postscriptum)
-    {
-        $this->postscriptum = $postscriptum;
         return $this;
     }
 

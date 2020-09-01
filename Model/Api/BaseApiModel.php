@@ -220,16 +220,19 @@ abstract class BaseApiModel implements \JsonSerializable
                 $property = ucfirst(substr($modelMethod, 3));
                 $lowercaseProperty = ucfirst(strtolower($property));
 
-                $theliaPossibleMethods = [
-                    'get' . $property,
-                    'get' . $lowercaseProperty,
-                    'get' . $property . 'Model',
-                    'get' . $lowercaseProperty . 'Model',
-                    'get' . substr(get_class($theliaModel), strrpos(get_class($theliaModel), "\\") + 1) . $property,
-                    'get' . substr(get_class($theliaModel), strrpos(get_class($theliaModel), "\\") + 1) . $lowercaseProperty
+                // List all possible getters for this property in propel
+                $propelPossibleMethods = [                                                                                                       //  EXAMPLE :
+                    'get' . $property,                                                                                                           //  getProductSaleElements
+                    'get' . $property.'s',                                                                                                       //  getProductSaleElementss
+                    'get' . $lowercaseProperty,                                                                                                  //  getProductsaleelements
+                    'get' . $lowercaseProperty.'s',                                                                                              //  getProductsaleelementss
+                    'get' . $property . 'Model',                                                                                                 //  getProductSaleElementsModel
+                    'get' . $lowercaseProperty . 'Model',                                                                                        //  getProductsaleelementsModel
+                    'get' . substr(get_class($theliaModel), strrpos(get_class($theliaModel), "\\") + 1) . $property,                //  getCartProductSaleElements
+                    'get' . substr(get_class($theliaModel), strrpos(get_class($theliaModel), "\\") + 1) . $lowercaseProperty        //  getCartProductsaleelements
                 ];
 
-                $availableMethods = array_filter(array_intersect($theliaPossibleMethods, get_class_methods($theliaModel)));
+                $availableMethods = array_filter(array_intersect($propelPossibleMethods, get_class_methods($theliaModel)));
 
                 if (empty($availableMethods)) {
                     continue;

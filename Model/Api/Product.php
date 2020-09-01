@@ -252,4 +252,23 @@ class Product extends BaseApiModel
         $this->images = $images;
         return $this;
     }
+
+    /**
+     * @return array
+     */
+    public function getProductSaleElements()
+    {
+        return $this->productSaleElements;
+    }
+
+    /**
+     * @param array $productSaleElements
+     *
+     * @return Product
+     */
+    public function setProductSaleElements($productSaleElements)
+    {
+        $this->productSaleElements = $productSaleElements;
+        return $this;
+    }
 }

@@ -110,6 +110,7 @@
         </service>
         <service id="open_api.model.product_sale_element" class="OpenApi\Model\Api\ProductSaleElement" parent="open_api.base.model"  shared="false">
             <tag name="open_api.model" alias="ProductSaleElement"/>
+            <tag name="open_api.model" alias="ProductSaleElements"/>
         </service>
         <service id="open_api.model.attribute" class="OpenApi\Model\Api\Attribute" parent="open_api.base.model"  shared="false">
             <tag name="open_api.model" alias="Attribute"/>

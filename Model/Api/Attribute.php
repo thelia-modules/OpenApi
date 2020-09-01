@@ -97,4 +97,15 @@ class Attribute extends BaseApiModel
         $this->values = $values;
         return $this;
     }
+
+    /**
+     * "setValues" alias to fit Thelia model
+     *
+     * @param array $values
+     * @return Attribute
+     */
+    public function setAttributeAvs($values)
+    {
+        return $this->setValues($values);
+    }
 }

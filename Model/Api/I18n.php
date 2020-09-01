@@ -2,6 +2,8 @@
 
 namespace OpenApi\Model\Api;
 
+use OpenApi\Annotations as OA;
+
 /**
  * Class I18n
  * @package OpenApi\Model\Api

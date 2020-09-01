@@ -26,7 +26,7 @@ class OpenApiController extends BaseFrontController
     {
         header("Access-Control-Allow-Origin: *");
 
-        $annotations = scan([__DIR__.'/../Controller', __DIR__.'/../Model']);
+        $annotations = scan([ __DIR__.'/../Model', THELIA_MODULE_DIR.'/*/Controller']);
         $annotations = json_decode($annotations->toJson(), true);
 
         $host = $this->getRequest()->getSchemeAndHttpHost();

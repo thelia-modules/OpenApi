@@ -5,6 +5,7 @@ namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
 use Thelia\Model\Country;
+use Thelia\Model\ProductPriceQuery;
 use Thelia\Model\ProductSaleElements;
 use OpenApi\Constraint as Constraint;
 
@@ -135,6 +136,15 @@ class ProductSaleElement extends BaseApiModel
      * )
      */
     protected $promoPrice;
+
+    public function createFromTheliaModel($theliaModel, $locale = null)
+    {
+        $price = ProductPriceQuery::create()->filterByProductSaleElements($theliaModel)->findOne();
+        $theliaModel->setVirtualColumn('price_PRICE', (float)$price->getPrice());
+        $theliaModel->setVirtualColumn('price_PROMO_PRICE', (float)$price->getPromoPrice());
+
+        parent::createFromTheliaModel($theliaModel, $locale);
+    }
 
     /**
      * Create an OpenApi ProductSaleElement from a Thelia ProductSaleElements and a Country, then returns it

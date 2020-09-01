@@ -137,6 +137,13 @@ class ProductSaleElement extends BaseApiModel
      */
     protected $promoPrice;
 
+    /**
+     * @param ProductSaleElements $theliaModel
+     * @param null $locale
+     *
+     * @return ProductSaleElement|void
+     * @throws \Propel\Runtime\Exception\PropelException
+     */
     public function createFromTheliaModel($theliaModel, $locale = null)
     {
         $price = ProductPriceQuery::create()->filterByProductSaleElements($theliaModel)->findOne();
@@ -144,6 +151,12 @@ class ProductSaleElement extends BaseApiModel
         $theliaModel->setVirtualColumn('price_PROMO_PRICE', (float)$price->getPromoPrice());
 
         parent::createFromTheliaModel($theliaModel, $locale);
+
+        $theliaModel->getAttributeCombinations()
+
+        $this->isPromo = (bool)$theliaModel->getPromo();
+        $this->price = $this->modelFactory->buildModel('Price', ['untaxed' => $theliaModel->getPrice(), 'taxed' => $theliaModel->getTaxedPrice($this->country)]);;
+        $this->promoPrice = $this->modelFactory->buildModel('Price', ['untaxed' => $theliaModel->getPromoPrice(), 'taxed' => $theliaModel->getTaxedPromoPrice($this->country)]);;
     }
 
     /**
@@ -238,6 +251,17 @@ class ProductSaleElement extends BaseApiModel
     {
         $this->reference = $reference;
         return $this;
+    }
+
+
+    /**
+     * @param $reference
+     *
+     * @return $this
+     */
+    public function setRef($reference)
+    {
+        return $this->setReference($reference);
     }
 
     /**
@@ -352,6 +376,16 @@ class ProductSaleElement extends BaseApiModel
     {
         $this->ean = $ean;
         return $this;
+    }
+
+    /**
+     * @param string $ean
+     *
+     * @return ProductSaleElement
+     */
+    public function setEanCode($ean)
+    {
+        return $this->setEan($ean);
     }
 
     /**

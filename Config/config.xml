@@ -52,6 +52,7 @@
         <service id="open_api.base.model" abstract="true">
             <argument type="service" id="open_api.model.factory"/>
             <argument type="service" id="request_stack"/>
+            <argument type="service" id="thelia.taxEngine"/>
         </service>
         <service id="open_api.model.address" class="OpenApi\Model\Api\Address" parent="open_api.base.model"  shared="false">
             <tag name="open_api.model" alias="Address"/>

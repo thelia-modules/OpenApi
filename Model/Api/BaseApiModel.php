@@ -12,6 +12,7 @@ use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Thelia\Core\Translation\Translator;
+use Thelia\TaxEngine\TaxEngine;
 
 abstract class BaseApiModel implements \JsonSerializable
 {
@@ -23,14 +24,18 @@ abstract class BaseApiModel implements \JsonSerializable
 
     protected $locale;
 
-    public function __construct(ModelFactory $modelFactory, RequestStack $requestStack)
+    protected $country;
+
+    public function __construct(ModelFactory $modelFactory, RequestStack $requestStack, TaxEngine $taxEngine)
     {
         $this->validator = Validation::createValidatorBuilder()
             ->enableAnnotationMapping()
             ->getValidator();
 
         $this->modelFactory = $modelFactory;
-        $this->locale = $requestStack->getCurrentRequest()->getSession()->getLang()->getLocale();
+        $this->locale = $requestStack->getCurrentRequest()->getSession()->getLang(true)->getLocale();
+        $this->country = $taxEngine->getDeliveryCountry();
+
         if (method_exists($this, 'initI18n')) {
             $this->initI18n($modelFactory);
         }

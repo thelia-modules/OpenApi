@@ -152,8 +152,6 @@ class ProductSaleElement extends BaseApiModel
 
         parent::createFromTheliaModel($theliaModel, $locale);
 
-        $theliaModel->getAttributeCombinations()
-
         $this->isPromo = (bool)$theliaModel->getPromo();
         $this->price = $this->modelFactory->buildModel('Price', ['untaxed' => $theliaModel->getPrice(), 'taxed' => $theliaModel->getTaxedPrice($this->country)]);;
         $this->promoPrice = $this->modelFactory->buildModel('Price', ['untaxed' => $theliaModel->getPromoPrice(), 'taxed' => $theliaModel->getTaxedPromoPrice($this->country)]);;

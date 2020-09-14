@@ -30,13 +30,11 @@ class Attribute extends BaseApiModel
     protected $id;
 
     /**
-     * @var array
+     * @var AttributeValue[]
      * @OA\Property(
      *     type="array",
      *     @OA\Items(
-     *         @OA\Property(
-     *             type="string",
-     *         )
+     *        ref="#/components/schemas/AttributeValue"
      *     )
      * )
      */

@@ -53,6 +53,7 @@
             <argument type="service" id="open_api.model.factory"/>
             <argument type="service" id="request_stack"/>
             <argument type="service" id="thelia.taxEngine"/>
+            <argument type="service" id="event_dispatcher"/>
         </service>
         <service id="open_api.model.address" class="OpenApi\Model\Api\Address" parent="open_api.base.model"  shared="false">
             <tag name="open_api.model" alias="Address"/>
@@ -122,6 +123,9 @@
         </service>
         <service id="open_api.model.feature" class="OpenApi\Model\Api\Feature" parent="open_api.base.model"  shared="false">
             <tag name="open_api.model" alias="Feature"/>
+        </service>
+        <service id="open_api.model.category" class="OpenApi\Model\Api\Category" parent="open_api.base.model"  shared="false">
+            <tag name="open_api.model" alias="Category"/>
         </service>
         <service id="open_api.model.feature_value" class="OpenApi\Model\Api\FeatureValue" parent="open_api.base.model"  shared="false">
             <tag name="open_api.model" alias="FeatureValue"/>

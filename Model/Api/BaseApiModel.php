@@ -2,10 +2,13 @@
 
 namespace OpenApi\Model\Api;
 
+use OpenApi\Events\ModelExtendDataEvent;
 use OpenApi\Exception\OpenApiException;
+use OpenApi\Normalizer\ModelApiNormalizer;
 use OpenApi\OpenApi;
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Collection\Collection;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
@@ -26,8 +29,13 @@ abstract class BaseApiModel implements \JsonSerializable
 
     protected $country;
 
-    public function __construct(ModelFactory $modelFactory, RequestStack $requestStack, TaxEngine $taxEngine)
+    protected $extendedData;
+
+    protected $dispatcher;
+
+    public function __construct(ModelFactory $modelFactory, RequestStack $requestStack, TaxEngine $taxEngine, EventDispatcher $dispatcher)
     {
+        $this->dispatcher = $dispatcher;
         $this->validator = Validation::createValidatorBuilder()
             ->enableAnnotationMapping()
             ->getValidator();
@@ -94,14 +102,19 @@ abstract class BaseApiModel implements \JsonSerializable
 
     public function jsonSerialize()
     {
-        $normalizer = new ObjectNormalizer();
+        $normalizer = new ModelApiNormalizer();
         $serializer = new Serializer([$normalizer]);
 
         return $serializer->normalize($this, null);
     }
 
+
     public function createOrUpdateFromData($data, $locale = null)
     {
+        if (null === $locale) {
+            $locale = $this->locale;
+        }
+
         if (is_object($data)) {
             $this->createFromTheliaModel($data, $locale);
         }
@@ -128,7 +141,17 @@ abstract class BaseApiModel implements \JsonSerializable
             }
         }
 
-        return $this;
+        $modelExtendEvent = (new ModelExtendDataEvent())
+            ->setData($data)
+            ->setLocale($locale)
+            ->setModel($this);
+
+        $this->dispatcher->dispatch(
+            ModelExtendDataEvent::ADD_EXTEND_DATA_PREFIX.$this->snakeCaseName(),
+            $modelExtendEvent
+        );
+
+        $this->setExtendData($modelExtendEvent->getExtendData());
     }
 
     /**
@@ -266,5 +289,30 @@ abstract class BaseApiModel implements \JsonSerializable
         }
 
         return $this;
+    }
+
+    public function setExtendData($extendedData)
+    {
+        $this->extendedData = $extendedData;
+
+        return $this;
+    }
+
+    public function extendedDataValue()
+    {
+        return $this->extendedData;
+    }
+
+    protected function snakeCaseName()
+    {
+        $name = basename(str_replace('\\', '/', get_class($this)));
+
+        preg_match_all('!([A-Z][A-Z0-9]*(?=$|[A-Z][a-z0-9])|[A-Za-z][a-z0-9]+)!', $name, $matches);
+        $ret = $matches[0];
+        foreach ($ret as &$match) {
+            $match = $match == strtoupper($match) ? strtolower($match) : lcfirst($match);
+        }
+
+        return implode('_', $ret);
     }
 }

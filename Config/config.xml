@@ -131,6 +131,12 @@
             <tag name="open_api.model" alias="FeatureValue"/>
             <tag name="open_api.model" alias="FeatureAv"/>
         </service>
+        <service id="open_api.model.search" class="OpenApi\Model\Api\Search" parent="open_api.base.model"  shared="false">
+            <tag name="open_api.model" alias="Search"/>
+        </service>
+        <service id="open_api.model.result" class="OpenApi\Model\Api\Result" parent="open_api.base.model"  shared="false">
+            <tag name="open_api.model" alias="Result"/>
+        </service>
     </services>
     <!--
     <hooks>

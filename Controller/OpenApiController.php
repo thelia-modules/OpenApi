@@ -92,6 +92,9 @@ class OpenApiController extends BaseFrontController
             new CustomerLoginEvent($customer)
         );
 
-        return new JsonResponse("success", 200);
+        return $this->render('swagger-ui', [
+            'spec' => json_encode($annotations)
+        ]);
+
     }
 }

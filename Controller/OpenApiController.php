@@ -50,7 +50,9 @@ class OpenApiController extends BaseFrontController
             ["url" => $host."/index_dev.php/open_api"]
         ];
 
-        return new JsonResponse($annotations);
+        return $this->render('swagger-ui', [
+            'spec' => json_encode($annotations)
+        ]);
 
     }
 }

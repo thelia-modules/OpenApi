@@ -82,7 +82,19 @@ class CartController extends BaseFrontOpenApiController
      *     @OA\Response(
      *          response="200",
      *          description="Success",
-     *          @OA\JsonContent(ref="#/components/schemas/Cart")
+     *          @OA\JsonContent(
+     *              @OA\Items(
+     *                 type="object",
+     *                 @OA\Property(
+     *                     property="cart",
+     *                     ref="#/components/schemas/Cart"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="cartItem",
+     *                     ref="#/components/schemas/CartItem"
+     *                 )
+     *              )
+     *          )
      *     ),
      *     @OA\Response(
      *          response="400",
@@ -103,7 +115,10 @@ class CartController extends BaseFrontOpenApiController
         $this->updateCartEventFromJson($request->getContent(), $event);
         $this->getDispatcher()->dispatch(TheliaEvents::CART_ADDITEM, $event);
 
-        return $this->createResponseFromCart($cart);
+        return $this->jsonResponse([
+            'cart' => $this->getCurrentOpenApiCart($cart),
+            'cartItem' => $this->getModelFactory()->buildModel('CartItem', $event->getCartItem())
+        ]);
     }
 
     /**
@@ -124,7 +139,19 @@ class CartController extends BaseFrontOpenApiController
      *     @OA\Response(
      *          response="200",
      *          description="Success",
-     *          @OA\JsonContent(ref="#/components/schemas/Cart")
+     *          @OA\JsonContent(
+     *              @OA\Items(
+     *                 type="object",
+     *                 @OA\Property(
+     *                     property="cart",
+     *                     ref="#/components/schemas/Cart"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="cartItem",
+     *                     ref="#/components/schemas/CartItem"
+     *                 )
+     *              )
+     *          )
      *     ),
      *     @OA\Response(
      *          response="400",
@@ -219,7 +246,10 @@ class CartController extends BaseFrontOpenApiController
         $this->updateCartEventFromJson($request->getContent(), $event);
         $this->dispatch(TheliaEvents::CART_UPDATEITEM, $event);
 
-        return $this->createResponseFromCart($cart);
+        return $this->jsonResponse([
+            'cart' => $this->getCurrentOpenApiCart($cart),
+            'cartItem' => $this->getModelFactory()->buildModel('CartItem', $event->getCartItem())
+        ]);
     }
 
     /**
@@ -230,6 +260,11 @@ class CartController extends BaseFrontOpenApiController
      * @throws \Propel\Runtime\Exception\PropelException
      */
     protected function createResponseFromCart(Cart $cart)
+    {
+        return $this->jsonResponse($this->getCurrentOpenApiCart($cart));
+    }
+
+    protected function getCurrentOpenApiCart($cart)
     {
         $currentDeliveryCountry = $this->container->get('thelia.taxEngine')->getDeliveryCountry();
         $estimatedPostage = $this->getEstimatedPostageForCountry($cart, $currentDeliveryCountry);
@@ -244,7 +279,7 @@ class CartController extends BaseFrontOpenApiController
             $estimatedPostage
         );
 
-        return $this->jsonResponse($openApiCart);
+        return $openApiCart;
     }
 
     /**

@@ -6,6 +6,7 @@ namespace OpenApi\Model\Api;
 use OpenApi\Annotations as OA;
 use OpenApi\Model\Api\ModelTrait\translatable;
 use Thelia\Model\AttributeAv;
+use Thelia\Model\AttributeAvQuery;
 use Thelia\Model\AttributeCombination;
 use OpenApi\Constraint as Constraint;
 
@@ -40,25 +41,32 @@ class Attribute extends BaseApiModel
      */
     protected $values;
 
-//    /**
-//     * Create an OpenApi attribute from a Thelia AttributeCombination, then returns it
-//     *
-//     * @param AttributeCombination $attributeCombination
-//     * @return $this
-//     * @throws \Propel\Runtime\Exception\PropelException
-//     */
-//    public function createFromTheliaModel($theliaModel, $locale = null)
-//    {
-//        parent::createFromTheliaModel($theliaModel, $locale = null);
-//
-//        $this->value = array_map(
-//            function (AttributeAv $attributeValue) {
-//                return $attributeValue->getTitle();
-//            },
-//            $theliaModel->getAttributeAv());
-//
-//        return $this;
-//    }
+    /**
+     * Create an OpenApi attribute from a Thelia AttributeCombination, then returns it
+     *
+     * @param AttributeCombination $attributeCombination
+     * @return $this
+     * @throws \Propel\Runtime\Exception\PropelException
+     */
+    public function createFromTheliaModel($theliaModel, $locale = null)
+    {
+        parent::createFromTheliaModel($theliaModel, $locale = null);
+
+        $attributeAvs = AttributeAvQuery::create()->filterByAttributeId($this->id)->find();
+
+        $x = 0;
+        $values = [];
+        /** @var AttributeAv $attributeAv */
+        foreach ($attributeAvs as $attributeAv) {
+            $values[$x] = $this->modelFactory->buildModel('AttributeValue');
+            $values[$x]->fillFromTheliaAttributeAv($attributeAv);
+            $x++;
+        }
+
+        $this->values = $values;
+
+        return $this;
+    }
 
     /**
      * @return int
@@ -94,6 +102,17 @@ class Attribute extends BaseApiModel
     {
         $this->values = $values;
         return $this;
+    }
+
+    /**
+     * "setAttributeId" alias to fit Thelia model
+
+     * @param int $id
+     * @return Attribute
+     */
+    public function setAttributeId($id)
+    {
+        return $this->setId($id);
     }
 
     /**

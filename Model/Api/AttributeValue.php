@@ -3,6 +3,8 @@
 namespace OpenApi\Model\Api;
 
 use OpenApi\Model\Api\ModelTrait\translatable;
+use Thelia\Model\AttributeAv;
+use Thelia\Model\Base\AttributeAvQuery;
 
 /**
  * Class AttributeValue
@@ -25,6 +27,21 @@ class AttributeValue extends BaseApiModel
     protected $id;
 
     /**
+     * @param AttributeAv $attributeAv
+     * @return $this
+     */
+    public function fillFromTheliaAttributeAv(AttributeAv $attributeAv)
+    {
+        $this->id = $attributeAv->getId();
+        $this->setTitle($attributeAv->setLocale($this->locale)->getTitle());
+        $this->setDescription($attributeAv->setLocale($this->locale)->getDescription());
+        $this->setChapo($attributeAv->setLocale($this->locale)->getChapo());
+        $this->setPostscriptum($attributeAv->setLocale($this->locale)->getPostscriptum());
+
+        return $this;
+    }
+
+    /**
      * @return int
      */
     public function getId()
@@ -41,5 +58,17 @@ class AttributeValue extends BaseApiModel
     {
         $this->id = $id;
         return $this;
+    }
+
+
+    /**
+     * "setAttributeId" alias to fit Thelia model
+
+     * @param int $id
+     * @return AttributeValue
+     */
+    public function setAttributeId($id)
+    {
+        return $this->setId($id);
     }
 }

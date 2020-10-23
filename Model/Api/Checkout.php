@@ -76,7 +76,7 @@ class Checkout extends BaseApiModel
         return $this;
     }
 
-    public function createFormOrder(Order $order)
+    public function createFromOrder(Order $order)
     {
         $this->setDeliveryAddressId($order->getChoosenDeliveryAddress());
         $this->setBillingAddressId($order->getChoosenInvoiceAddress());

@@ -507,7 +507,8 @@ class Address extends BaseApiModel
      */
     public function getTitleId()
     {
-        return $this->getCivilityTitle()->getId();
+        $civilityTitle = $this->getCivilityTitle();
+        return null !== $civilityTitle ? $civilityTitle->getId() : null;
     }
 
     /**
@@ -515,12 +516,14 @@ class Address extends BaseApiModel
      */
     public function getCustomerId()
     {
-        return $this->getCustomer()->getId();
+        $customer = $this->getCustomer();
+        return null !== $customer ? $customer->getId() : null;
     }
 
     public function getCountryId()
     {
-        return CountryQuery::create()->filterByIsoalpha2($this->getCountryCode())->findOne()->getId();
+        $country = CountryQuery::create()->filterByIsoalpha2($this->getCountryCode())->findOne();
+        return null !== $country ? $country->getId() : null;
     }
 
     public function getPhone()

@@ -3,6 +3,7 @@
 namespace OpenApi\Controller\Front;
 
 use Front\Front;
+use OpenApi\Model\Api\Address;
 use OpenApi\Model\Api\Checkout;
 use OpenApi\Model\Api\Error;
 use OpenApi\OpenApi;
@@ -56,8 +57,6 @@ class CheckoutController extends BaseFrontOpenApiController
             throw new \Exception(Translator::getInstance()->trans('Cart is empty', [], OpenApi::DOMAIN_NAME));
         }
 
-        $test = $request->getContent();
-        $test2 = json_decode($test, true);
         /** @var Checkout $checkout */
         $checkout = $this->getModelFactory()->buildModel('Checkout', $request->getContent());
 
@@ -68,7 +67,7 @@ class CheckoutController extends BaseFrontOpenApiController
         $this->setOrderInvoicePart($checkout, $orderEvent);
 
         $responseCheckout = $checkout
-            ->createFormOrder($orderEvent->getOrder());
+            ->createFromOrder($orderEvent->getOrder());
 
         return $this->jsonResponse($responseCheckout);
     }
@@ -92,7 +91,7 @@ class CheckoutController extends BaseFrontOpenApiController
 
         /** @var Checkout $checkout */
         $checkout = ($this->getModelFactory()->buildModel('Checkout'))
-            ->createFormOrder($order);
+            ->createFromOrder($order);
 
         $checkout->setPickupAddress($request->getSession()->get(OpenApi::PICKUP_ADDRESS_SESSION_KEY));
 
@@ -169,7 +168,7 @@ class CheckoutController extends BaseFrontOpenApiController
             $this->checkValidDelivery();
         }
 
-        $this->getRequest()->getSession()->set(OpenApi::PICKUP_ADDRESS_SESSION_KEY, $pickupAddress);
+        $this->getRequest()->getSession()->set(OpenApi::PICKUP_ADDRESS_SESSION_KEY, json_encode($pickupAddress));
     }
 
     protected function setOrderInvoicePart(Checkout $checkout, OrderEvent $orderEvent)

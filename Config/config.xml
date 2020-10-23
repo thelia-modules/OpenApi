@@ -38,6 +38,7 @@
         </service>
         <service id="open_api.order.listener" class="OpenApi\EventListener\OrderListener">
             <argument type="service" id="request_stack"/>
+            <argument type="service" id="open_api.model.factory"/>
             <tag name="kernel.event_subscriber"/>
         </service>
         <service id="open_api.exception.listener" class="OpenApi\EventListener\ExceptionListener">
@@ -56,6 +57,7 @@
             <argument type="service" id="event_dispatcher"/>
         </service>
         <service id="open_api.model.address" class="OpenApi\Model\Api\Address" parent="open_api.base.model"  shared="false">
+            <tag name="open_api.model" alias="PickupAddress"/>
             <tag name="open_api.model" alias="Address"/>
         </service>
         <service id="open_api.model.cart" class="OpenApi\Model\Api\Cart" parent="open_api.base.model"  shared="false">

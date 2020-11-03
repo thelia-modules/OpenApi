@@ -42,17 +42,17 @@ class Attribute extends BaseApiModel
     protected $values;
 
     /**
-     * Create an OpenApi attribute from a Thelia AttributeCombination, then returns it
-     *
-     * @param AttributeCombination $attributeCombination
-     * @return $this
-     * @throws \Propel\Runtime\Exception\PropelException
+     * @param $theliaModel
+     * @param null $locale
+     * @return $this|Attribute
      */
     public function createFromTheliaModel($theliaModel, $locale = null)
     {
         parent::createFromTheliaModel($theliaModel, $locale = null);
 
-        $attributeAvs = AttributeAvQuery::create()->filterByAttributeId($this->id)->find();
+        $attributeAvs = $theliaModel->getAttributeAvs()
+            ? $theliaModel->getAttributeAvs()
+            : AttributeAvQuery::create()->filterByAttributeId($this->id)->find();
 
         $x = 0;
         $values = [];

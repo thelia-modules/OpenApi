@@ -154,6 +154,25 @@ class ProductSaleElement extends BaseApiModel
 
         parent::createFromTheliaModel($theliaModel, $locale);
 
+        $modelFactory = $this->modelFactory;
+        $this->attributes = array_map(
+            function (AttributeCombination $attributeCombination) use ($modelFactory){
+                $propelAttribute = $attributeCombination->getAttribute();
+                $attributeAvBackup = $propelAttribute->getAttributeAvs();
+
+                // Temporary set only pse attribute av to build good attribute av list
+                $propelAttribute->setAttributeAvs((new Collection()));
+                $propelAttribute->addAttributeAv($attributeCombination->getAttributeAv());
+
+                $attribute = $modelFactory->buildModel('Attribute', $propelAttribute);
+
+                // Reset attribute av to all for next use of attribute (because of propel "cache")
+                $propelAttribute->setAttributeAvs($attributeAvBackup);
+                return $attribute;
+            },
+            iterator_to_array($theliaModel->getAttributeCombinations())
+        );
+
         $this->isPromo = (bool)$theliaModel->getPromo();
         $this->price = $this->modelFactory->buildModel('Price', ['untaxed' => $theliaModel->getPrice(), 'taxed' => $theliaModel->getTaxedPrice($this->country)]);;
         $this->promoPrice = $this->modelFactory->buildModel('Price', ['untaxed' => $theliaModel->getPromoPrice(), 'taxed' => $theliaModel->getTaxedPromoPrice($this->country)]);;

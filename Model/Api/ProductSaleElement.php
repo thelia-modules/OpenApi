@@ -4,6 +4,8 @@
 namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
+use Propel\Runtime\Collection\Collection;
+use Thelia\Model\AttributeCombination;
 use Thelia\Model\Country;
 use Thelia\Model\ProductPriceQuery;
 use Thelia\Model\ProductSaleElements;
@@ -169,8 +171,11 @@ class ProductSaleElement extends BaseApiModel
     {
         $modelFactory = $this->modelFactory;
         $attributes = array_map(
-            function ($attributeCombination) use ($modelFactory){
-                return $modelFactory->buildModel('Attribute', $attributeCombination);
+            function (AttributeCombination $attributeCombination) use ($modelFactory){
+                $attribute = $attributeCombination->getAttribute();
+                $attribute->setAttributeAvs((new Collection()));
+                $attribute->addAttributeAv($attributeCombination->getAttributeAv());
+                return $modelFactory->buildModel('Attribute', $attribute);
             },
             iterator_to_array($pse->getAttributeCombinations())
         );

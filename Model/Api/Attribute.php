@@ -42,33 +42,6 @@ class Attribute extends BaseApiModel
     protected $values;
 
     /**
-     * @param $theliaModel
-     * @param null $locale
-     * @return $this|Attribute
-     */
-    public function createFromTheliaModel($theliaModel, $locale = null)
-    {
-        parent::createFromTheliaModel($theliaModel, $locale = null);
-
-        $attributeAvs = $theliaModel->getAttributeAvs()
-            ? $theliaModel->getAttributeAvs()
-            : AttributeAvQuery::create()->filterByAttributeId($this->id)->find();
-
-        $x = 0;
-        $values = [];
-        /** @var AttributeAv $attributeAv */
-        foreach ($attributeAvs as $attributeAv) {
-            $values[$x] = $this->modelFactory->buildModel('AttributeValue');
-            $values[$x]->fillFromTheliaAttributeAv($attributeAv);
-            $x++;
-        }
-
-        $this->values = $values;
-
-        return $this;
-    }
-
-    /**
      * @return int
      */
     public function getId()

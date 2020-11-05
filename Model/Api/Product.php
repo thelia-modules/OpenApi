@@ -144,44 +144,6 @@ class Product extends BaseApiModel
     protected $productSaleElements;
 
     /**
-     * Create an OpenApi Product from a Thelia CartItem and a Country
-     *
-     * @param \Thelia\Model\CartItem $cartItem
-     * @param Country $country
-     * @param ImageService $imageService
-     * @return $this
-     * @throws \Propel\Runtime\Exception\PropelException
-     */
-    public function fillFromTheliaCartItemAndCountry(\Thelia\Model\CartItem $cartItem)
-    {
-        $product = $cartItem->getProduct();
-
-        $modelFactory = $this->modelFactory;
-
-        try {
-            $images = array_map(
-                function ($productImage) use ($modelFactory) {
-                    return $modelFactory->buildModel('Image', $productImage);
-                },
-                iterator_to_array($product->getProductImages())
-            );
-        } catch (\Exception $e) {
-            $images = [];
-        }
-
-        $this->id = $cartItem->getProductId();
-        $this->reference = $product->getRef();
-        $this->url = $product->getUrl();
-
-        $i18n = $modelFactory
-            ->buildModel('I18n', $product);
-        $this->i18n = $i18n;
-        $this->images = $images;
-
-        return $this;
-    }
-
-    /**
      * @return int
      */
     public function getId()
@@ -269,6 +231,17 @@ class Product extends BaseApiModel
     public function setProductSaleElements($productSaleElements)
     {
         $this->productSaleElements = $productSaleElements;
+        return $this;
+    }
+
+    /**
+     * @param string $reference
+     *
+     * @return Product
+     */
+    public function setRef($reference)
+    {
+        $this->setReference($reference);
         return $this;
     }
 }

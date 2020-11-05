@@ -106,8 +106,7 @@ class CartItem extends BaseApiModel
     {
         $this->id = $cartItem->getId();
         /** @var Product $product */
-        $product = $this->modelFactory->buildModel('Product');
-        $product->fillFromTheliaCartItemAndCountry($cartItem);
+        $product = $this->modelFactory->buildModel('Product', $cartItem->getProduct());
         $this->product = $product;
 
         /** @var ProductSaleElement $productSaleElements */

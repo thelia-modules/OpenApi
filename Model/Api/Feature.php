@@ -75,4 +75,15 @@ class Feature extends BaseApiModel
         $this->values = $values;
         return $this;
     }
+
+    /**
+     * "setValues" alias to fit Thelia model
+     *
+     * @param array $values
+     * @return Feature
+     */
+    public function setFeatureAvs($values)
+    {
+        return $this->setValues($values);
+    }
 }

@@ -162,9 +162,11 @@ class Product extends BaseApiModel
                 $propelFeature = $featureProduct->getFeature();
                 $featureAvBackup = $propelFeature->getFeatureAvs();
 
-                // Temporary set only pse attribute av to build good attribute av list
                 $propelFeature->setFeatureAvs((new Collection()));
-                $propelFeature->addFeatureAv($featureProduct->getFeatureAv());
+                if (null !== $featureProduct->getFeatureAv()) {
+                    // Temporary set only pse attribute av to build good attribute av list
+                    $propelFeature->addFeatureAv($featureProduct->getFeatureAv());
+                }
 
                 $feature = $modelFactory->buildModel('Feature', $propelFeature);
 

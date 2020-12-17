@@ -115,8 +115,20 @@ class CartItem extends BaseApiModel
         $this->productSaleElement = $productSaleElements;
 
         $this->isPromo = (bool)$cartItem->getPromo();
-        $this->price = $this->modelFactory->buildModel('Price', ['taxed' => $cartItem->getPrice()]);;
-        $this->promoPrice = $this->modelFactory->buildModel('Price', ['taxed' => $cartItem->getPromoPrice()]);;
+        $this->price = $this->modelFactory->buildModel(
+            'Price',
+            [
+                'taxed' => $cartItem->getTaxedPrice($country),
+                'untaxed' => $cartItem->getPrice(),
+            ]
+        );
+        $this->promoPrice = $this->modelFactory->buildModel(
+            'Price',
+            [
+                'taxed' => $cartItem->getTaxedPromoPrice($country),
+                'untaxed' => $cartItem->getPromoPrice()
+            ]
+        );
         $this->quantity = $cartItem->getQuantity();
 
         /** If there are PSE specific images, we use them. Otherwise, we just use the product images */

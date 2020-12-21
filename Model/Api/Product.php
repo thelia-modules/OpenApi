@@ -6,6 +6,7 @@ use OpenApi\Annotations as OA;
 use OpenApi\Model\Api\ModelTrait\translatable;
 use OpenApi\Service\ImageService;
 use Propel\Runtime\Collection\Collection;
+use Thelia\Model\Base\ProductCategory;
 use Thelia\Model\Country;
 use Thelia\Model\FeatureProduct;
 use Thelia\Model\ProductSaleElements;
@@ -176,6 +177,22 @@ class Product extends BaseApiModel
             },
             iterator_to_array($theliaModel->getFeatureProducts())
         );
+
+        $this->categories = array_map(
+            function (ProductCategory  $productCategory) use ($modelFactory){
+                $propelCategory = $productCategory->getCategory();
+
+                $category = $modelFactory->buildModel('Category', $propelCategory);
+
+                if ($productCategory->isDefaultCategory()) {
+                    $this->defaultCategory = $category;
+                }
+
+                return $category;
+            },
+            iterator_to_array($theliaModel->getProductCategories())
+        );
+
     }
 
     /**
@@ -336,6 +353,24 @@ class Product extends BaseApiModel
     }
 
     /**
+     * @return Category
+     */
+    public function getDefaultCategory(): Category
+    {
+        return $this->defaultCategory;
+    }
+
+    /**
+     * @param Category $defaultCategory
+     * @return Product
+     */
+    public function setDefaultCategory(Category $defaultCategory): Product
+    {
+        $this->defaultCategory = $defaultCategory;
+        return $this;
+    }
+
+    /**
      * @return array
      */
     public function getCategories(): array
@@ -351,6 +386,17 @@ class Product extends BaseApiModel
     {
         $this->categories = $categories;
         return $this;
+    }
+
+    /**
+     * Method alias to match thelia getter name
+     * @param array $categories
+     *
+     * @return Product
+     */
+    public function setProductCategories(array $categories = []): Product
+    {
+        return $this->setCategories($categories);
     }
 
     /**

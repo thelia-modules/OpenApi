@@ -19,6 +19,7 @@ use Thelia\Model\Country;
 use Thelia\Model\CouponQuery;
 use Thelia\Model\ModuleQuery;
 use Thelia\Model\ProductSaleElementsQuery;
+use Thelia\Model\State;
 use Thelia\Module\BaseModule;
 use Thelia\Module\Exception\DeliveryException;
 
@@ -267,7 +268,8 @@ class CartController extends BaseFrontOpenApiController
     protected function getCurrentOpenApiCart($cart)
     {
         $currentDeliveryCountry = $this->container->get('thelia.taxEngine')->getDeliveryCountry();
-        $estimatedPostage = $this->getEstimatedPostageForCountry($cart, $currentDeliveryCountry);
+        $currentDeliveryState = $this->container->get('thelia.taxEngine')->getDeliveryState();
+        $estimatedPostage = $this->getEstimatedPostageForCountry($cart, $currentDeliveryCountry, $currentDeliveryState);
         $coupons = $this->createOpenApiCouponsFromCouponsCodes($this->getSession()->getConsumedCoupons());
 
         /** @var \OpenApi\Model\Api\Cart $openApiCart */
@@ -357,10 +359,11 @@ class CartController extends BaseFrontOpenApiController
      *
      * @param Cart $cart
      * @param Country $country
+     * @param State|null $state
      * @return float|null
      * @throws \Propel\Runtime\Exception\PropelException
      */
-    protected function getEstimatedPostageForCountry(Cart $cart, Country $country)
+    protected function getEstimatedPostageForCountry(Cart $cart, Country $country, State $state = null)
     {
         $deliveryModules = ModuleQuery::create()
             ->filterByActivate(1)
@@ -374,7 +377,7 @@ class CartController extends BaseFrontOpenApiController
         /** @var \Thelia\Model\Module $deliveryModule */
         foreach ($deliveryModules as $deliveryModule) {
             $areaDeliveryModule = AreaDeliveryModuleQuery::create()
-                ->findByCountryAndModule($country, $deliveryModule);
+                ->findByCountryAndModule($country, $deliveryModule, $state);
 
             if (null === $areaDeliveryModule && false === $virtual) {
                 continue;
@@ -387,7 +390,7 @@ class CartController extends BaseFrontOpenApiController
             }
 
             try {
-                $deliveryPostageEvent = new DeliveryPostageEvent($moduleInstance, $cart, null, $country, null);
+                $deliveryPostageEvent = new DeliveryPostageEvent($moduleInstance, $cart, null, $country, $state);
                 $this->getDispatcher()->dispatch(
                     TheliaEvents::MODULE_DELIVERY_GET_POSTAGE,
                     $deliveryPostageEvent

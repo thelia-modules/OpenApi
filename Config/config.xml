@@ -129,6 +129,9 @@
         <service id="open_api.model.category" class="OpenApi\Model\Api\Category" parent="open_api.base.model"  shared="false">
             <tag name="open_api.model" alias="Category"/>
         </service>
+        <service id="open_api.model.brand" class="OpenApi\Model\Api\Brand" parent="open_api.base.model"  shared="false">
+            <tag name="open_api.model" alias="Brand"/>
+        </service>
         <service id="open_api.model.feature_value" class="OpenApi\Model\Api\FeatureValue" parent="open_api.base.model"  shared="false">
             <tag name="open_api.model" alias="FeatureValue"/>
             <tag name="open_api.model" alias="FeatureAv"/>

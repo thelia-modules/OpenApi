@@ -4,6 +4,7 @@ namespace OpenApi\Model\Api;
 
 use OpenApi\Model\Api\ModelTrait\translatable;
 use OpenApi\Annotations as OA;
+use OpenApi\Constraint as Constraint;
 
 /**
  * Class Category

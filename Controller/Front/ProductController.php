@@ -3,6 +3,7 @@
 namespace OpenApi\Controller\Front;
 
 use OpenApi\Annotations as OA;
+use Propel\Runtime\ActiveQuery\Criteria;
 use Symfony\Component\Routing\Annotation\Route;
 use Thelia\Core\HttpFoundation\Request;
 use Thelia\Model\ProductQuery;
@@ -122,71 +123,74 @@ class ProductController extends BaseFrontOpenApiController
     {
         $productQuery = ProductQuery::create();
 
-        if (null !== $id = $this->getRequestValue('id')) {
+
+        if (null !== $id = $request->get('id')) {
             $productQuery->filterById($id);
         }
 
-        if (null !== $reference = $this->getRequestValue('reference')) {
+        if (null !== $reference = $request->get('reference')) {
             $productQuery->filterByRef($reference);
         }
 
-        $productQuery->filterByVisible($this->getRequestValue('visible', true));
+        $productQuery->filterByVisible($request->get('visible', true));
 
-        $order = $this->getRequestValue('order', 'alpha');
-        $locale = $this->getRequestValue('locale', $request->getLocale());
-        $title = $this->getRequestValue('title');
-        $description = $this->getRequestValue('description');
-        $chapo = $this->getRequestValue('chapo');
-        $postscriptum = $this->getRequestValue('postscriptum');
+        $order = $request->get('order', 'alpha');
+        $locale = $request->get('locale', $request->getSession()->getLang()->getLocale());
+        $title = $request->get('title');
+        $description = $request->get('description');
+        $chapo = $request->get('chapo');
+        $postscriptum = $request->get('postscriptum');
 
-//        $productQuery->joinWithProductI18n();
-//
-//        if (null !== $title || null !== $description || null !== $chapo || null !== $postscriptum) {
-//            $productI18nQuery = $productQuery
-//                ->useProductI18nQuery()
-//                ->filterByLocale($locale);
-//
-//            if (null !== $title) {
-//                $productI18nQuery->filterByTitle('%'.$title.'%', Criteria::LIKE);
-//            }
-//
-//            if (null !== $description) {
-//                $productI18nQuery->filterByDescription('%'.$description.'%', Criteria::LIKE);
-//            }
-//
-//            if (null !== $chapo) {
-//                $productI18nQuery->filterByChapo('%'.$chapo.'%', Criteria::LIKE);
-//            }
-//
-//            if (null !== $postscriptum) {
-//                $productI18nQuery->filterByPostscriptum('%'.$postscriptum.'%', Criteria::LIKE);
-//            }
-//
-//            $productI18nQuery->endUse();
-//        }
+        $productQuery
+            ->limit($request->get('limit', 20))
+            ->offset($request->get('offset', 0));
 
-        $productQuery->limit($this->getRequestValue('limit', 20))
-            ->offset($this->getRequestValue('offset', 0));
+        switch ($order) {
+            case 'created' :
+                $productQuery->orderByCreatedAt();
+                break;
+            case 'created_reverse' :
+                $productQuery->orderByCreatedAt(Criteria::DESC);
+                break;
+        }
 
-//        switch ($order) {
-//            case 'alpha' :
-//                $productQuery->addAscendingOrderByColumn('product_i18n.title');
-//                break;
-//            case 'alpha_reverse' :
-//                $productQuery->addDescendingOrderByColumn('product_i18n.title');
-//                break;
-//            case 'created' :
-//                $productQuery->orderByCreatedAt();
-//                break;
-//            case 'created_reverse' :
-//                $productQuery->orderByCreatedAt(Criteria::DESC);
-//                break;
-//        }
+        if (null !== $title || null !== $description || null !== $chapo || null !== $postscriptum) {
+            $productI18nQuery = $productQuery
+                ->useProductI18nQuery()
+                ->filterByLocale($locale);
+
+            if (null !== $title) {
+                $productI18nQuery->filterByTitle('%' . $title . '%', Criteria::LIKE);
+            }
+
+            if (null !== $description) {
+                $productI18nQuery->filterByDescription('%' . $description . '%', Criteria::LIKE);
+            }
+
+            if (null !== $chapo) {
+                $productI18nQuery->filterByChapo('%' . $chapo . '%', Criteria::LIKE);
+            }
+
+            if (null !== $postscriptum) {
+                $productI18nQuery->filterByPostscriptum('%' . $postscriptum . '%', Criteria::LIKE);
+            }
+
+            switch ($order) {
+                case 'alpha' :
+                    $productI18nQuery->orderByTitle();
+                    break;
+                case 'alpha_reverse' :
+                    $productI18nQuery->orderByTitle(Criteria::DESC);
+                    break;
+            }
+
+            $productI18nQuery->endUse();
+        }
 
         $products = $productQuery->find();
         $modelFactory = $this->getModelFactory();
 
-        $products = array_map(function ($product) use ($modelFactory){
+        $products = array_map(function ($product) use ($modelFactory) {
             return $modelFactory->buildModel('Product', $product);
         }, iterator_to_array($products));
 

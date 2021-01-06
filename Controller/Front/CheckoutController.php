@@ -19,6 +19,7 @@ use Thelia\Model\AddressQuery;
 use Thelia\Model\AreaDeliveryModuleQuery;
 use Thelia\Model\ModuleQuery;
 use Thelia\Model\Order;
+use Thelia\Model\ConfigQuery;
 use Thelia\Module\Exception\DeliveryException;
 
 /**
@@ -57,6 +58,12 @@ class CheckoutController extends BaseFrontOpenApiController
             throw new \Exception(Translator::getInstance()->trans('Cart is empty', [], OpenApi::DOMAIN_NAME));
         }
 
+        if (true === ConfigQuery::checkAvailableStock()) {
+            if (!$this->checkStockNotEmpty()) {
+                throw new \Exception(Translator::getInstance()->trans('Not enough stock', [], OpenApi::DOMAIN_NAME));
+            }
+        }
+
         /** @var Checkout $checkout */
         $checkout = $this->getModelFactory()->buildModel('Checkout', $request->getContent());
 
@@ -68,6 +75,7 @@ class CheckoutController extends BaseFrontOpenApiController
 
         $responseCheckout = $checkout
             ->createFromOrder($orderEvent->getOrder());
+
 
         return $this->jsonResponse($responseCheckout);
     }
@@ -245,5 +253,24 @@ class CheckoutController extends BaseFrontOpenApiController
             null === ModuleQuery::create()->findPk($order->getPaymentModuleId())) {
             throw new \Exception(Translator::getInstance()->trans('Invalid invoice', [], OpenApi::DOMAIN_NAME));
         }
+    }
+
+    protected function checkStockNotEmpty()
+    {
+        $cart = $this->getSession()->getSessionCart($this->getDispatcher());
+
+        $cartItems = $cart->getCartItems();
+
+        foreach ($cartItems as $cartItem) {
+            $pse = $cartItem->getProductSaleElements();
+
+            $product = $cartItem->getProduct();
+
+            if ($pse->getQuantity() <= 0 && $product->getVirtual() !== 1) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

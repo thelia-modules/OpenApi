@@ -244,8 +244,17 @@ class CartController extends BaseFrontOpenApiController
 
         $event = new CartEvent($cart);
         $event->setCartItemId($cartItemId);
-        $this->updateCartEventFromJson($request->getContent(), $event);
-        $this->dispatch(TheliaEvents::CART_UPDATEITEM, $event);
+        
+        if($request->get('quantity') === 0) {
+            $this->getDispatcher()->dispatch(
+                TheliaEvents::CART_DELETEITEM,
+                $event
+            );
+
+        } else {
+            $this->updateCartEventFromJson($request->getContent(), $event);
+            $this->dispatch(TheliaEvents::CART_UPDATEITEM, $event);
+        }
 
         return $this->jsonResponse([
             'cart' => $this->getCurrentOpenApiCart($cart),

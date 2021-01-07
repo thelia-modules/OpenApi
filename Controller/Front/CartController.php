@@ -15,9 +15,11 @@ use Thelia\Core\Translation\Translator;
 use Thelia\Model\AreaDeliveryModuleQuery;
 use Thelia\Model\Cart;
 use Thelia\Model\CartItemQuery;
+use Thelia\Model\ConfigQuery;
 use Thelia\Model\Country;
 use Thelia\Model\CouponQuery;
 use Thelia\Model\ModuleQuery;
+use Thelia\Model\ProductSaleElements;
 use Thelia\Model\ProductSaleElementsQuery;
 use Thelia\Model\State;
 use Thelia\Module\BaseModule;
@@ -293,6 +295,20 @@ class CartController extends BaseFrontOpenApiController
     }
 
     /**
+     * @param ProductSaleElements $pse
+     * @param integer $quantity
+     * @return bool
+     */
+    protected function checkAvailableStock(ProductSaleElements $pse, $quantity) {
+
+        if ($pse && $quantity) {
+            return $quantity > $pse->getQuantity() && ConfigQuery::checkAvailableStock() && !$pse->getProduct()->getVirtual() === 0;
+        }
+
+        throw new \Exception(Translator::getInstance()->trans('A PSE is needed in the POST request to add an item to the cart.'));
+    }
+
+    /**
      * Update a Cart Event from a json
      *
      * @param $json
@@ -310,7 +326,7 @@ class CartController extends BaseFrontOpenApiController
         /** If the function was called from the PATCH route, we just update the quantity and return */
         if ($cartItemId = $event->getCartItemId()) {
             $cartItem = CartItemQuery::create()->filterById($cartItemId)->findOne();
-            if ($data['quantity'] >= $cartItem->getProductSaleElements()->getQuantity()) {
+            if ($this->checkAvailableStock($cartItem->getProductSaleElements(), $data['quantity'])) {
                 throw new \Exception(Translator::getInstance()->trans('Desired quantity exceed available stock'));
             }
             $event->setQuantity($data['quantity']);
@@ -325,18 +341,14 @@ class CartController extends BaseFrontOpenApiController
             throw new \Exception(Translator::getInstance()->trans('You need to set the append value in the POST request to add an item to the cart.'));
         }
 
-        $availableQuantity = ProductSaleElementsQuery::create()
-            ->filterById($data['pseId'])
-            ->findOne()
-            ->getQuantity()
-        ;
+        $pse = ProductSaleElementsQuery::create()->findPk($data['pseId']);
 
-        if ($data['quantity'] > $availableQuantity) {
+        if ($this->checkAvailableStock($pse, $data['quantity'])) {
             throw new \Exception(Translator::getInstance()->trans('Desired quantity exceed available stock'));
         }
 
         $event
-            ->setProduct(ProductSaleElementsQuery::create()->findPk($data['pseId'])->getProductId())
+            ->setProduct($pse->getProductId())
             ->setProductSaleElementsId($data['pseId'])
             ->setQuantity($data['quantity'])
             ->setAppend($data['append'])

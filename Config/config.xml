@@ -85,6 +85,9 @@
         <service id="open_api.model.delivery_module_option" class="OpenApi\Model\Api\DeliveryModuleOption" parent="open_api.base.model"  shared="false">
             <tag name="open_api.model" alias="DeliveryModuleOption"/>
         </service>
+        <service id="open_api.model.delivery.modes" class="OpenApi\Model\Api\DeliveryMode" parent="open_api.base.model"  shared="false">
+            <tag name="open_api.model" alias="DeliveryMode"/>
+        </service>        
         <service id="open_api.model.payment_module" class="OpenApi\Model\Api\PaymentModule" parent="open_api.base.model"  shared="false">
             <tag name="open_api.model" alias="PaymentModule"/>
         </service>

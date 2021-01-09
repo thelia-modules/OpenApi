@@ -219,11 +219,70 @@ class DeliveryController extends BaseFrontOpenApiController
         $class = $this;
         return $this->jsonResponse(
             array_map(
-                function ($module) use ($class, $cart, $deliveryAddress, $country, $state)  {
+                function ($module) use ($class, $cart, $deliveryAddress, $country, $state) {
                     return $class->getDeliveryModule($module, $cart, $deliveryAddress, $country, $state);
                 },
                 iterator_to_array($modules)
             )
+        );
+    }
+
+    /**
+     * @Route("/modes", name="delivery_modes", methods="GET")
+     *
+     * @OA\Get(
+     *     path="/delivery/modes",
+     *     tags={"delivery", "modules"},
+     *     summary="List all available delivery modes",
+     *     @OA\Response(
+     *          response="200",
+     *          description="Success",
+     *          @OA\JsonContent(
+     *              type="array",
+     *                  @OA\Items(
+     *                      type="string",
+     *                      enum={"pickup", "delivery"}
+     *                  )
+     *          )
+     *     ),
+     *     @OA\Response(
+     *          response="400",
+     *          description="Bad request",
+     *          @OA\JsonContent(ref="#/components/schemas/Error")
+     *     )
+     * )
+     */
+    public function getDeliveryModes(Request $request)
+    {
+        $modes = [];
+        $deliveryAddress = $this->getDeliveryAddress($request);
+
+        if (null === $deliveryAddress) {
+            throw new \Exception(Translator::getInstance()->trans('You must have a customer connected', [], OpenApi::DOMAIN_NAME));
+        }
+
+        $cart = $request->getSession()->getSessionCart($this->getDispatcher());
+        $country = $deliveryAddress->getCountry();
+        $state = $deliveryAddress->getState();
+
+        $moduleQuery = ModuleQuery::create()
+            ->filterByActivate(1)
+            ->filterByType(BaseModule::DELIVERY_MODULE_TYPE);
+
+
+        $modules = $moduleQuery->find();
+
+        $class = $this;
+
+        foreach ($modules as $module) {
+            $mode = $class->getDeliveryMode($module, $cart, $deliveryAddress, $country, $state)->getDeliveryMode();
+            if (!(in_array($mode, $modes))) {
+                $modes[] = $mode;
+            }
+        }
+
+        return $this->jsonResponse(
+            $modes
         );
     }
 
@@ -275,6 +334,30 @@ class DeliveryController extends BaseFrontOpenApiController
         ;
 
         return $deliveryModule;
+    }
+
+    protected function getDeliveryMode(Module $theliaDeliveryModule, Cart $cart, $address, $country, $state)
+    {
+        $moduleInstance = $theliaDeliveryModule->getDeliveryModuleInstance($this->container);
+
+        $deliveryPostageEvent = new DeliveryPostageEvent($moduleInstance, $cart, $address, $country, $state);
+
+        try {
+            $this->getDispatcher()->dispatch(
+                TheliaEvents::MODULE_DELIVERY_GET_POSTAGE,
+                $deliveryPostageEvent
+            );
+        } catch (DeliveryException $exception) {
+        }
+
+        /** @var DeliveryMode $deliveryMode */
+        $deliveryMode = $this->getModelFactory()->buildModel('DeliveryMode', $theliaDeliveryModule);
+
+        $deliveryMode
+            ->setDeliveryMode($deliveryPostageEvent->getDeliveryMode())
+        ;
+
+        return $deliveryMode;
     }
 
     protected function getDeliveryAddress(Request $request)

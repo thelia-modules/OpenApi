@@ -22,10 +22,7 @@ class DeliveryModule extends BaseApiModel
 
     /**
      * @var string
-     * @OA\Property(
-     *    type="string",
-     *    enum={"pickup", "delivery"}
-     * )
+    * @OA\Property(ref="#/components/schemas/DeliveryMode")
      */
     protected $deliveryMode;
 
@@ -170,6 +167,4 @@ class DeliveryModule extends BaseApiModel
         $this->options = $options;
         return $this;
     }
-
-
 }

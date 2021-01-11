@@ -2,7 +2,6 @@
 
 namespace OpenApi\Model\Api;
 
-use OpenApi\Annotations as OA;
 use OpenApi\Constraint as Constraint;
 use OpenApi\Model\Api\ModelTrait\translatable;
 
@@ -16,6 +15,7 @@ use OpenApi\Model\Api\ModelTrait\translatable;
 class PaymentModule extends BaseApiModel
 {
     use translatable;
+    
     /**
      * @var integer
      * @OA\Property(
@@ -60,13 +60,15 @@ class PaymentModule extends BaseApiModel
     protected $maximumAmount;
 
     /**
-     * @var string
+     * @var array
      * @OA\Property(
-     *    type="string",
-     *    description="Payment logo url"
+     *    type="array",
+     *     @OA\Items(
+     *          ref="#/components/schemas/File"
+     *     )
      * )
      */
-    protected $image;
+    protected $images = [];
 
     /**
      * @return int
@@ -159,20 +161,20 @@ class PaymentModule extends BaseApiModel
     }
 
     /**
-     * @return string
+     * @return array
      */
-    public function getImage()
+    public function getImages()
     {
-        return $this->image;
+        return $this->images;
     }
 
     /**
-     * @param string $image
+     * @param array $images
      * @return PaymentModule
      */
-    public function setImage($image)
+    public function setImages($images)
     {
-        $this->image = $image;
+        $this->images = $images;
         return $this;
     }
 }

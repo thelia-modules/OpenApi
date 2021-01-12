@@ -24,7 +24,8 @@ class DeliveryModule extends BaseApiModel
      * @var string
      * @OA\Property(
      *    type="string",
-     *    enum={"pickup", "delivery"}
+     *    description="delivery -> At customer adress; pickup -> At carrier pickup point; localPickup -> At store pickup point",
+     *    enum={"delivery", "pickup", "localPickup"}
      * )
      */
     protected $deliveryMode;
@@ -92,13 +93,13 @@ class DeliveryModule extends BaseApiModel
      */
     public function setDeliveryMode($deliveryMode)
     {
-        if (!in_array($deliveryMode, ['pickup', 'delivery'])) {
+        if (!in_array($deliveryMode, ['delivery', 'pickup', 'localPickup'])) {
             /** @var Error $error */
             $error = $this->modelFactory->buildModel(
                 'Error',
                 [
                     'title' => Translator::getInstance()->trans('Invalid data', [], OpenApi::DOMAIN_NAME),
-                    'description' => Translator::getInstance()->trans("Delivery mode can only be 'pickup' or 'delivery'", [], OpenApi::DOMAIN_NAME),
+                    'description' => Translator::getInstance()->trans("Delivery mode can only be 'delivery', 'pickup' or  'localPickup'", [], OpenApi::DOMAIN_NAME),
                 ]
             );
 

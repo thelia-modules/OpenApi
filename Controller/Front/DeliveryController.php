@@ -25,6 +25,7 @@ use Thelia\Model\Module;
 use Thelia\Model\ModuleQuery;
 use Thelia\Model\PickupLocation;
 use Thelia\Model\StateQuery;
+use Thelia\Module\AbstractDeliveryModule;
 use Thelia\Module\BaseModule;
 use Thelia\Module\Exception\DeliveryException;
 
@@ -152,6 +153,55 @@ class DeliveryController extends BaseFrontOpenApiController
                     return $pickupLocation->toArray();
                 },
                 $pickupLocationEvent->getLocations()
+            )
+        );
+    }
+
+    /**
+     * @Route("/simple-modules", name="delivery_simple_modules", methods="GET")
+     *
+     * @OA\Get(
+     *     path="/delivery/simpleModules",
+     *     tags={"delivery", "modules"},
+     *     summary="List all delivery modules as simple list (without postages and options)",
+     *     @OA\Response(
+     *          response="200",
+     *          description="Success",
+     *          @OA\JsonContent(
+     *                  type="array",
+     *                  @OA\Items(
+     *                      ref="#/components/schemas/DeliveryModule"
+     *                  )
+     *          )
+     *     ),
+     *     @OA\Response(
+     *          response="400",
+     *          description="Bad request",
+     *          @OA\JsonContent(ref="#/components/schemas/Error")
+     *     )
+     * )
+     */
+    public function getSimpleDeliveryModules(Request $request)
+    {
+        $modules = ModuleQuery::create()
+            ->filterByActivate(1)
+            ->filterByType(BaseModule::DELIVERY_MODULE_TYPE)
+            ->find();
+
+        $class = $this;
+        return $this->jsonResponse(
+            array_map(
+                function (Module $module) use ($class)  {
+                    /** @var AbstractDeliveryModule $moduleInstance */
+                    $moduleInstance = $module->getDeliveryModuleInstance($this->container);
+
+                    /** @var DeliveryModule $deliveryModule */
+                    $deliveryModule = $class->getModelFactory()->buildModel('DeliveryModule', $module);
+                    $deliveryModule->setDeliveryMode($moduleInstance->getDeliveryMode());
+
+                    return $deliveryModule;
+                },
+                iterator_to_array($modules)
             )
         );
     }

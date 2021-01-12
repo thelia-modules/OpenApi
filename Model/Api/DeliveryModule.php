@@ -63,6 +63,17 @@ class DeliveryModule extends BaseApiModel
     protected $options;
 
     /**
+     * @var array
+     * @OA\Property(
+     *    type="array",
+     *     @OA\Items(
+     *          ref="#/components/schemas/File"
+     *     )
+     * )
+     */
+    protected $images = [];
+
+    /**
      * @return string
      */
     public function getDeliveryMode()
@@ -167,4 +178,24 @@ class DeliveryModule extends BaseApiModel
         $this->options = $options;
         return $this;
     }
+
+    /**
+     * @return array
+     */
+    public function getImages()
+    {
+        return $this->images;
+    }
+
+    /**
+     * @param array $images
+     * @return DeliveryModule
+     */
+    public function setImages($images)
+    {
+        $this->images = $images;
+        return $this;
+    }
+
 }
+

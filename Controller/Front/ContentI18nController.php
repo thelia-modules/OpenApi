@@ -62,7 +62,7 @@ class ContentI18nController extends BaseFrontOpenApiController
             $lang   = $request->getSession()->getLang(true)->getLocale();
 
         $contentI18n = ContentI18nQuery::create()
-            ->where("locale = '$lang'")
+            ->filterByLocale($lang)
             ->findOneById($id);
 
         if (null === $contentI18n) {

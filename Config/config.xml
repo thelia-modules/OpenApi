@@ -106,6 +106,9 @@
         <service id="open_api.model.i18n" class="OpenApi\Model\Api\I18n" parent="open_api.base.model"  shared="false">
             <tag name="open_api.model" alias="I18n"/>
         </service>
+        <service id="open_api.model.content" class="OpenApi\Model\Api\Content" parent="open_api.base.model"  shared="false">
+            <tag name="open_api.model" alias="Content"/>
+        </service>
         <service id="open_api.model.price" class="OpenApi\Model\Api\Price" parent="open_api.base.model"  shared="false">
             <tag name="open_api.model" alias="Price"/>
         </service>

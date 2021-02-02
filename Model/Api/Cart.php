@@ -114,9 +114,8 @@ class Cart extends BaseApiModel
         $cartItems = array_map(
             function ($theliaCartItem) use ($modelFactory, $deliveryCountry) {
                 /** @var CartItem $cartItem */
-                $cartItem = $modelFactory->buildModel('CartItem');
+                $cartItem = $modelFactory->buildModel('CartItem', $theliaCartItem);
                 $cartItem->fillFromTheliaCartItemAndCountry($theliaCartItem, $deliveryCountry);
-
                 return $cartItem;
             },
             iterator_to_array($cart->getCartItems())

@@ -78,7 +78,11 @@ class CartController extends BaseFrontOpenApiController
      *                     property="append",
      *                     type="boolean"
      *                 ),
-     *                 example={"pseId": 18, "quantity": 2, "append": true}
+     *                 @OA\Property(
+     *                     property="newness",
+     *                     type="boolean"
+     *                 ),
+     *                 example={"pseId": 18, "quantity": 2, "append": true, "newness": true}
      *             )
      *         )
      *     ),
@@ -283,7 +287,7 @@ class CartController extends BaseFrontOpenApiController
         $coupons = $this->createOpenApiCouponsFromCouponsCodes($this->getSession()->getConsumedCoupons());
 
         /** @var \OpenApi\Model\Api\Cart $openApiCart */
-        $openApiCart = $this->getModelFactory()->buildModel('Cart');
+        $openApiCart = $this->getModelFactory()->buildModel('Cart', $cart);
         $openApiCart->fillFromSessionCart(
             $cart,
             $currentDeliveryCountry,
@@ -347,11 +351,15 @@ class CartController extends BaseFrontOpenApiController
             throw new \Exception(Translator::getInstance()->trans('Desired quantity exceed available stock'));
         }
 
+        /** If newness then force new cart_item id */
+        $newness = isset($data['newness']) ? (bool)$data['newness'] : false;
+
         $event
             ->setProduct($pse->getProductId())
             ->setProductSaleElementsId($data['pseId'])
             ->setQuantity($data['quantity'])
             ->setAppend($data['append'])
+            ->setNewness($newness)
         ;
     }
 

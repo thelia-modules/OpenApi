@@ -61,6 +61,7 @@
             <tag name="open_api.model" alias="Address"/>
         </service>
         <service id="open_api.model.cart" class="OpenApi\Model\Api\Cart" parent="open_api.base.model"  shared="false">
+            <argument type="service" id="service_container"/>
             <tag name="open_api.model" alias="Cart"/>
         </service>
         <service id="open_api.model.cart_item" class="OpenApi\Model\Api\CartItem" parent="open_api.base.model"  shared="false">

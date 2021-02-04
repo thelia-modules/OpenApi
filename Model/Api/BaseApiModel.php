@@ -10,11 +10,13 @@ use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Collection\Collection;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Thelia\Core\HttpFoundation\Request;
 use Thelia\Core\Translation\Translator;
+use Thelia\Model\Country;
+use Thelia\Model\State;
 use Thelia\TaxEngine\TaxEngine;
 
 abstract class BaseApiModel implements \JsonSerializable
@@ -25,24 +27,39 @@ abstract class BaseApiModel implements \JsonSerializable
     /** @var ModelFactory  */
     protected $modelFactory;
 
+    /** @var Request  */
+    protected $request;
+
+    /** @var string  */
     protected $locale;
 
+    /** @var Country  */
     protected $country;
+
+    /** @var State|null  */
+    protected $state;
+
+    /** @var EventDispatcher  */
+    protected $dispatcher;
 
     protected $extendedData;
 
-    protected $dispatcher;
-
-    public function __construct(ModelFactory $modelFactory, RequestStack $requestStack, TaxEngine $taxEngine, EventDispatcher $dispatcher)
-    {
+    public function __construct(
+        ModelFactory $modelFactory,
+        RequestStack $requestStack,
+        TaxEngine $taxEngine,
+        EventDispatcher $dispatcher
+    ) {
         $this->dispatcher = $dispatcher;
         $this->validator = Validation::createValidatorBuilder()
             ->enableAnnotationMapping()
             ->getValidator();
 
         $this->modelFactory = $modelFactory;
-        $this->locale = $requestStack->getCurrentRequest()->getSession()->getLang(true)->getLocale();
+        $this->request = $requestStack->getCurrentRequest();
+        $this->locale = $this->request->getSession()->getLang(true)->getLocale();
         $this->country = $taxEngine->getDeliveryCountry();
+        $this->state = $taxEngine->getDeliveryState();
 
         if (method_exists($this, 'initI18n')) {
             $this->initI18n($modelFactory);

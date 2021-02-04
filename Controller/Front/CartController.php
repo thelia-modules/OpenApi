@@ -281,21 +281,7 @@ class CartController extends BaseFrontOpenApiController
 
     protected function getCurrentOpenApiCart($cart)
     {
-        $currentDeliveryCountry = $this->container->get('thelia.taxEngine')->getDeliveryCountry();
-        $currentDeliveryState = $this->container->get('thelia.taxEngine')->getDeliveryState();
-        $estimatedPostage = $this->getEstimatedPostageForCountry($cart, $currentDeliveryCountry, $currentDeliveryState);
-        $coupons = $this->createOpenApiCouponsFromCouponsCodes($this->getSession()->getConsumedCoupons());
-
-        /** @var \OpenApi\Model\Api\Cart $openApiCart */
-        $openApiCart = $this->getModelFactory()->buildModel('Cart', $cart);
-        $openApiCart->fillFromSessionCart(
-            $cart,
-            $currentDeliveryCountry,
-            $coupons,
-            $estimatedPostage
-        );
-
-        return $openApiCart;
+        return $this->getModelFactory()->buildModel('Cart', $cart);
     }
 
     /**
@@ -361,81 +347,5 @@ class CartController extends BaseFrontOpenApiController
             ->setAppend($data['append'])
             ->setNewness($newness)
         ;
-    }
-
-    /**
-     * Creates an array of OpenApi coupons from an array of coupons codes, then returns it
-     *
-     * @param $couponsCodes
-     * @return array
-     */
-    protected function createOpenApiCouponsFromCouponsCodes($couponsCodes)
-    {
-        $coupons = CouponQuery::create()->filterByCode($couponsCodes)->find();
-
-        $factory = $this->getModelFactory();
-        return array_map(
-            function ($coupon) use ($factory) {
-                return $factory->buildModel('Coupon', $coupon);
-            },
-            iterator_to_array($coupons)
-        );
-    }
-
-    /**
-     * Return the minimum expected postage for a cart in a given country
-     *
-     * @param Cart $cart
-     * @param Country $country
-     * @param State|null $state
-     * @return float|null
-     * @throws \Propel\Runtime\Exception\PropelException
-     */
-    protected function getEstimatedPostageForCountry(Cart $cart, Country $country, State $state = null)
-    {
-        $deliveryModules = ModuleQuery::create()
-            ->filterByActivate(1)
-            ->filterByType(BaseModule::DELIVERY_MODULE_TYPE, Criteria::EQUAL)
-            ->find()
-        ;
-
-        $virtual = $cart->isVirtual();
-        $postage = null;
-
-        /** @var \Thelia\Model\Module $deliveryModule */
-        foreach ($deliveryModules as $deliveryModule) {
-            $areaDeliveryModule = AreaDeliveryModuleQuery::create()
-                ->findByCountryAndModule($country, $deliveryModule, $state);
-
-            if (null === $areaDeliveryModule && false === $virtual) {
-                continue;
-            }
-
-            $moduleInstance = $deliveryModule->getDeliveryModuleInstance($this->container);
-
-            if (true === $virtual && false === $moduleInstance->handleVirtualProductDelivery()) {
-                continue;
-            }
-
-            try {
-                $deliveryPostageEvent = new DeliveryPostageEvent($moduleInstance, $cart, null, $country, $state);
-                $this->getDispatcher()->dispatch(
-                    TheliaEvents::MODULE_DELIVERY_GET_POSTAGE,
-                    $deliveryPostageEvent
-                );
-
-                if ($deliveryPostageEvent->isValidModule()) {
-                    $modulePostage = $deliveryPostageEvent->getPostage();
-
-                    if (null === $postage || $postage > $modulePostage->getAmount()) {
-                        $postage = $modulePostage->getAmount();
-                    }
-                }
-            } catch (DeliveryException $ex) {
-                // Module is not available
-            }
-        }
-
-        return $postage;
     }
 }

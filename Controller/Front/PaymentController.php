@@ -63,7 +63,8 @@ class PaymentController extends BaseFrontOpenApiController
         $lang = $request->getSession()->getLang();
         $moduleQuery = ModuleQuery::create()
             ->filterByActivate(1)
-            ->filterByType(BaseModule::PAYMENT_MODULE_TYPE);
+            ->filterByType(BaseModule::PAYMENT_MODULE_TYPE)
+            ->orderByPosition();
 
         if (null !== $moduleId = $request->get('moduleId')) {
             $moduleQuery->filterById($moduleId);
@@ -76,7 +77,7 @@ class PaymentController extends BaseFrontOpenApiController
         // Return formatted valid payment
         return $this->jsonResponse(
             array_map(
-                function ($module) use ($class, $cart, $lang)  {
+                function ($module) use ($class, $cart, $lang) {
                     return $class->getPaymentModule($module, $cart, $lang);
                 },
                 iterator_to_array($modules)

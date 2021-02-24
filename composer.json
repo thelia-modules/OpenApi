@@ -6,7 +6,7 @@
   "require": {
     "thelia/installer": "~1.1",
     "zircote/swagger-php": "~3.0.0",
-    "sensio/framework-extra-bundle": "~3.0.0"
+    "sensio/framework-extra-bundle": "~3.0.0|5.2.*"
   },
   "extra": {
     "installer-name": "OpenApi"

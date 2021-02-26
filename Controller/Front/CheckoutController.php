@@ -66,6 +66,7 @@ class CheckoutController extends BaseFrontOpenApiController
 
         /** @var Checkout $checkout */
         $checkout = $this->getModelFactory()->buildModel('Checkout', $request->getContent());
+        $checkout->checkIsValid();
 
         $order = $this->getOrder($this->getRequest());
         $orderEvent = new OrderEvent($order);

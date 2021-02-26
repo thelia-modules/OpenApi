@@ -3,6 +3,9 @@
 namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
+use OpenApi\Exception\OpenApiException;
+use OpenApi\OpenApi;
+use Thelia\Core\Translation\Translator;
 use Thelia\Model\Order;
 use OpenApi\Constraint as Constraint;
 
@@ -62,6 +65,14 @@ class Checkout extends BaseApiModel
      */
     protected $pickupAddress;
 
+    /**
+     * @var boolean
+     * @OA\Property(
+     *    type="boolean"
+     * )
+     */
+    protected $acceptedTermsAndConditions;
+
     public function createFromData($json)
     {
         parent::createFromData($json);
@@ -90,6 +101,7 @@ class Checkout extends BaseApiModel
     /**
      *  @OA\Property(
      *     property="isComplete",
+     *     description="Tell if a checkout has defined a Module and an Address for both delivery and billing"
      *     type="boolean"
      *  )
      * @return boolean
@@ -113,6 +125,62 @@ class Checkout extends BaseApiModel
         }
 
         return true;
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function checkIsValid()
+    {
+        if (null === $this->getDeliveryModuleId()) {
+            throw new \Exception(
+                Translator::getInstance()->trans(
+                    "You must choose a delivery module",
+                    [],
+                    OpenApi::DOMAIN_NAME
+                )
+            );
+        }
+
+        if (null === $this->getPaymentModuleId()) {
+            throw new \Exception(
+                Translator::getInstance()->trans(
+                    "You must choose a payment module",
+                    [],
+                    OpenApi::DOMAIN_NAME
+                )
+            );
+        }
+
+        if (null === $this->getDeliveryAddressId()) {
+            throw new \Exception(
+                Translator::getInstance()->trans(
+                    "You must choose a delivery address",
+                    [],
+                    OpenApi::DOMAIN_NAME
+                )
+            );
+        }
+
+        if (null === $this->getBillingAddressId()) {
+            throw new \Exception(
+                Translator::getInstance()->trans(
+                    "You must choose a billing address",
+                    [],
+                    OpenApi::DOMAIN_NAME
+                )
+            );
+        }
+
+        if (true === $this->isAcceptedTermsAndConditions()) {
+            throw new \Exception(
+                Translator::getInstance()->trans(
+                    "You must accept the terms and conditions",
+                    [],
+                    OpenApi::DOMAIN_NAME
+                )
+            );
+        }
     }
 
     /**
@@ -202,6 +270,24 @@ class Checkout extends BaseApiModel
     public function setPickupAddress($pickupAddress)
     {
         $this->pickupAddress = $pickupAddress;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAcceptedTermsAndConditions(): bool
+    {
+        return $this->acceptedTermsAndConditions;
+    }
+
+    /**
+     * @param bool $acceptedTermsAndConditions
+     * @return Checkout
+     */
+    public function setAcceptedTermsAndConditions(bool $acceptedTermsAndConditions): Checkout
+    {
+        $this->acceptedTermsAndConditions = $acceptedTermsAndConditions;
         return $this;
     }
 }

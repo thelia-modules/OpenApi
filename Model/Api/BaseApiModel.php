@@ -140,7 +140,7 @@ abstract class BaseApiModel implements \JsonSerializable
             $data = json_decode($data, true);
         }
 
-        if (is_iterable($data)) {
+        if (is_array($data) || $data instanceof \Traversable) {
             foreach ($data as $key => $value) {
                 $setMethodName = 'set'.ucfirst($key);
                 $getMethodName = 'get'.ucfirst($key);

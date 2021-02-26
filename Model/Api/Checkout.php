@@ -172,7 +172,7 @@ class Checkout extends BaseApiModel
             );
         }
 
-        if (true === $this->isAcceptedTermsAndConditions()) {
+        if (false === $this->isAcceptedTermsAndConditions()) {
             throw new \Exception(
                 Translator::getInstance()->trans(
                     "You must accept the terms and conditions",

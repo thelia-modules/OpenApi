@@ -164,8 +164,8 @@ abstract class BaseApiModel implements \JsonSerializable
             ->setModel($this);
 
         $this->dispatcher->dispatch(
-            ModelExtendDataEvent::ADD_EXTEND_DATA_PREFIX.$this->snakeCaseName(),
-            $modelExtendEvent
+            $modelExtendEvent,
+            ModelExtendDataEvent::ADD_EXTEND_DATA_PREFIX.$this->snakeCaseName()
         );
 
         $this->setExtendData($modelExtendEvent->getExtendData());

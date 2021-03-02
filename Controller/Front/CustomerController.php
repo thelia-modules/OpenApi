@@ -4,10 +4,12 @@ namespace OpenApi\Controller\Front;
 
 use OpenApi\Model\Api\Address as OpenApiAddress;
 use OpenApi\Model\Api\Customer as OpenApiCustomer;
+use OpenApi\Model\Api\ModelFactory;
 use OpenApi\OpenApi;
+use OpenApi\Service\OpenApiService;
 use Propel\Runtime\Propel;
-use Thelia\Core\Event\TheliaEvents;
 use Thelia\Core\HttpFoundation\Request;
+use Thelia\Core\Security\SecurityContext;
 use Thelia\Core\Translation\Translator;
 use Symfony\Component\Routing\Annotation\Route;
 use OpenApi\Annotations as OA;
@@ -44,15 +46,17 @@ class CustomerController extends BaseFrontOpenApiController
      * )
      * )
      */
-    public function getCustomer(Request $request)
-    {
-        $currentCustomer = $this->getCurrentCustomer();
+    public function getCustomer(
+        OpenApiService $openApiService,
+        ModelFactory $modelFactory
+    ) {
+        $currentCustomer = $openApiService->getCurrentCustomer();
 
         /** @var OpenApiCustomer $openApiCustomer */
-        $openApiCustomer = $this->getModelFactory()->buildModel('Customer', $currentCustomer);
+        $openApiCustomer = $modelFactory->buildModel('Customer', $currentCustomer);
         $openApiCustomer->validate(self::GROUP_READ);
 
-        return $this->jsonResponse($openApiCustomer);
+        return OpenApiService::jsonResponse($openApiCustomer);
     }
 
     /**
@@ -100,12 +104,12 @@ class CustomerController extends BaseFrontOpenApiController
      *     )
      * )
      */
-    public function createCustomer(Request $request)
+    public function createCustomer(Request $request, ModelFactory $modelFactory)
     {
         $data = json_decode($request->getContent(), true);
 
         /** @var OpenApiCustomer $openApiCustomer */
-        $openApiCustomer = $this->getModelFactory()->buildModel('Customer', $data['customer']);
+        $openApiCustomer = $modelFactory->buildModel('Customer', $data['customer']);
         $openApiCustomer->validate(self::GROUP_CREATE);
 
         /** We create a Propel transaction to save the customer and get its ID necessary for the validation
@@ -122,7 +126,7 @@ class CustomerController extends BaseFrontOpenApiController
 
             /** We must catch the validation exception if it is thrown to rollback the Propel transaction before throwing the exception again */
             /** @var OpenApiAddress $openApiAddress */
-            $openApiAddress = $this->getModelFactory()->buildModel('Address', $data['address']);
+            $openApiAddress = $modelFactory->buildModel('Address', $data['address']);
             $openApiAddress->setCustomer($openApiCustomer)->validate(self::GROUP_CREATE);
 
             /** @var Address $theliaAddress */
@@ -140,7 +144,7 @@ class CustomerController extends BaseFrontOpenApiController
         /** If everything went fine, we actually commit the changes to the base. */
         $con->commit();
 
-        return $this->jsonResponse($openApiCustomer);
+        return OpenApiService::jsonResponse($openApiCustomer);
     }
 
     /**
@@ -183,14 +187,18 @@ class CustomerController extends BaseFrontOpenApiController
      *     )
      * )
      */
-    public function updateCustomer(Request $request)
-    {
-        $currentCustomer = $this->getCurrentCustomer();
+    public function updateCustomer(
+        Request $request,
+        SecurityContext $securityContext,
+        OpenApiService $openApiService,
+        ModelFactory $modelFactory
+    ) {
+        $currentCustomer = $openApiService->getCurrentCustomer();
 
         $data = json_decode($request->getContent(), true);
 
         /** @var OpenApiCustomer $openApiCustomer */
-        $openApiCustomer = $this->getModelFactory()->buildModel('Customer', $data['customer']);
+        $openApiCustomer = $modelFactory->buildModel('Customer', $data['customer']);
         $openApiCustomer->setId($currentCustomer->getId())->validate(self::GROUP_UPDATE);
 
         /** @var Customer $theliaCustomer */
@@ -200,11 +208,11 @@ class CustomerController extends BaseFrontOpenApiController
         if (array_key_exists('password', $data) && null !== $newPassword = $data['password']) {
             $theliaCustomer->setPassword($newPassword);
         }
-        
+
         $theliaCustomer->save();
 
-        $this->getSecurityContext()->setCustomerUser($theliaCustomer);
+        $securityContext->setCustomerUser($theliaCustomer);
 
-        return $this->jsonResponse($openApiCustomer);
+        return OpenApiService::jsonResponse($openApiCustomer);
     }
 }

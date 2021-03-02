@@ -1,16 +1,15 @@
 <?php
 
-
 namespace OpenApi\Controller\Front;
 
-
-use Front\Front;
 use OpenApi\Model\Api\Coupon;
-use OpenApi\Model\Api\Error;
+use OpenApi\Model\Api\ModelFactory;
 use OpenApi\OpenApi;
+use OpenApi\Service\OpenApiService;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Thelia\Core\Event\Coupon\CouponConsumeEvent;
 use Thelia\Core\Event\TheliaEvents;
-use Thelia\Core\HttpFoundation\JsonResponse;
+use Thelia\Core\EventDispatcher\EventDispatcher;
 use Thelia\Core\HttpFoundation\Request;
 use OpenApi\Annotations as OA;
 use Symfony\Component\Routing\Annotation\Route;
@@ -54,15 +53,19 @@ class CouponController extends BaseFrontOpenApiController
      *     )
      * )
      */
-    public function submitCoupon(Request $request)
+    public function submitCoupon(
+        Request $request,
+        EventDispatcherInterface $dispatcher,
+        ModelFactory $modelFactory
+    )
     {
-        $cart = $request->getSession()->getSessionCart($this->getDispatcher());
+        $cart = $request->getSession()->getSessionCart($dispatcher);
         if (null === $cart) {
             throw new \Exception(Translator::getInstance()->trans('No cart found', [], OpenApi::DOMAIN_NAME));
         }
 
         /** @var Coupon $openApiCoupon */
-        $openApiCoupon = $this->getModelFactory()->buildModel('Coupon', $request->getContent());
+        $openApiCoupon = $modelFactory->buildModel('Coupon', $request->getContent());
         if (null === $openApiCoupon->getCode()) {
             throw new \Exception(Translator::getInstance()->trans('Coupon code cannot be null', [], OpenApi::DOMAIN_NAME));
         }
@@ -75,12 +78,12 @@ class CouponController extends BaseFrontOpenApiController
 
         try {
             $event = new CouponConsumeEvent($openApiCoupon->getCode());
-            $this->getDispatcher()->dispatch(TheliaEvents::COUPON_CONSUME, $event);
-            $openApiCoupon = $this->getModelFactory()->buildModel('Coupon', $theliaCoupon);
+            $dispatcher->dispatch($event,TheliaEvents::COUPON_CONSUME);
+            $openApiCoupon = $modelFactory->buildModel('Coupon', $theliaCoupon);
         } catch (UnmatchableConditionException $exception) {
             throw new \Exception(Translator::getInstance()->trans('You should sign in or register to use this coupon.', [], OpenApi::DOMAIN_NAME));
         }
 
-        return $this->jsonResponse($openApiCoupon);
+        return OpenApiService::jsonResponse($openApiCoupon);
     }
 }

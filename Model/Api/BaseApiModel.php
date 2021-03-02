@@ -2,6 +2,7 @@
 
 namespace OpenApi\Model\Api;
 
+use Doctrine\Common\Annotations\AnnotationRegistry;
 use OpenApi\Events\ModelExtendDataEvent;
 use OpenApi\Exception\OpenApiException;
 use OpenApi\Normalizer\ModelApiNormalizer;
@@ -11,6 +12,7 @@ use Propel\Runtime\Collection\Collection;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Validator\Constraints\Valid;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Thelia\Core\HttpFoundation\Request;
@@ -50,6 +52,10 @@ abstract class BaseApiModel implements \JsonSerializable
         TaxEngine $taxEngine,
         EventDispatcher $dispatcher
     ) {
+        if (class_exists(AnnotationRegistry::class)) {
+            AnnotationRegistry::registerLoader('class_exists');
+        }
+
         $this->dispatcher = $dispatcher;
         $this->validator = Validation::createValidatorBuilder()
             ->enableAnnotationMapping()
@@ -103,7 +109,7 @@ abstract class BaseApiModel implements \JsonSerializable
                 ]
             );
         },
-            iterator_to_array($this->validator->validate($this, $groups))
+            iterator_to_array($this->validator->validate($this, null, $groups))
         );
 
         if ($recursively === true) {

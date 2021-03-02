@@ -3,9 +3,9 @@
 namespace OpenApi\Controller\Front;
 
 use Exception;
+use OpenApi\Model\Api\ModelFactory;
 use OpenApi\OpenApi;
 use Thelia\Core\HttpFoundation\JsonResponse;
-use Thelia\Core\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use OpenApi\Annotations as OA;
 use Thelia\Core\Translation\Translator;
@@ -45,9 +45,8 @@ class ContentController extends BaseFrontOpenApiController
      * )
      * @throws Exception
      */
-    public function getContent(Request $request, $id)
+    public function getContent(ModelFactory $modelFactory, $id)
     {
-        $modelFactory = $this->getModelFactory();
         $content = ContentQuery::create()
             ->findOneById($id);
         $apiContent = $modelFactory->buildModel('Content', $content);

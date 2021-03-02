@@ -1,17 +1,18 @@
 <?php
 
-
 namespace OpenApi\Controller\Front;
 
-use OpenApi\Model\Api\Customer;
-use OpenApi\Model\Api\Error;
+use OpenApi\Model\Api\ModelFactory;
 use OpenApi\OpenApi;
 use OpenApi\Annotations as OA;
+use OpenApi\Service\OpenApiService;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Thelia\Action\BaseAction;
 use Thelia\Core\Event\Customer\CustomerLoginEvent;
 use Thelia\Core\Event\TheliaEvents;
-use Thelia\Core\HttpFoundation\JsonResponse;
 use Thelia\Core\HttpFoundation\Request;
+use Thelia\Core\Security\SecurityContext;
 use Thelia\Core\Security\Token\CookieTokenProvider;
 use Thelia\Core\Translation\Translator;
 use Thelia\Model\ConfigQuery;
@@ -61,9 +62,13 @@ class AuthController extends BaseFrontOpenApiController
      *     )
      * )
      */
-    public function customerLogin(Request $request)
-    {
-        if ($this->getSecurityContext()->hasCustomerUser()) {
+    public function customerLogin(
+        Request $request,
+        SecurityContext $securityContext,
+        EventDispatcherInterface $dispatcher,
+        ModelFactory $modelFactory
+    ) {
+        if ($securityContext->hasCustomerUser()) {
             throw new \Exception(Translator::getInstance()->trans('A user is already connected. Please disconnect before trying to login in another account.'));
         }
 
@@ -82,7 +87,7 @@ class AuthController extends BaseFrontOpenApiController
             throw new \Exception(Translator::getInstance()->trans('Password incorrect.', [], OpenApi::DOMAIN_NAME));
         }
 
-        $this->dispatch(TheliaEvents::CUSTOMER_LOGIN, new CustomerLoginEvent($customer));
+        $dispatcher->dispatch(new CustomerLoginEvent($customer),TheliaEvents::CUSTOMER_LOGIN);
 
         /** If the rememberMe property is set to true, we create a new cookie to store the information */
         if (true === (bool)$data['rememberMe']) {
@@ -93,7 +98,7 @@ class AuthController extends BaseFrontOpenApiController
             );
         }
 
-        return $this->jsonResponse($this->getModelFactory()->buildModel('Customer', $customer));
+        return OpenApiService::jsonResponse($modelFactory->buildModel('Customer', $customer));
     }
 
     /**
@@ -115,15 +120,17 @@ class AuthController extends BaseFrontOpenApiController
      *     )
      * )
      */
-    public function customerLogout(Request $request)
-    {
-        if (!$this->getSecurityContext()->hasCustomerUser()) {
+    public function customerLogout(
+        SecurityContext $securityContext,
+        EventDispatcherInterface $dispatcher
+    ) {
+        if (!$securityContext->hasCustomerUser()) {
             throw new \Exception(Translator::getInstance()->trans('No user is currently logged in.'));
         }
 
-        $this->dispatch(TheliaEvents::CUSTOMER_LOGOUT);
+        $dispatcher->dispatch((new BaseAction()),TheliaEvents::CUSTOMER_LOGOUT);
         (new CookieTokenProvider())->clearCookie(ConfigQuery::read('customer_remember_me_cookie_name', 'crmcn'));
 
-        return $this->jsonResponse("Success", 204);
+        return OpenApiService::jsonResponse("Success", 204);
     }
 }

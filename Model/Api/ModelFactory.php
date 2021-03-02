@@ -3,6 +3,7 @@
 namespace OpenApi\Model\Api;
 
 use OpenApi\OpenApi;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\DependencyInjection\Container;
 use Thelia\Log\Tlog;
 
@@ -11,7 +12,7 @@ class ModelFactory
     /** @var Container  */
     protected $container;
 
-    public function __construct(Container $container)
+    public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
     }

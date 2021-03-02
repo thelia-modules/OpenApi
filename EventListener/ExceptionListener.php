@@ -7,7 +7,7 @@ use OpenApi\Model\Api\Error;
 use OpenApi\Model\Api\ModelFactory;
 use OpenApi\OpenApi;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
+use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Thelia\Core\HttpFoundation\JsonResponse;
 use Thelia\Core\Translation\Translator;
@@ -24,14 +24,13 @@ class ExceptionListener implements EventSubscriberInterface
 
     /**
      * Convert all exception to OpenApiException if route is an open api route
-     * @param GetResponseForExceptionEvent $event
+     * @param ExceptionEvent $event
      *
-     * @throws OpenApiException
      */
-    public function catchAllException(GetResponseForExceptionEvent $event)
+    public function catchAllException(ExceptionEvent $event)
     {
         // Do nothing if this is already an Open Api Exception
-        if ($event->getException() instanceof OpenApiException) {
+        if ($event->getThrowable() instanceof OpenApiException) {
             return;
         }
 
@@ -45,26 +44,26 @@ class ExceptionListener implements EventSubscriberInterface
             'Error',
             [
                 'title' => Translator::getInstance()->trans('Unexpected error', [], OpenApi::DOMAIN_NAME),
-                'description' => $event->getException()->getMessage(),
+                'description' => $event->getThrowable()->getMessage()
             ]
         );
 
-        $event->setException((new OpenApiException($error)));
+        $event->setThrowable((new OpenApiException($error)));
     }
 
     /**
      * Format OpenApiException to JSON response
      *
-     * @param GetResponseForExceptionEvent $event
+     * @param ExceptionEvent $event
      */
-    public function catchOpenApiException(GetResponseForExceptionEvent $event)
+    public function catchOpenApiException(ExceptionEvent $event)
     {
-        if (!$event->getException() instanceof OpenApiException) {
+        if (!$event->getThrowable() instanceof OpenApiException) {
             return;
         }
 
         /** @var OpenApiException $openApiException */
-        $openApiException = $event->getException();
+        $openApiException = $event->getThrowable();
 
         $response = new JsonResponse($openApiException->getError(), $openApiException->getHttpCode());
         $event->setResponse($response);

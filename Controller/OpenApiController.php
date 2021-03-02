@@ -6,6 +6,7 @@ use OpenApi\Annotations as OA;
 use Symfony\Component\Routing\Annotation\Route;
 use Thelia\Controller\Front\BaseFrontController;
 use Thelia\Core\HttpFoundation\JsonResponse;
+use Thelia\Core\HttpFoundation\Request;
 use Thelia\Model\Module;
 use Thelia\Model\ModuleQuery;
 use function OpenApi\scan;
@@ -18,7 +19,7 @@ class OpenApiController extends BaseFrontController
     /**
      * @Route("/doc", name="documentation")
      */
-    public function getDocumentation()
+    public function getDocumentation(Request $request)
     {
         header("Access-Control-Allow-Origin: *");
 
@@ -44,7 +45,7 @@ class OpenApiController extends BaseFrontController
 
         $annotations['components']['schemas'] = $modelAnnotations;
 
-        $host = $this->getRequest()->getSchemeAndHttpHost();
+        $host = $request->getSchemeAndHttpHost();
         $annotations['servers'] = [
             ["url" => $host."/open_api"],
             ["url" => $host."/index_dev.php/open_api"]

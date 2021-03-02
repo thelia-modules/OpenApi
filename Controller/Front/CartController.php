@@ -2,28 +2,22 @@
 
 namespace OpenApi\Controller\Front;
 
+use OpenApi\Model\Api\ModelFactory;
 use OpenApi\OpenApi;
-use Propel\Runtime\ActiveQuery\Criteria;
+use OpenApi\Service\OpenApiService;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Thelia\Core\Event\Cart\CartEvent;
-use Thelia\Core\Event\Delivery\DeliveryPostageEvent;
 use Thelia\Core\Event\TheliaEvents;
 use Thelia\Core\HttpFoundation\JsonResponse;
 use Thelia\Core\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use OpenApi\Annotations as OA;
 use Thelia\Core\Translation\Translator;
-use Thelia\Model\AreaDeliveryModuleQuery;
 use Thelia\Model\Cart;
 use Thelia\Model\CartItemQuery;
 use Thelia\Model\ConfigQuery;
-use Thelia\Model\Country;
-use Thelia\Model\CouponQuery;
-use Thelia\Model\ModuleQuery;
 use Thelia\Model\ProductSaleElements;
 use Thelia\Model\ProductSaleElementsQuery;
-use Thelia\Model\State;
-use Thelia\Module\BaseModule;
-use Thelia\Module\Exception\DeliveryException;
 
 /**
  * @Route("/cart", name="cart")
@@ -49,9 +43,9 @@ class CartController extends BaseFrontOpenApiController
      *     )
      * )
      */
-    public function getCart(Request $request)
+    public function getCart(OpenApiService $openApiService)
     {
-        return $this->createResponseFromCart($request->getSession()->getSessionCart($this->getDispatcher()));
+        return $this->createResponseFromCart($openApiService);
     }
 
     /**
@@ -110,9 +104,13 @@ class CartController extends BaseFrontOpenApiController
      *     )
      * )
      */
-    public function cartAddCartItem(Request $request)
-    {
-        $cart = $request->getSession()->getSessionCart($this->getDispatcher());
+    public function cartAddCartItem(
+        Request $request,
+        EventDispatcherInterface $dispatcher,
+        OpenApiService $openApiService,
+        ModelFactory $modelFactory
+    ) {
+        $cart = $request->getSession()->getSessionCart($dispatcher);
         if (null === $cart) {
             throw new \Exception(Translator::getInstance()->trans('No cart found', [], OpenApi::DOMAIN_NAME));
         }
@@ -120,11 +118,11 @@ class CartController extends BaseFrontOpenApiController
         $event = new CartEvent($cart);
 
         $this->updateCartEventFromJson($request->getContent(), $event);
-        $this->getDispatcher()->dispatch(TheliaEvents::CART_ADDITEM, $event);
+        $dispatcher->dispatch($event,TheliaEvents::CART_ADDITEM);
 
-        return $this->jsonResponse([
-            'cart' => $this->getCurrentOpenApiCart($cart),
-            'cartItem' => $this->getModelFactory()->buildModel('CartItem', $event->getCartItem())
+        return OpenApiService::jsonResponse([
+            'cart' => $openApiService->getCurrentOpenApiCart(),
+            'cartItem' => $modelFactory->buildModel('CartItem', $event->getCartItem())
         ]);
     }
 
@@ -167,9 +165,13 @@ class CartController extends BaseFrontOpenApiController
      *     )
      * )
      */
-    public function cartDeleteCartItem(Request $request, $cartItemId)
-    {
-        $cart = $request->getSession()->getSessionCart($this->getDispatcher());
+    public function cartDeleteCartItem(
+        Request $request,
+        EventDispatcherInterface $dispatcher,
+        OpenApiService $openApiService,
+        $cartItemId
+    ) {
+        $cart = $request->getSession()->getSessionCart($dispatcher);
         if (null === $cart) {
             throw new \Exception(Translator::getInstance()->trans('No cart found', [], OpenApi::DOMAIN_NAME));
         }
@@ -183,12 +185,12 @@ class CartController extends BaseFrontOpenApiController
         $cartEvent = new CartEvent($cart);
         $cartEvent->setCartItemId($cartItemId);
 
-        $this->getDispatcher()->dispatch(
-            TheliaEvents::CART_DELETEITEM,
-            $cartEvent
+        $dispatcher->dispatch(
+            $cartEvent,
+            TheliaEvents::CART_DELETEITEM
         );
 
-        return $this->createResponseFromCart($cart);
+        return $this->createResponseFromCart($openApiService);
     }
 
     /**
@@ -230,9 +232,14 @@ class CartController extends BaseFrontOpenApiController
      *     )
      * )
      */
-    public function cartUpdateCartItem(Request $request, $cartItemId)
-    {
-        $cart = $request->getSession()->getSessionCart($this->getDispatcher());
+    public function cartUpdateCartItem(
+        Request $request,
+        EventDispatcherInterface $dispatcher,
+        ModelFactory $modelFactory,
+        OpenApiService $openApiService,
+        $cartItemId
+    ) {
+        $cart = $request->getSession()->getSessionCart($dispatcher);
         if (null === $cart) {
             throw new \Exception(Translator::getInstance()->trans('No cart found', [], OpenApi::DOMAIN_NAME));
         }
@@ -252,18 +259,18 @@ class CartController extends BaseFrontOpenApiController
         $event->setCartItemId($cartItemId);
 
         if ($request->get('quantity') === 0) {
-            $this->getDispatcher()->dispatch(
-                TheliaEvents::CART_DELETEITEM,
-                $event
+            $dispatcher->dispatch(
+                $event,
+                TheliaEvents::CART_DELETEITEM
             );
         } else {
             $this->updateCartEventFromJson($request->getContent(), $event);
-            $this->dispatch(TheliaEvents::CART_UPDATEITEM, $event);
+            $dispatcher->dispatch($event,TheliaEvents::CART_UPDATEITEM);
         }
 
-        return $this->jsonResponse([
-            'cart' => $this->getCurrentOpenApiCart($cart),
-            'cartItem' => $this->getModelFactory()->buildModel('CartItem', $event->getCartItem())
+        return OpenApiService::jsonResponse([
+            'cart' => $openApiService->getCurrentOpenApiCart(),
+            'cartItem' => $modelFactory->buildModel('CartItem', $event->getCartItem())
         ]);
     }
 
@@ -274,14 +281,9 @@ class CartController extends BaseFrontOpenApiController
      * @return JsonResponse
      * @throws \Propel\Runtime\Exception\PropelException
      */
-    protected function createResponseFromCart(Cart $cart)
+    protected function createResponseFromCart(OpenApiService $openApiService)
     {
-        return $this->jsonResponse($this->getCurrentOpenApiCart($cart));
-    }
-
-    protected function getCurrentOpenApiCart($cart)
-    {
-        return $this->getModelFactory()->buildModel('Cart', $cart);
+        return OpenApiService::jsonResponse($openApiService->getCurrentOpenApiCart());
     }
 
     /**

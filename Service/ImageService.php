@@ -1,12 +1,9 @@
 <?php
 
-
 namespace OpenApi\Service;
 
-
-use OpenApi\Model\Api\Image;
-use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Thelia\Core\Event\Image\ImageEvent;
 use Thelia\Core\Event\TheliaEvents;
 use Thelia\Model\BrandImage;
@@ -24,14 +21,9 @@ class ImageService
      */
     private $dispatcher;
 
-    public function __construct(EventDispatcher $dispatcher)
+    public function __construct(EventDispatcherInterface $dispatcher)
     {
         $this->dispatcher = $dispatcher;
-    }
-
-    protected function dispatch($eventName, Event $event = null)
-    {
-        $this->dispatcher->dispatch($eventName, $event);
     }
 
     /**
@@ -107,7 +99,7 @@ class ImageService
             $event->setEffects($effects);
         }
 
-        $this->dispatch(TheliaEvents::IMAGE_PROCESS, $event);
+        $this->dispatcher->dispatch($event, TheliaEvents::IMAGE_PROCESS);
 
         return $event->getFileUrl();
     }

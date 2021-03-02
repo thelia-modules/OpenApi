@@ -3,8 +3,11 @@
 namespace OpenApi\Controller\Front;
 
 use OpenApi\Annotations as OA;
+use OpenApi\Model\Api\ModelFactory;
 use OpenApi\Model\Api\PaymentModule;
+use OpenApi\Service\OpenApiService;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Thelia\Core\Event\Payment\IsValidPaymentEvent;
 use Thelia\Core\Event\TheliaEvents;
 use Thelia\Core\HttpFoundation\Request;
@@ -57,8 +60,11 @@ class PaymentController extends BaseFrontOpenApiController
      *     )
      * )
      */
-    public function getPaymentModules(Request $request)
-    {
+    public function getPaymentModules(
+        EventDispatcherInterface $dispatcher,
+        ModelFactory $modelFactory,
+        Request $request
+    ) {
         $cart = $request->getSession()->getSessionCart($this->getDispatcher());
         $lang = $request->getSession()->getLang();
         $moduleQuery = ModuleQuery::create()
@@ -72,32 +78,35 @@ class PaymentController extends BaseFrontOpenApiController
 
         $modules = $moduleQuery->find();
 
-        $class = $this;
-
         // Return formatted valid payment
-        return $this->jsonResponse(
+        return OpenApiService::jsonResponse(
             array_map(
-                function ($module) use ($class, $cart, $lang) {
-                    return $class->getPaymentModule($module, $cart, $lang);
+                function ($module) use ($dispatcher, $modelFactory, $cart, $lang) {
+                    return $this->getPaymentModule($dispatcher, $modelFactory, $module, $cart, $lang);
                 },
                 iterator_to_array($modules)
             )
         );
     }
 
-    protected function getPaymentModule(Module $paymentModule, Cart $cart, Lang $lang)
-    {
+    protected function getPaymentModule(
+        EventDispatcherInterface $dispatcher,
+        ModelFactory $modelFactory,
+        Module $paymentModule,
+        Cart $cart,
+        Lang $lang
+    ) {
         $paymentModule->setLocale($lang->getLocale());
         $moduleInstance = $paymentModule->getPaymentModuleInstance($this->container);
 
         $isValidPaymentEvent = new IsValidPaymentEvent($moduleInstance, $cart);
-        $this->getDispatcher()->dispatch(
-            TheliaEvents::MODULE_PAYMENT_IS_VALID,
-            $isValidPaymentEvent
+        $dispatcher->dispatch(
+            $isValidPaymentEvent,
+            TheliaEvents::MODULE_PAYMENT_IS_VALID
         );
 
         /** @var PaymentModule $paymentModule */
-        $paymentModule = $this->getModelFactory()->buildModel('PaymentModule', $paymentModule);
+        $paymentModule = $modelFactory->buildModel('PaymentModule', $paymentModule);
         $paymentModule->setValid($isValidPaymentEvent->isValidModule())
             ->setCode($moduleInstance->getCode())
             ->setMinimumAmount($isValidPaymentEvent->getMinimumAmount())

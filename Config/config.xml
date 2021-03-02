@@ -24,123 +24,102 @@
 
 
     <services>
-        <service id="open_api.router.annotation" class="OpenApi\Service\AnnotationRouter">
-            <argument type="service" id="router.filelocator"/>
-            <tag name="router.register" priority="255"/>
-        </service>
-        <service id="open_api.image.service" class="OpenApi\Service\ImageService">
-            <argument type="service" id="event_dispatcher"/>
-        </service>
-
-        <!--   LISTENERS     -->
-        <service id="open_api.order.listener" class="OpenApi\EventListener\OrderListener">
-            <argument type="service" id="request_stack"/>
-            <argument type="service" id="open_api.model.factory"/>
-            <tag name="kernel.event_subscriber"/>
-        </service>
-        <service id="open_api.exception.listener" class="OpenApi\EventListener\ExceptionListener">
-            <argument type="service" id="open_api.model.factory"/>
-            <tag name="kernel.event_subscriber"/>
-        </service>
-
-        <!--    MODELS    -->
-        <service id="open_api.model.factory" class="OpenApi\Model\Api\ModelFactory">
-            <argument type="service" id="service_container"/>
-        </service>
+        <service id="open_api.model.factory" alias="OpenApi\Model\Api\ModelFactory" public="true"/>
+      <!--    MODELS    -->
         <service id="open_api.base.model" abstract="true">
-            <argument type="service" id="open_api.model.factory"/>
+            <argument type="service" id="OpenApi\Model\Api\ModelFactory"/>
             <argument type="service" id="request_stack"/>
             <argument type="service" id="thelia.taxEngine"/>
             <argument type="service" id="event_dispatcher"/>
         </service>
-        <service id="open_api.model.address" class="OpenApi\Model\Api\Address" parent="open_api.base.model"  shared="false">
+        <service id="open_api.model.address" class="OpenApi\Model\Api\Address" parent="open_api.base.model" public="true" shared="false">
             <tag name="open_api.model" alias="PickupAddress"/>
             <tag name="open_api.model" alias="Address"/>
         </service>
-        <service id="open_api.model.cart" class="OpenApi\Model\Api\Cart" parent="open_api.base.model"  shared="false">
+        <service id="open_api.model.cart" class="OpenApi\Model\Api\Cart" parent="open_api.base.model"  public="true" shared="false">
             <argument type="service" id="service_container"/>
             <tag name="open_api.model" alias="Cart"/>
         </service>
-        <service id="open_api.model.cart_item" class="OpenApi\Model\Api\CartItem" parent="open_api.base.model"  shared="false">
+        <service id="open_api.model.cart_item" class="OpenApi\Model\Api\CartItem" parent="open_api.base.model"  public="true" shared="false">
             <tag name="open_api.model" alias="CartItem"/>
         </service>
-        <service id="open_api.model.checkout" class="OpenApi\Model\Api\Checkout" parent="open_api.base.model"  shared="false">
+        <service id="open_api.model.checkout" class="OpenApi\Model\Api\Checkout" parent="open_api.base.model"  public="true" shared="false">
             <tag name="open_api.model" alias="Checkout"/>
         </service>
-        <service id="open_api.model.coupon" class="OpenApi\Model\Api\Coupon" parent="open_api.base.model"  shared="false">
+        <service id="open_api.model.coupon" class="OpenApi\Model\Api\Coupon" parent="open_api.base.model"  public="true" shared="false">
             <tag name="open_api.model" alias="Coupon"/>
         </service>
-        <service id="open_api.model.civility_title" class="OpenApi\Model\Api\CivilityTitle" parent="open_api.base.model"  shared="false">
+        <service id="open_api.model.civility_title" class="OpenApi\Model\Api\CivilityTitle" parent="open_api.base.model"  public="true" shared="false">
             <tag name="open_api.model" alias="CivilityTitle"/>
             <tag name="open_api.model" alias="Title"/>
         </service>
-        <service id="open_api.model.customer" class="OpenApi\Model\Api\Customer" parent="open_api.base.model"  shared="false">
+        <service id="open_api.model.customer" class="OpenApi\Model\Api\Customer" parent="open_api.base.model"  public="true" shared="false">
             <tag name="open_api.model" alias="Customer"/>
         </service>
-        <service id="open_api.model.delivery_module" class="OpenApi\Model\Api\DeliveryModule" parent="open_api.base.model"  shared="false">
+        <service id="open_api.model.delivery_module" class="OpenApi\Model\Api\DeliveryModule" parent="open_api.base.model"  public="true" shared="false">
             <tag name="open_api.model" alias="DeliveryModule"/>
         </service>
-        <service id="open_api.model.delivery_module_option" class="OpenApi\Model\Api\DeliveryModuleOption" parent="open_api.base.model"  shared="false">
+        <service id="open_api.model.delivery_module_option" class="OpenApi\Model\Api\DeliveryModuleOption" parent="open_api.base.model"  public="true" shared="false">
             <tag name="open_api.model" alias="DeliveryModuleOption"/>
         </service>
-        <service id="open_api.model.payment_module" class="OpenApi\Model\Api\PaymentModule" parent="open_api.base.model"  shared="false">
+        <service id="open_api.model.payment_module" class="OpenApi\Model\Api\PaymentModule" parent="open_api.base.model"  public="true" shared="false">
             <tag name="open_api.model" alias="PaymentModule"/>
         </service>
-        <service id="open_api.model.error" class="OpenApi\Model\Api\Error" parent="open_api.base.model"  shared="false">
+        <service id="open_api.model.error" class="OpenApi\Model\Api\Error" parent="open_api.base.model"  public="true" shared="false">
             <tag name="open_api.model" alias="Error"/>
         </service>
-        <service id="open_api.model.schema_violation" class="OpenApi\Model\Api\SchemaViolation" parent="open_api.base.model"  shared="false">
+        <service id="open_api.model.schema_violation" class="OpenApi\Model\Api\SchemaViolation" parent="open_api.base.model"  public="true" shared="false">
             <tag name="open_api.model" alias="SchemaViolation"/>
         </service>
-        <service id="open_api.model.image" class="OpenApi\Model\Api\Image" parent="open_api.base.model"  shared="false">
-            <argument type="service" id="open_api.image.service"/>
+        <service id="open_api.model.image" class="OpenApi\Model\Api\Image" parent="open_api.base.model"  public="true" shared="false">
+            <argument type="service" id="OpenApi\Service\ImageService"/>
             <tag name="open_api.model" alias="Image"/>
             <tag name="open_api.model" alias="Images"/>
         </service>
-        <service id="open_api.model.language" class="OpenApi\Model\Api\Lang" parent="open_api.base.model"  shared="false">
+        <service id="open_api.model.language" class="OpenApi\Model\Api\Lang" parent="open_api.base.model"  public="true" shared="false">
             <tag name="open_api.model" alias="Language"/>
             <tag name="open_api.model" alias="Lang"/>
         </service>
-        <service id="open_api.model.i18n" class="OpenApi\Model\Api\I18n" parent="open_api.base.model"  shared="false">
+        <service id="open_api.model.i18n" class="OpenApi\Model\Api\I18n" parent="open_api.base.model"  public="true" shared="false">
             <tag name="open_api.model" alias="I18n"/>
         </service>
-        <service id="open_api.model.content" class="OpenApi\Model\Api\Content" parent="open_api.base.model"  shared="false">
+        <service id="open_api.model.content" class="OpenApi\Model\Api\Content" parent="open_api.base.model"  public="true" shared="false">
             <tag name="open_api.model" alias="Content"/>
         </service>
-        <service id="open_api.model.price" class="OpenApi\Model\Api\Price" parent="open_api.base.model"  shared="false">
+        <service id="open_api.model.price" class="OpenApi\Model\Api\Price" parent="open_api.base.model"  public="true" shared="false">
             <tag name="open_api.model" alias="Price"/>
         </service>
-        <service id="open_api.model.product" class="OpenApi\Model\Api\Product" parent="open_api.base.model"  shared="false">
+        <service id="open_api.model.product" class="OpenApi\Model\Api\Product" parent="open_api.base.model"  public="true" shared="false">
             <tag name="open_api.model" alias="Product"/>
         </service>
-        <service id="open_api.model.product_sale_element" class="OpenApi\Model\Api\ProductSaleElement" parent="open_api.base.model"  shared="false">
+        <service id="open_api.model.product_sale_element" class="OpenApi\Model\Api\ProductSaleElement" parent="open_api.base.model"  public="true" shared="false">
             <tag name="open_api.model" alias="ProductSaleElement"/>
             <tag name="open_api.model" alias="ProductSaleElements"/>
         </service>
-        <service id="open_api.model.attribute" class="OpenApi\Model\Api\Attribute" parent="open_api.base.model"  shared="false">
+        <service id="open_api.model.attribute" class="OpenApi\Model\Api\Attribute" parent="open_api.base.model"  public="true" shared="false">
             <tag name="open_api.model" alias="Attribute"/>
         </service>
-        <service id="open_api.model.attribute_value" class="OpenApi\Model\Api\AttributeValue" parent="open_api.base.model"  shared="false">
+        <service id="open_api.model.attribute_value" class="OpenApi\Model\Api\AttributeValue" parent="open_api.base.model"  public="true" shared="false">
             <tag name="open_api.model" alias="AttributeValue"/>
             <tag name="open_api.model" alias="AttributeAv"/>
         </service>
-        <service id="open_api.model.feature" class="OpenApi\Model\Api\Feature" parent="open_api.base.model"  shared="false">
+        <service id="open_api.model.feature" class="OpenApi\Model\Api\Feature" parent="open_api.base.model"  public="true" shared="false">
             <tag name="open_api.model" alias="Feature"/>
         </service>
-        <service id="open_api.model.category" class="OpenApi\Model\Api\Category" parent="open_api.base.model"  shared="false">
+        <service id="open_api.model.category" class="OpenApi\Model\Api\Category" parent="open_api.base.model"  public="true" shared="false">
             <tag name="open_api.model" alias="Category"/>
         </service>
-        <service id="open_api.model.brand" class="OpenApi\Model\Api\Brand" parent="open_api.base.model"  shared="false">
+        <service id="open_api.model.brand" class="OpenApi\Model\Api\Brand" parent="open_api.base.model"  public="true" shared="false">
             <tag name="open_api.model" alias="Brand"/>
         </service>
-        <service id="open_api.model.feature_value" class="OpenApi\Model\Api\FeatureValue" parent="open_api.base.model"  shared="false">
+        <service id="open_api.model.feature_value" class="OpenApi\Model\Api\FeatureValue" parent="open_api.base.model"  public="true" shared="false">
             <tag name="open_api.model" alias="FeatureValue"/>
             <tag name="open_api.model" alias="FeatureAv"/>
         </service>
-        <service id="open_api.model.search" class="OpenApi\Model\Api\Search" parent="open_api.base.model"  shared="false">
+        <service id="open_api.model.search" class="OpenApi\Model\Api\Search" parent="open_api.base.model"  public="true" shared="false">
             <tag name="open_api.model" alias="Search"/>
         </service>
-        <service id="open_api.model.result" class="OpenApi\Model\Api\Result" parent="open_api.base.model"  shared="false">
+        <service id="open_api.model.result" class="OpenApi\Model\Api\Result" parent="open_api.base.model"  public="true" shared="false">
             <tag name="open_api.model" alias="Result"/>
         </service>
     </services>

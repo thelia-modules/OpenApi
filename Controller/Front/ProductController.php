@@ -3,6 +3,8 @@
 namespace OpenApi\Controller\Front;
 
 use OpenApi\Annotations as OA;
+use OpenApi\Model\Api\ModelFactory;
+use OpenApi\Service\OpenApiService;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Symfony\Component\Routing\Annotation\Route;
 use Thelia\Core\HttpFoundation\Request;
@@ -119,8 +121,10 @@ class ProductController extends BaseFrontOpenApiController
      *     )
      * )
      */
-    public function search(Request $request)
-    {
+    public function search(
+        Request $request,
+        ModelFactory $modelFactory
+    ) {
         $productQuery = ProductQuery::create();
 
 
@@ -188,12 +192,11 @@ class ProductController extends BaseFrontOpenApiController
         }
 
         $products = $productQuery->find();
-        $modelFactory = $this->getModelFactory();
 
         $products = array_map(function ($product) use ($modelFactory) {
             return $modelFactory->buildModel('Product', $product);
         }, iterator_to_array($products));
 
-        return $this->jsonResponse($products);
+        return OpenApiService::jsonResponse($products);
     }
 }

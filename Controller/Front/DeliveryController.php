@@ -6,16 +6,16 @@ use OpenApi\Annotations as OA;
 use OpenApi\Events\DeliveryModuleOptionEvent;
 use OpenApi\Events\OpenApiEvents;
 use OpenApi\Model\Api\DeliveryModule;
-use OpenApi\Model\Api\DeliveryModuleOption;
-use OpenApi\Model\Api\Error;
+use OpenApi\Model\Api\ModelFactory;
 use OpenApi\OpenApi;
-use Thelia\Controller\Front\BaseFrontController;
+use OpenApi\Service\OpenApiService;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Thelia\Core\Event\Delivery\DeliveryPostageEvent;
 use Thelia\Core\Event\Delivery\PickupLocationEvent;
 use Thelia\Core\Event\TheliaEvents;
-use Thelia\Core\HttpFoundation\JsonResponse;
 use Thelia\Core\HttpFoundation\Request;
+use Thelia\Core\Security\SecurityContext;
 use Thelia\Core\Translation\Translator;
 use Thelia\Model\AddressQuery;
 use Thelia\Model\AreaDeliveryModuleQuery;
@@ -128,7 +128,7 @@ class DeliveryController extends BaseFrontOpenApiController
      *     )
      * )
      */
-    public function getPickupLocations(Request $request)
+    public function getPickupLocations(Request $request, EventDispatcherInterface $dispatcher)
     {
         $state = $request->get('stateId') ? (StateQuery::create())->filterById($request->get('stateId'))->findOne() : null;
         $country = $request->get('countryId') ? (CountryQuery::create())->filterById($request->get('countryId'))->findOne() : null;
@@ -145,9 +145,9 @@ class DeliveryController extends BaseFrontOpenApiController
             $request->get('moduleIds')
         );
 
-        $this->getDispatcher()->dispatch(TheliaEvents::MODULE_DELIVERY_GET_PICKUP_LOCATIONS, $pickupLocationEvent);
+        $dispatcher->dispatch($pickupLocationEvent, TheliaEvents::MODULE_DELIVERY_GET_PICKUP_LOCATIONS);
 
-        return $this->jsonResponse(
+        return OpenApiService::jsonResponse(
             array_map(
                 function (PickupLocation $pickupLocation) {
                     return $pickupLocation->toArray();
@@ -181,22 +181,21 @@ class DeliveryController extends BaseFrontOpenApiController
      *     )
      * )
      */
-    public function getSimpleDeliveryModules(Request $request)
+    public function getSimpleDeliveryModules(ModelFactory $modelFactory)
     {
         $modules = ModuleQuery::create()
             ->filterByActivate(1)
             ->filterByType(BaseModule::DELIVERY_MODULE_TYPE)
             ->find();
 
-        $class = $this;
-        return $this->jsonResponse(
+        return OpenApiService::jsonResponse(
             array_map(
-                function (Module $module) use ($class)  {
+                function (Module $module) use ($modelFactory)  {
                     /** @var AbstractDeliveryModule $moduleInstance */
                     $moduleInstance = $module->getDeliveryModuleInstance($this->container);
 
                     /** @var DeliveryModule $deliveryModule */
-                    $deliveryModule = $class->getModelFactory()->buildModel('DeliveryModule', $module);
+                    $deliveryModule = $modelFactory->buildModel('DeliveryModule', $module);
                     $deliveryModule->setDeliveryMode($moduleInstance->getDeliveryMode());
 
                     return $deliveryModule;
@@ -244,15 +243,20 @@ class DeliveryController extends BaseFrontOpenApiController
      *     )
      * )
      */
-    public function getDeliveryModules(Request $request)
+    public function getDeliveryModules(
+        Request $request,
+        SecurityContext $securityContext,
+        EventDispatcherInterface $dispatcher,
+        ModelFactory $modelFactory
+    )
     {
-        $deliveryAddress = $this->getDeliveryAddress($request);
+        $deliveryAddress = $this->getDeliveryAddress($request, $securityContext);
 
         if (null === $deliveryAddress) {
             throw new \Exception(Translator::getInstance()->trans('You must either pass an address id or have a customer connected', [], OpenApi::DOMAIN_NAME));
         }
 
-        $cart = $request->getSession()->getSessionCart($this->getDispatcher());
+        $cart = $request->getSession()->getSessionCart($dispatcher);
         $country = $deliveryAddress->getCountry();
         $state = $deliveryAddress->getState();
 
@@ -267,18 +271,25 @@ class DeliveryController extends BaseFrontOpenApiController
         $modules = $moduleQuery->find();
 
         $class = $this;
-        return $this->jsonResponse(
+        return OpenApiService::jsonResponse(
             array_map(
-                function ($module) use ($class, $cart, $deliveryAddress, $country, $state)  {
-                    return $class->getDeliveryModule($module, $cart, $deliveryAddress, $country, $state);
+                function ($module) use ($class, $cart, $modelFactory, $dispatcher, $deliveryAddress, $country, $state)  {
+                    return $class->getDeliveryModule($module, $dispatcher, $cart, $modelFactory, $deliveryAddress, $country, $state);
                 },
                 iterator_to_array($modules)
             )
         );
     }
 
-    protected function getDeliveryModule(Module $theliaDeliveryModule, Cart $cart, $address, $country, $state)
-    {
+    protected function getDeliveryModule(
+        Module $theliaDeliveryModule,
+        EventDispatcherInterface $dispatcher,
+        Cart $cart,
+        ModelFactory $modelFactory,
+        $address,
+        $country,
+        $state
+    ) {
         $areaDeliveryModule = AreaDeliveryModuleQuery::create()
             ->findByCountryAndModule($country, $theliaDeliveryModule, $state);
         $isCartVirtual = $cart->isVirtual();
@@ -296,9 +307,9 @@ class DeliveryController extends BaseFrontOpenApiController
 
         $deliveryPostageEvent = new DeliveryPostageEvent($moduleInstance, $cart, $address, $country, $state);
         try {
-            $this->getDispatcher()->dispatch(
-                TheliaEvents::MODULE_DELIVERY_GET_POSTAGE,
-                $deliveryPostageEvent
+            $dispatcher->dispatch(
+                $deliveryPostageEvent,
+                TheliaEvents::MODULE_DELIVERY_GET_POSTAGE
             );
         } catch (DeliveryException $exception) {
             $isValid = false;
@@ -310,13 +321,13 @@ class DeliveryController extends BaseFrontOpenApiController
 
         $deliveryModuleOptionEvent = new DeliveryModuleOptionEvent($theliaDeliveryModule, $address, $cart, $country, $state);
 
-        $this->getDispatcher()->dispatch(
-            OpenApiEvents::MODULE_DELIVERY_GET_OPTIONS,
-            $deliveryModuleOptionEvent
+        $dispatcher->dispatch(
+            $deliveryModuleOptionEvent,
+            OpenApiEvents::MODULE_DELIVERY_GET_OPTIONS
         );
 
         /** @var DeliveryModule $deliveryModule */
-        $deliveryModule = $this->getModelFactory()->buildModel('DeliveryModule', $theliaDeliveryModule);
+        $deliveryModule = $modelFactory->buildModel('DeliveryModule', $theliaDeliveryModule);
 
         $deliveryModule
             ->setDeliveryMode($deliveryPostageEvent->getDeliveryMode())
@@ -327,7 +338,7 @@ class DeliveryController extends BaseFrontOpenApiController
         return $deliveryModule;
     }
 
-    protected function getDeliveryAddress(Request $request)
+    protected function getDeliveryAddress(Request $request, SecurityContext $securityContext)
     {
         $addressId = $request->get('addressId');
 
@@ -343,7 +354,7 @@ class DeliveryController extends BaseFrontOpenApiController
         }
 
         // If no address in request or in order take customer default address
-        $currentCustomer = $this->getSecurityContext()->getCustomerUser();
+        $currentCustomer = $securityContext->getCustomerUser();
 
         if (null === $currentCustomer) {
             return null;

@@ -358,8 +358,8 @@ class Cart extends BaseApiModel
             try {
                 $deliveryPostageEvent = new DeliveryPostageEvent($moduleInstance, $cart, null, $country, $state);
                 $this->dispatcher->dispatch(
-                    TheliaEvents::MODULE_DELIVERY_GET_POSTAGE,
-                    $deliveryPostageEvent
+                    $deliveryPostageEvent,
+                    TheliaEvents::MODULE_DELIVERY_GET_POSTAGE
                 );
 
                 if ($deliveryPostageEvent->isValidModule()) {

@@ -2,10 +2,10 @@
 
 namespace OpenApi\Controller\Front;
 
-use OpenApi\Exception\OpenApiException;
-use OpenApi\Model\Api\Error;
+use OpenApi\Model\Api\ModelFactory;
 use OpenApi\OpenApi;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use OpenApi\Service\OpenApiService;
+use Symfony\Component\Routing\Annotation\Route;
 use Thelia\Core\HttpFoundation\JsonResponse;
 use Thelia\Core\HttpFoundation\Request;
 use OpenApi\Annotations as OA;
@@ -45,19 +45,21 @@ class AddressController extends BaseFrontOpenApiController
      * )
      * )
      */
-    public function getAddress(Request $request)
-    {
-        $currentCustomer = $this->getCurrentCustomer();
+    public function getAddress(
+        OpenApiService $openApiService,
+        ModelFactory $modelFactory
+    ) {
+        $currentCustomer = $openApiService->getCurrentCustomer();
 
         $addresses = AddressQuery::create()
             ->filterByCustomerId($currentCustomer->getId())
             ->find();
 
-        return $this->jsonResponse(
+        return OpenApiService::jsonResponse(
             array_map(
-                function (Address $address) {
+                function (Address $address) use ($modelFactory) {
                     /** @var OpenApiAddress $openApiAddress */
-                    $openApiAddress = $this->getModelFactory()->buildModel('Address', $address);
+                    $openApiAddress = $modelFactory->buildModel('Address', $address);
                     $openApiAddress->validate(self::GROUP_READ);
                     return ($openApiAddress);
                 },
@@ -94,15 +96,18 @@ class AddressController extends BaseFrontOpenApiController
      *     )
      * )
      */
-    public function createAddress(Request $request)
-    {
-        $currentCustomer = $this->getCurrentCustomer();
+    public function createAddress(
+        Request $request,
+        OpenApiService $openApiService,
+        ModelFactory $modelFactory
+    ) {
+        $currentCustomer = $openApiService->getCurrentCustomer();
 
         /** @var OpenApiCustomer $openApiCustomer */
-        $openApiCustomer = $this->getModelFactory()->buildModel('Customer', $currentCustomer);
+        $openApiCustomer = $modelFactory->buildModel('Customer', $currentCustomer);
 
         /** @var OpenApiAddress $openApiAddress */
-        $openApiAddress = $this->getModelFactory()->buildModel('Address', $request->getContent());
+        $openApiAddress = $modelFactory->buildModel('Address', $request->getContent());
         $openApiAddress
             ->setCustomer($openApiCustomer)
             ->validate(self::GROUP_CREATE);
@@ -118,7 +123,7 @@ class AddressController extends BaseFrontOpenApiController
             $theliaAddress->makeItDefault();
         }
 
-        return $this->jsonResponse($openApiAddress->setId($theliaAddress->getId()));
+        return OpenApiService::jsonResponse($openApiAddress->setId($theliaAddress->getId()));
     }
 
     /**
@@ -153,9 +158,13 @@ class AddressController extends BaseFrontOpenApiController
      *     )
      * )
      */
-    public function updateAddress(Request $request, $id)
-    {
-        $currentCustomer = $this->getCurrentCustomer();
+    public function updateAddress(
+        Request $request,
+        OpenApiService $openApiService,
+        ModelFactory $modelFactory,
+        $id
+    ) {
+        $currentCustomer = $openApiService->getCurrentCustomer();
 
         $theliaAddress = AddressQuery::create()
             ->filterByCustomerId($currentCustomer->getId())
@@ -163,23 +172,17 @@ class AddressController extends BaseFrontOpenApiController
             ->findOne();
 
         if (null === $theliaAddress) {
-            /** @var Error $error */
-            $error = $this->getModelFactory()->buildModel(
-                'Error',
-                [
-                    'title' => Translator::getInstance()->trans('Invalid data', [], OpenApi::DOMAIN_NAME),
-                    'description' => Translator::getInstance()->trans("No address found for id $id for the current customer.", [], OpenApi::DOMAIN_NAME),
-                ]
+            throw $openApiService->buildOpenApiException(
+                Translator::getInstance()->trans('Invalid data', [], OpenApi::DOMAIN_NAME),
+                Translator::getInstance()->trans(Translator::getInstance()->trans("No address found for id $id for the current customer.", [], OpenApi::DOMAIN_NAME), [], OpenApi::DOMAIN_NAME)
             );
-
-            throw new OpenApiException($error);
         }
 
         /** @var OpenApiCustomer $openApiCustomer */
-        $openApiCustomer = $this->getModelFactory()->buildModel('Customer', $currentCustomer);
+        $openApiCustomer = $modelFactory->buildModel('Customer', $currentCustomer);
 
         /** @var OpenApiAddress $openApiAddress */
-        $openApiAddress = $this->getModelFactory()->buildModel('Address', $request->getContent());
+        $openApiAddress = $modelFactory->buildModel('Address', $request->getContent());
         $openApiAddress
             ->setId($id)
             ->setCustomer($openApiCustomer)
@@ -224,9 +227,12 @@ class AddressController extends BaseFrontOpenApiController
      *     )
      * )
      */
-    public function deleteAddress(Request $request, $id)
-    {
-        $currentCustomer = $this->getCurrentCustomer();
+    public function deleteAddress(
+        OpenApiService $openApiService,
+        ModelFactory $modelFactory,
+        $id
+    ) {
+        $currentCustomer = $openApiService->getCurrentCustomer();
 
         $theliaAddress = AddressQuery::create()
             ->filterByCustomerId($currentCustomer->getId())
@@ -235,16 +241,10 @@ class AddressController extends BaseFrontOpenApiController
 
         if (null === $theliaAddress || $theliaAddress->getIsDefault()) {
             $errorDescription = $theliaAddress ? "Impossible to delete the default address." : "No address found for id $id for the current customer.";
-            /** @var Error $error */
-            $error = $this->getModelFactory()->buildModel(
-                'Error',
-                [
-                    'title' => Translator::getInstance()->trans('Invalid data', [], OpenApi::DOMAIN_NAME),
-                    'description' => Translator::getInstance()->trans($errorDescription, [], OpenApi::DOMAIN_NAME),
-                ]
+            throw $openApiService->buildOpenApiException(
+                Translator::getInstance()->trans('Invalid data', [], OpenApi::DOMAIN_NAME),
+                Translator::getInstance()->trans($errorDescription, [], OpenApi::DOMAIN_NAME)
             );
-
-            throw new OpenApiException($error);
         }
 
         $theliaAddress->delete();

@@ -2,29 +2,11 @@
 
 namespace OpenApi\Controller\Front;
 
-use OpenApi\OpenApi;
-use Propel\Runtime\ActiveQuery\Criteria;
-use Thelia\Core\Event\Cart\CartEvent;
-use Thelia\Core\Event\Delivery\DeliveryPostageEvent;
-use Thelia\Core\Event\TheliaEvents;
 use Thelia\Core\HttpFoundation\JsonResponse;
 use Thelia\Core\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use OpenApi\Annotations as OA;
-use Thelia\Core\Translation\Translator;
-use Thelia\Model\AreaDeliveryModuleQuery;
-use Thelia\Model\Cart;
-use Thelia\Model\CartItemQuery;
 use Thelia\Model\ConfigQuery;
-use Thelia\Model\Country;
-use Thelia\Model\CouponQuery;
-use Thelia\Model\ModuleQuery;
-use Thelia\Model\ProductQuery;
-use Thelia\Model\ProductSaleElements;
-use Thelia\Model\ProductSaleElementsQuery;
-use Thelia\Model\State;
-use Thelia\Module\BaseModule;
-use Thelia\Module\Exception\DeliveryException;
 
 /**
  * @Route("/config", name="config")
@@ -58,7 +40,7 @@ class ConfigController extends BaseFrontOpenApiController
      *     )
      * )
      */
-    public function getConfig(Request $request, $key)
+    public function getConfig($key)
     {
         return new JsonResponse(ConfigQuery::read($key));
     }

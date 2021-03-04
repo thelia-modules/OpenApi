@@ -101,7 +101,7 @@ class Checkout extends BaseApiModel
     /**
      *  @OA\Property(
      *     property="isComplete",
-     *     description="Tell if a checkout has defined a Module and an Address for both delivery and billing"
+     *     description="Tell if a checkout has defined a Module and an Address for both delivery and billing",
      *     type="boolean"
      *  )
      * @return boolean

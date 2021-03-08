@@ -158,7 +158,6 @@ class ProductSaleElement extends BaseApiModel
         $this->attributes = array_map(
             function (AttributeCombination $attributeCombination) use ($modelFactory){
                 $propelAttribute = $attributeCombination->getAttribute();
-                $attributeAvBackup = $propelAttribute->getAttributeAvs();
 
                 // Temporary set only pse attribute av to build good attribute av list
                 $propelAttribute->setAttributeAvs((new Collection()));
@@ -167,7 +166,7 @@ class ProductSaleElement extends BaseApiModel
                 $attribute = $modelFactory->buildModel('Attribute', $propelAttribute);
 
                 // Reset attribute av to all for next use of attribute (because of propel "cache")
-                $propelAttribute->setAttributeAvs($attributeAvBackup);
+                $propelAttribute->clearAttributeAvs();
                 return $attribute;
             },
             iterator_to_array($theliaModel->getAttributeCombinations())

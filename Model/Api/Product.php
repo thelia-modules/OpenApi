@@ -161,18 +161,16 @@ class Product extends BaseApiModel
         $this->features = array_map(
             function (FeatureProduct $featureProduct) use ($modelFactory){
                 $propelFeature = $featureProduct->getFeature();
-                $featureAvBackup = $propelFeature->getFeatureAvs();
 
                 $propelFeature->setFeatureAvs((new Collection()));
                 if (null !== $featureProduct->getFeatureAv()) {
-                    // Temporary set only pse attribute av to build good attribute av list
+                    // Temporary set only product feature av to build good feature av list
                     $propelFeature->addFeatureAv($featureProduct->getFeatureAv());
                 }
 
                 $feature = $modelFactory->buildModel('Feature', $propelFeature);
 
-                // Reset attribute av to all for next use of attribute (because of propel "cache")
-                $propelFeature->setFeatureAvs($featureAvBackup);
+                $propelFeature->clearFeatureAvs();
                 return $feature;
             },
             iterator_to_array($theliaModel->getFeatureProducts())
@@ -441,26 +439,5 @@ class Product extends BaseApiModel
     public function getFeatures(): array
     {
         return $this->features;
-    }
-
-    /**
-     * @param array $features
-     * @return Product
-     */
-    public function setFeatures(array $features = []): Product
-    {
-        $this->features = $features;
-        return $this;
-    }
-
-    /**
-     * Method alias to match thelia getter name
-     * @param array $features
-     *
-     * @return Product
-     */
-    public function setFeatureProducts(array $features = []): Product
-    {
-        return $this->setFeatures($features);
     }
 }

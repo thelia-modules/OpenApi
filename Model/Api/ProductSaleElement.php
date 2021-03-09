@@ -160,7 +160,6 @@ class ProductSaleElement extends BaseApiModel
                 $propelAttribute = $attributeCombination->getAttribute();
 
                 // Temporary set only pse attribute av to build good attribute av list
-                $propelAttribute->setAttributeAvs((new Collection()));
                 $propelAttribute->addAttributeAv($attributeCombination->getAttributeAv());
 
                 $attribute = $modelFactory->buildModel('Attribute', $propelAttribute);

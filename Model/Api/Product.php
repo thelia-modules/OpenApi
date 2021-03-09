@@ -162,7 +162,6 @@ class Product extends BaseApiModel
             function (FeatureProduct $featureProduct) use ($modelFactory){
                 $propelFeature = $featureProduct->getFeature();
 
-                $propelFeature->setFeatureAvs((new Collection()));
                 if (null !== $featureProduct->getFeatureAv()) {
                     // Temporary set only product feature av to build good feature av list
                     $propelFeature->addFeatureAv($featureProduct->getFeatureAv());

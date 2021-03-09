@@ -81,20 +81,6 @@ class Checkout extends BaseApiModel
      */
     protected $acceptedTermsAndConditions = false;
 
-    public function createFromData($json)
-    {
-        parent::createFromData($json);
-
-        $data = json_decode($json, true);
-
-        if (!null === $data['pickupAddress']) {
-            $this->pickupAddress = (new Address())
-                ->createFromData($data['pickupAddress']);
-        }
-
-        return $this;
-    }
-
     public function createFromOrder(Order $order)
     {
         $this->setDeliveryAddressId($order->getChoosenDeliveryAddress());

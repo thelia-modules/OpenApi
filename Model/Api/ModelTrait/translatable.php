@@ -5,7 +5,13 @@ namespace OpenApi\Model\Api\ModelTrait;
 use OpenApi\Model\Api\I18n;
 use OpenApi\Model\Api\ModelFactory;
 
+/**
+ * @OA\Schema
+ * Trait translatable
+ * @package OpenApi\Model\Api\ModelTrait
+ */
 trait translatable {
+
     /**
      * @var I18n
      * @OA\Property(

@@ -22,7 +22,7 @@ class RequestListener implements EventSubscriberInterface
     public function markRequestAsOpenApi(ControllerEvent $event)
     {
         $controller = $event->getController();
-        if (isset($controller[0]) && $controller[0] instanceof BaseFrontOpenApiController) {
+        if (isset($controller[0]) && $controller[0] instanceof BaseFrontOpenApiController || $controller[0] instanceof BaseFrontOpenApiController) {
             $currentRequest = $event->getRequest();
             $currentRequest->attributes->set(OpenApi::OPEN_API_ROUTE_REQUEST_KEY, true);
         }

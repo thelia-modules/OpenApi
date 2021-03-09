@@ -15,8 +15,13 @@ class ModelPass implements CompilerPassInterface
         $modelServices = [];
         foreach ($taggedServices as $id => $tags) {
             foreach ($tags as $attributes) {
-                $modelServices[$attributes['alias']] = $id;
+                $classParts = explode("\\",$id);
+                $modelAlias = isset($attributes['alias']) ? $attributes['alias'] : end($classParts);
+                $modelServices[$modelAlias] = $id;
             }
+            $definition = $containerBuilder->getDefinition($id);
+            $definition->setPublic(true)
+                ->setShared(false);
         }
 
         $containerBuilder->setParameter(OpenApi::OPEN_API_MODELS_PARAMETER_KEY, $modelServices);

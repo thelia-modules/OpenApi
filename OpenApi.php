@@ -13,8 +13,11 @@
 namespace OpenApi;
 
 use OpenApi\Compiler\ModelPass;
+use OpenApi\Model\Api\BaseApiModel;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ServicesConfigurator;
 use Thelia\Module\BaseModule;
+use TheliaSmarty\Template\SmartyPluginInterface;
 
 class OpenApi extends BaseModule
 {
@@ -51,6 +54,12 @@ class OpenApi extends BaseModule
             ->exclude([THELIA_MODULE_DIR.ucfirst(self::getModuleCode()).'/I18n/*'])
             ->autowire(true)
             ->autoconfigure(true);
+    }
+
+    public static function loadConfiguration(ContainerBuilder $containerBuilder): void
+    {
+        $containerBuilder->registerForAutoconfiguration(BaseApiModel::class)
+            ->addTag('open_api.model');
     }
 
     public static function getAnnotationRoutePrefix(): string

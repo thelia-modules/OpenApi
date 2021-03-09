@@ -4,7 +4,8 @@ namespace OpenApi\Model\Api;
 
 use Propel\Runtime\ActiveQuery\Criteria;
 use Symfony\Component\DependencyInjection\Container;
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Thelia\Core\Event\Delivery\DeliveryPostageEvent;
 use Thelia\Core\Event\TheliaEvents;
@@ -111,7 +112,7 @@ class Cart extends BaseApiModel
     protected $items;
 
     /**
-     * @var Container
+     * @var ContainerInterface
      */
     protected $container;
 
@@ -119,9 +120,9 @@ class Cart extends BaseApiModel
         ModelFactory $modelFactory,
         RequestStack $requestStack,
         TaxEngine $taxEngine,
-        EventDispatcher $dispatcher,
+        EventDispatcherInterface $dispatcher,
         // Todo find a way to remove container here (only used to get module instance)
-        Container $container
+        ContainerInterface $container
     )
     {
         parent::__construct($modelFactory, $requestStack, $taxEngine, $dispatcher);

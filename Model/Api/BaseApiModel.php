@@ -9,12 +9,11 @@ use OpenApi\Normalizer\ModelApiNormalizer;
 use OpenApi\OpenApi;
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Collection\Collection;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Serializer\Serializer;
-use Symfony\Component\Validator\Constraints\Valid;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Thelia\Core\HttpFoundation\Request;
 use Thelia\Core\Translation\Translator;
 use Thelia\Model\Country;
@@ -41,7 +40,7 @@ abstract class BaseApiModel implements \JsonSerializable
     /** @var State|null  */
     protected $state;
 
-    /** @var EventDispatcher  */
+    /** @var EventDispatcherInterface  */
     protected $dispatcher;
 
     protected $extendedData;
@@ -50,7 +49,7 @@ abstract class BaseApiModel implements \JsonSerializable
         ModelFactory $modelFactory,
         RequestStack $requestStack,
         TaxEngine $taxEngine,
-        EventDispatcher $dispatcher
+        EventDispatcherInterface $dispatcher
     ) {
         if (class_exists(AnnotationRegistry::class)) {
             AnnotationRegistry::registerLoader('class_exists');
@@ -178,25 +177,27 @@ abstract class BaseApiModel implements \JsonSerializable
     }
 
     /**
-     * Override to return the Thelia model associated with the OpenApi model instead of null
+     * Override to return the propel model associated with the OpenApi model instead of null
      *
      * @return mixed
      */
-    protected function getTheliaModel()
+    protected function getTheliaModel($propelModelName = null)
     {
-        $theliaModelName = "Thelia\Model\\".basename(str_replace('\\', '/', get_class($this)));
+        if (null === $propelModelName) {
+            $propelModelName = "Thelia\Model\\".basename(str_replace('\\', '/', get_class($this)));
+        }
 
-        if (!class_exists($theliaModelName)) {
+        if (!class_exists($propelModelName)) {
             return null;
         }
 
         if (null !== $id = $this->getId()) {
-            $theliaModelQueryName = $theliaModelName . 'Query';
+            $theliaModelQueryName = $propelModelName . 'Query';
             return $theliaModelQueryName::create()->filterById($id)->findOne();
         }
 
         /** @var ActiveRecordInterface $newTheliaModel */
-        $newTheliaModel = new $theliaModelName;
+        $newTheliaModel = new $propelModelName;
         $newTheliaModel->setNew(true);
 
         return $newTheliaModel;
@@ -205,7 +206,7 @@ abstract class BaseApiModel implements \JsonSerializable
     public function toTheliaModel($locale = null)
     {
         if (null === $theliaModel = $this->getTheliaModel()) {
-            throw new \Exception(Translator::getInstance()->trans('You need to override the getTheliaModel method to use the toTheliaModel method.', [], OpenApi::DOMAIN_NAME));
+            throw new \Exception(Translator::getInstance()->trans('Propel model not found automatically. Please override the getTheliaModel method to use the toTheliaModel method.', [], OpenApi::DOMAIN_NAME));
         }
 
         // If model need locale, set it
@@ -215,22 +216,27 @@ abstract class BaseApiModel implements \JsonSerializable
 
         // Look all method of Open API model
         foreach (get_class_methods($this) as $methodName) {
-            // If it's not a getter skip it
-            if (0 !== strncasecmp('get', $methodName, 3)) {
-                continue ;
-            }
             $getter = $methodName;
+            $setter = null;
 
-            // Build thelia setter name
-            $setter = 'set' . substr($getter, 3);
+            // If it's not a getter skip it
+            if (0 === strncasecmp('get', $methodName, 3)) {
+                // Build thelia setter name
+                $setter = 'set' . substr($getter, 3);
+            }
+
+            // For boolean method like "isVisible"
+            if ($setter === null && 0 === strncasecmp('is', $methodName, 2)) {
+                // Build thelia setter name
+                $setter = 'set' . substr($getter, 2);
+            }
 
             // Check if setter exist in Thelia model
-            if (!method_exists($theliaModel, $setter)) {
+            if (null === $setter || !method_exists($theliaModel, $setter)) {
                 continue ;
             }
 
             $value = $this->$getter();
-
 
             // If Values are the same skip this property
             if (method_exists($theliaModel, $getter) && $theliaModel->$getter() === $value) {

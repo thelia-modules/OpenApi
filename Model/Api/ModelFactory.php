@@ -17,7 +17,7 @@ class ModelFactory
         $this->container = $container;
     }
 
-    public function buildModel($modelName, $data = null)
+    public function buildModel($modelName, $data = null, $locale = null)
     {
         try {
             $openApiModels = $this->container->getParameter(OpenApi::OPEN_API_MODELS_PARAMETER_KEY);
@@ -37,7 +37,7 @@ class ModelFactory
             $model = $this->container->get($modelServiceId);
 
             if (null !== $data) {
-                $model->createOrUpdateFromData($data);
+                $model->createOrUpdateFromData($data, $locale);
             }
 
             return $model;

@@ -99,6 +99,14 @@ class Cart extends BaseApiModel
     protected $currency;
 
     /**
+     * @var boolean
+     * @OA\Property(
+     *    type="boolean"
+     * )
+     */
+    protected $virtual;
+
+    /**
      * @var array
      * @OA\Property(
      *    type="array",
@@ -154,7 +162,8 @@ class Cart extends BaseApiModel
             ->setCoupons($coupons)
             ->setTotal($theliaModel->getTaxedAmount($deliveryCountry, false, null))
             ->setCurrency($theliaModel->getCurrency()->getSymbol())
-            ->setItems($cartItems);
+            ->setItems($cartItems)
+            ->setVirtual($theliaModel->isVirtual());
     }
 
     /**
@@ -248,6 +257,24 @@ class Cart extends BaseApiModel
     }
 
     /**
+     * @return boolean
+     */
+    public function getVirtual()
+    {
+        return $this->virtual;
+    }
+
+    /**
+     * @param boolean $virtual
+     * @return Cart
+     */
+    public function setVirtual($virtual)
+    {
+        $this->virtual = $virtual;
+        return $this;
+    }
+
+    /**
      * @return float
      */
     public function getTotal()
@@ -334,8 +361,7 @@ class Cart extends BaseApiModel
         $deliveryModules = ModuleQuery::create()
             ->filterByActivate(1)
             ->filterByType(BaseModule::DELIVERY_MODULE_TYPE, Criteria::EQUAL)
-            ->find()
-        ;
+            ->find();
 
         $virtual = $cart->isVirtual();
         $postage = null;

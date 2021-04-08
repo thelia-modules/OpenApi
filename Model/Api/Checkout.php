@@ -71,7 +71,7 @@ class Checkout extends BaseApiModel
      *    type="boolean"
      * )
      */
-    protected $acceptedTermsAndConditions;
+    protected $acceptedTermsAndConditions = false;
 
     public function createFromData($json)
     {

@@ -35,7 +35,12 @@ class CheckoutController extends BaseFrontOpenApiController
      *     summary="Validate and set an checkout",
      *     @OA\RequestBody(
      *          required=true,
-     *          @OA\JsonContent(ref="#/components/schemas/Checkout")
+     *          @OA\JsonContent(
+     *          allOf={
+     *               @OA\Schema(@OA\Property(property="needValidate", type="boolean", default=false)),
+     *               @OA\Schema(ref="#/components/schemas/Checkout")
+     *          }
+     *     )
      *     ),
      *     @OA\Response(
      *          response="200",
@@ -64,9 +69,14 @@ class CheckoutController extends BaseFrontOpenApiController
             }
         }
 
+        $decodedContent = json_decode($request->getContent(), true);
+
         /** @var Checkout $checkout */
-        $checkout = $this->getModelFactory()->buildModel('Checkout', $request->getContent());
-        $checkout->checkIsValid();
+        $checkout = $this->getModelFactory()->buildModel('Checkout', $decodedContent);
+
+        if (isset($decodedContent['needValidate']) && true === $decodedContent['needValidate']) {
+            $checkout->checkIsValid();
+        }
 
         $order = $this->getOrder($this->getRequest());
         $orderEvent = new OrderEvent($order);

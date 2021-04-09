@@ -132,6 +132,10 @@ class Checkout extends BaseApiModel
             return false;
         }
 
+        if (null === $this->getDeliveryModuleOptionCode()) {
+            return false;
+        }
+
         return true;
     }
 
@@ -174,6 +178,16 @@ class Checkout extends BaseApiModel
             throw new \Exception(
                 Translator::getInstance()->trans(
                     "You must choose a billing address",
+                    [],
+                    OpenApi::DOMAIN_NAME
+                )
+            );
+        }
+
+        if (false === $this->getDeliveryModuleOptionCode()) {
+            throw new \Exception(
+                Translator::getInstance()->trans(
+                    "You must choose a delivery mode",
                     [],
                     OpenApi::DOMAIN_NAME
                 )

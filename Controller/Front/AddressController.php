@@ -190,20 +190,23 @@ class AddressController extends BaseFrontOpenApiController
         $theliaAddress = $openApiAddress->toTheliaModel();
 
         $oldDefaultAddress = AddressQuery::create()->filterByCustomer($currentCustomer)->filterByIsDefault(true)->findOne();
+        $alreadyDefault = false;
 
         /*
          * Force a default address to stay as default
          * Because we can't unset a default address, this is only done when a new address is set as default
          */
         if (null !== $oldDefaultAddress && $oldDefaultAddress->getId() === $theliaAddress->getId()) {
-            $openApiAddress->setIsDefault(true);
+            $alreadyDefault = true;
+            $theliaAddress->setIsDefault(true);
         }
 
-        if (null === $oldDefaultAddress || $openApiAddress->getIsDefault()) {
+        if ((null === $oldDefaultAddress || $openApiAddress->getIsDefault()) && !$alreadyDefault) {
             $theliaAddress->makeItDefault();
         }
 
-        $theliaAddress->save();
+        $theliaAddress
+            ->save();
 
         return new JsonResponse($openApiAddress);
     }

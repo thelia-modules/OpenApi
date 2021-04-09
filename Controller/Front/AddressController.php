@@ -185,10 +185,19 @@ class AddressController extends BaseFrontOpenApiController
             ->setCustomer($openApiCustomer)
             ->validate(self::GROUP_UPDATE);
 
-        /** @var Address $address */
+        /** @var Address $theliaAddress */
         $theliaAddress = $openApiAddress->toTheliaModel();
 
         $oldDefaultAddress = AddressQuery::create()->filterByCustomer($currentCustomer)->filterByIsDefault(true)->findOne();
+
+        /*
+         * Force a default address to stay as default
+         * Because we can't unset a default address, this is only done when a new address is set as default
+         */
+        if (null !== $oldDefaultAddress && $oldDefaultAddress->getId() === $theliaAddress->getId()) {
+            $openApiAddress->setIsDefault(true);
+        }
+
         if (null === $oldDefaultAddress || $openApiAddress->getIsDefault()) {
             $theliaAddress->makeItDefault();
         }

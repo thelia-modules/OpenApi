@@ -215,7 +215,7 @@ class Address extends BaseApiModel
     /**
      * @return bool
      */
-    public function isDefault()
+    public function getIsDefault()
     {
         return $this->isDefault;
     }

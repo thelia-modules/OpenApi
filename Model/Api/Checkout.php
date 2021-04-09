@@ -58,6 +58,14 @@ class Checkout extends BaseApiModel
     protected $deliveryAddressId;
 
     /**
+     * @var string
+     * @OA\Property(
+     *    type="string"
+     * )
+     */
+    protected $deliveryModuleOptionCode;
+
+    /**
      * @var Address
      * @OA\Property(
      *     ref="#/components/schemas/Address"
@@ -290,4 +298,24 @@ class Checkout extends BaseApiModel
         $this->acceptedTermsAndConditions = $acceptedTermsAndConditions;
         return $this;
     }
+
+    /**
+     * @return string
+     */
+    public function getDeliveryModuleOptionCode()
+    {
+        return $this->deliveryModuleOptionCode;
+    }
+
+    /**
+     * @param $deliveryModuleOptionCode
+     * @return Checkout
+     */
+    public function setDeliveryModuleOptionCode($deliveryModuleOptionCode)
+    {
+        $this->deliveryModuleOptionCode = $deliveryModuleOptionCode;
+        return $this;
+    }
+
+
 }

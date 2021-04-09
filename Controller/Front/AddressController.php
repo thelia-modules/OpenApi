@@ -114,7 +114,7 @@ class AddressController extends BaseFrontOpenApiController
         $theliaAddress->save();
 
         $oldDefaultAddress = AddressQuery::create()->filterByCustomer($currentCustomer)->filterByIsDefault(true)->findOne();
-        if (null === $oldDefaultAddress || $openApiAddress->isDefault()) {
+        if (null === $oldDefaultAddress || $openApiAddress->getIsDefault()) {
             $theliaAddress->makeItDefault();
         }
 

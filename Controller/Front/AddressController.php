@@ -190,7 +190,15 @@ class AddressController extends BaseFrontOpenApiController
 
         $oldDefaultAddress = AddressQuery::create()->filterByCustomer($currentCustomer)->filterByIsDefault(true)->findOne();
         if (null === $oldDefaultAddress || $openApiAddress->getIsDefault()) {
-            $theliaAddress->makeItDefault();
+            $addresses = AddressQuery::create()->filterByCustomerId($currentCustomer->getId())
+                ->find();
+
+            foreach ($addresses as $address) {
+                $address->setIsDefault(0);
+                $address->save();
+            }
+
+            $theliaAddress->setIsDefault(1);
         }
 
         $theliaAddress->save();

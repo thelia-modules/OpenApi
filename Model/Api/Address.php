@@ -185,6 +185,11 @@ class Address extends BaseApiModel
 
         /** @var CivilityTitle $civ */
         $civ = $this->modelFactory->buildModel('Title', $customerTitle);
+        if ($this->getIsDefault()) {
+            $this->setIsDefault(true);
+        } else {
+            $this->setIsDefault(false);
+        }
 
         $this
             ->setCivilityTitle($civ)

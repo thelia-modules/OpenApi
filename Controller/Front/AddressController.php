@@ -111,12 +111,13 @@ class AddressController extends BaseFrontOpenApiController
 
         /** @var Address $theliaAddress */
         $theliaAddress = $openApiAddress->toTheliaModel();
-        $theliaAddress->save();
 
         $oldDefaultAddress = AddressQuery::create()->filterByCustomer($currentCustomer)->filterByIsDefault(true)->findOne();
         if (null === $oldDefaultAddress || $openApiAddress->getIsDefault()) {
             $theliaAddress->makeItDefault();
         }
+
+        $theliaAddress->save();
 
         return $this->jsonResponse($openApiAddress->setId($theliaAddress->getId()));
     }

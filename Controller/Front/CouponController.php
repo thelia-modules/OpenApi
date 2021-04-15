@@ -4,6 +4,7 @@
 namespace OpenApi\Controller\Front;
 
 
+use Front\Front;
 use OpenApi\Model\Api\Coupon;
 use OpenApi\Model\Api\Error;
 use OpenApi\OpenApi;
@@ -14,6 +15,7 @@ use Thelia\Core\HttpFoundation\Request;
 use OpenApi\Annotations as OA;
 use Symfony\Component\Routing\Annotation\Route;
 use Thelia\Core\Translation\Translator;
+use Thelia\Exception\UnmatchableConditionException;
 use Thelia\Model\CouponQuery;
 
 /**
@@ -71,9 +73,13 @@ class CouponController extends BaseFrontOpenApiController
             throw new \Exception(Translator::getInstance()->trans('No coupons were found for this coupon code.', [], OpenApi::DOMAIN_NAME));
         }
 
-        $event = new CouponConsumeEvent($openApiCoupon->getCode());
-        $this->getDispatcher()->dispatch(TheliaEvents::COUPON_CONSUME, $event);
-        $openApiCoupon = $this->getModelFactory()->buildModel('Coupon', $theliaCoupon);
+        try {
+            $event = new CouponConsumeEvent($openApiCoupon->getCode());
+            $this->getDispatcher()->dispatch(TheliaEvents::COUPON_CONSUME, $event);
+            $openApiCoupon = $this->getModelFactory()->buildModel('Coupon', $theliaCoupon);
+        } catch (UnmatchableConditionException $exception) {
+            throw new \Exception(Translator::getInstance()->trans('You should sign in or register to use this coupon.', [], OpenApi::DOMAIN_NAME));
+        }
 
         return $this->jsonResponse($openApiCoupon);
     }

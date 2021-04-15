@@ -252,7 +252,7 @@ class Cart extends BaseApiModel
      */
     public function setDiscount($discount)
     {
-        $this->discount = $discount;
+        $this->discount = (float)$discount;
         return $this;
     }
 

@@ -158,21 +158,27 @@ class Product extends BaseApiModel
         parent::createFromTheliaModel($theliaModel, $locale);
 
         $modelFactory = $this->modelFactory;
-        $this->features = array_map(
-            function (FeatureProduct $featureProduct) use ($modelFactory){
-                $propelFeature = $featureProduct->getFeature();
+        $this->features = array_filter(
+            array_map(
+                function (FeatureProduct $featureProduct) use ($modelFactory){
+                    $propelFeature = $featureProduct->getFeature();
+                    if(null === $propelFeature){
+                        return false;
+                    }
+                    if (null !== $featureProduct->getFeatureAv()) {
+                        // Temporary set only product feature av to build good feature av list
+                        $propelFeature->addFeatureAv($featureProduct->getFeatureAv());
+                    }
+                    $feature = $modelFactory->buildModel('Feature', $propelFeature);
 
-                if (null !== $featureProduct->getFeatureAv()) {
-                    // Temporary set only product feature av to build good feature av list
-                    $propelFeature->addFeatureAv($featureProduct->getFeatureAv());
-                }
-
-                $feature = $modelFactory->buildModel('Feature', $propelFeature);
-
-                $propelFeature->clearFeatureAvs();
-                return $feature;
-            },
-            iterator_to_array($theliaModel->getFeatureProducts())
+                    $propelFeature->clearFeatureAvs();
+                    return $feature;
+                },
+                iterator_to_array($theliaModel->getFeatureProducts())
+            ),
+            function($value){
+                return $value;
+            }
         );
 
         $this->categories = array_map(

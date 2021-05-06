@@ -65,7 +65,7 @@ class PaymentController extends BaseFrontOpenApiController
         ModelFactory $modelFactory,
         Request $request
     ) {
-        $cart = $request->getSession()->getSessionCart($this->getDispatcher());
+        $cart = $request->getSession()->getSessionCart($dispatcher);
         $lang = $request->getSession()->getLang();
         $moduleQuery = ModuleQuery::create()
             ->filterByActivate(1)

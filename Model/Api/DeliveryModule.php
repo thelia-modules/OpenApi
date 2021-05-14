@@ -3,15 +3,15 @@
 namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
+use OpenApi\Constraint as Constraint;
 use OpenApi\Exception\OpenApiException;
 use OpenApi\Model\Api\ModelTrait\translatable;
 use OpenApi\OpenApi;
 use Thelia\Core\Translation\Translator;
-use OpenApi\Constraint as Constraint;
 
 /**
- * Class DeliveryModule
- * @package OpenApi\Model\Api
+ * Class DeliveryModule.
+ *
  * @OA\Schema(
  *     description="A module of type delivery"
  * )
@@ -31,7 +31,7 @@ class DeliveryModule extends BaseApiModel
     protected $deliveryMode;
 
     /**
-     * @var integer
+     * @var int
      * @OA\Property(
      *    type="integer"
      * )
@@ -40,7 +40,7 @@ class DeliveryModule extends BaseApiModel
     protected $id;
 
     /**
-     * @var boolean
+     * @var bool
      * @OA\Property(
      *    type="boolean"
      * )
@@ -89,11 +89,12 @@ class DeliveryModule extends BaseApiModel
      * @param string $deliveryMode
      *
      * @return DeliveryModule
+     *
      * @throws \Exception
      */
     public function setDeliveryMode($deliveryMode)
     {
-        if (!in_array($deliveryMode, ['delivery', 'pickup', 'localPickup'])) {
+        if (!\in_array($deliveryMode, ['delivery', 'pickup', 'localPickup'])) {
             /** @var Error $error */
             $error = $this->modelFactory->buildModel(
                 'Error',
@@ -121,11 +122,13 @@ class DeliveryModule extends BaseApiModel
 
     /**
      * @param int $id
+     *
      * @return DeliveryModule
      */
     public function setId($id)
     {
         $this->id = $id;
+
         return $this;
     }
 
@@ -139,11 +142,13 @@ class DeliveryModule extends BaseApiModel
 
     /**
      * @param bool $valid
+     *
      * @return DeliveryModule
      */
     public function setValid($valid)
     {
         $this->valid = $valid;
+
         return $this;
     }
 
@@ -157,11 +162,13 @@ class DeliveryModule extends BaseApiModel
 
     /**
      * @param string $code
+     *
      * @return DeliveryModule
      */
     public function setCode($code)
     {
         $this->code = $code;
+
         return $this;
     }
 
@@ -175,11 +182,13 @@ class DeliveryModule extends BaseApiModel
 
     /**
      * @param array $options
+     *
      * @return DeliveryModule
      */
     public function setOptions($options)
     {
         $this->options = $options;
+
         return $this;
     }
 
@@ -193,12 +202,13 @@ class DeliveryModule extends BaseApiModel
 
     /**
      * @param array $images
+     *
      * @return DeliveryModule
      */
     public function setImages($images)
     {
         $this->images = $images;
+
         return $this;
     }
-
 }

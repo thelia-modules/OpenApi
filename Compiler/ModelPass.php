@@ -8,15 +8,15 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class ModelPass implements CompilerPassInterface
 {
-    public function process(ContainerBuilder $containerBuilder)
+    public function process(ContainerBuilder $containerBuilder): void
     {
         $taggedServices = $containerBuilder->findTaggedServiceIds('open_api.model');
 
         $modelServices = [];
         foreach ($taggedServices as $id => $tags) {
             foreach ($tags as $attributes) {
-                $classParts = explode("\\",$id);
-                $modelAlias = isset($attributes['alias']) ? $attributes['alias'] : end($classParts);
+                $classParts = explode('\\', $id);
+                $modelAlias = $attributes['alias'] ?? end($classParts);
                 $modelServices[$modelAlias] = $id;
             }
             $definition = $containerBuilder->getDefinition($id);

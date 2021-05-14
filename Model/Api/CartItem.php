@@ -1,17 +1,16 @@
 <?php
 
-
 namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
-use OpenApi\Service\ImageService;
-use Thelia\Model\Country;
-use \Thelia\Model\CartItem as TheliaCartItem;
 use OpenApi\Constraint as Constraint;
+use OpenApi\Service\ImageService;
+use Thelia\Model\CartItem as TheliaCartItem;
+use Thelia\Model\Country;
 
 /**
- * Class CartItem
- * @package OpenApi\Model\Api
+ * Class CartItem.
+ *
  * @OA\Schema(
  *     description="An item in a cart"
  * )
@@ -19,7 +18,7 @@ use OpenApi\Constraint as Constraint;
 class CartItem extends BaseApiModel
 {
     /**
-     * @var integer
+     * @var int
      * @OA\Property(
      *    type="integer",
      *    description="cartItemId, not to be confused with the productId or pseId",
@@ -28,9 +27,8 @@ class CartItem extends BaseApiModel
      */
     protected $id;
 
-
     /**
-     * @var boolean
+     * @var bool
      * @OA\Property(
      *    type="boolean",
      * )
@@ -86,7 +84,7 @@ class CartItem extends BaseApiModel
     protected $promoPrice;
 
     /**
-     * @var integer
+     * @var int
      * @OA\Property(
      *    type="integer",
      * )
@@ -94,12 +92,13 @@ class CartItem extends BaseApiModel
     protected $quantity;
 
     /**
-     * Create a new OpenApi CartItem from a Thelia CartItem and a Country, then returns it
+     * Create a new OpenApi CartItem from a Thelia CartItem and a Country, then returns it.
      *
      * @param \Thelia\Model\CartItem $cartItem
-     * @param Country $country
-     * @param ImageService $imageService
+     * @param ImageService           $imageService
+     *
      * @return $this
+     *
      * @throws \Propel\Runtime\Exception\PropelException
      */
     public function fillFromTheliaCartItemAndCountry(TheliaCartItem $cartItem, Country $country)
@@ -114,7 +113,7 @@ class CartItem extends BaseApiModel
         $productSaleElements->fillFromTheliaPseAndCountry($cartItem->getProductSaleElements(), $country);
         $this->productSaleElement = $productSaleElements;
 
-        $this->isPromo = (bool)$cartItem->getPromo();
+        $this->isPromo = (bool) $cartItem->getPromo();
         $this->price = $this->modelFactory->buildModel(
             'Price',
             [
@@ -126,7 +125,7 @@ class CartItem extends BaseApiModel
             'Price',
             [
                 'taxed' => $cartItem->getTaxedPromoPrice($country),
-                'untaxed' => $cartItem->getPromoPrice()
+                'untaxed' => $cartItem->getPromoPrice(),
             ]
         );
         $this->quantity = $cartItem->getQuantity();
@@ -136,9 +135,7 @@ class CartItem extends BaseApiModel
 
         try {
             $images = array_map(
-                function ($productSaleElementsImage) use ($modelFactory) {
-                    return $modelFactory->buildModel('Image', $productSaleElementsImage->getProductImage());
-                },
+                fn ($productSaleElementsImage) => $modelFactory->buildModel('Image', $productSaleElementsImage->getProductImage()),
                 iterator_to_array($cartItem->getProductSaleElements()->getProductSaleElementsProductImages())
             );
         } catch (\Exception $exception) {
@@ -160,11 +157,13 @@ class CartItem extends BaseApiModel
 
     /**
      * @param int $id
+     *
      * @return CartItem
      */
     public function setId($id)
     {
         $this->id = $id;
+
         return $this;
     }
 
@@ -178,11 +177,13 @@ class CartItem extends BaseApiModel
 
     /**
      * @param bool $isPromo
+     *
      * @return CartItem
      */
     public function setIsPromo($isPromo)
     {
         $this->isPromo = $isPromo;
+
         return $this;
     }
 
@@ -196,11 +197,13 @@ class CartItem extends BaseApiModel
 
     /**
      * @param Product $product
+     *
      * @return CartItem
      */
     public function setProduct($product)
     {
         $this->product = $product;
+
         return $this;
     }
 
@@ -214,11 +217,13 @@ class CartItem extends BaseApiModel
 
     /**
      * @param ProductSaleElement $productSaleElement
+     *
      * @return CartItem
      */
     public function setProductSaleElement($productSaleElement)
     {
         $this->productSaleElement = $productSaleElement;
+
         return $this;
     }
 
@@ -232,11 +237,13 @@ class CartItem extends BaseApiModel
 
     /**
      * @param array $images
+     *
      * @return CartItem
      */
     public function setImages($images)
     {
         $this->images = $images;
+
         return $this;
     }
 
@@ -250,11 +257,13 @@ class CartItem extends BaseApiModel
 
     /**
      * @param Price $price
+     *
      * @return CartItem
      */
     public function setPrice($price)
     {
         $this->price = $price;
+
         return $this;
     }
 
@@ -268,11 +277,13 @@ class CartItem extends BaseApiModel
 
     /**
      * @param Price $promoPrice
+     *
      * @return CartItem
      */
     public function setPromoPrice($promoPrice)
     {
         $this->promoPrice = $promoPrice;
+
         return $this;
     }
 
@@ -286,11 +297,13 @@ class CartItem extends BaseApiModel
 
     /**
      * @param int $quantity
+     *
      * @return CartItem
      */
     public function setQuantity($quantity)
     {
         $this->quantity = $quantity;
+
         return $this;
     }
 }

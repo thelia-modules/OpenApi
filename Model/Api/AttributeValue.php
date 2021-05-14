@@ -3,12 +3,10 @@
 namespace OpenApi\Model\Api;
 
 use OpenApi\Model\Api\ModelTrait\translatable;
-use Thelia\Model\AttributeAv;
-use Thelia\Model\Base\AttributeAvQuery;
 
 /**
- * Class AttributeValue
- * @package OpenApi\Model\Api
+ * Class AttributeValue.
+ *
  * @OA\Schema(
  *     description="An attribute value"
  * )
@@ -18,7 +16,7 @@ class AttributeValue extends BaseApiModel
     use translatable;
 
     /**
-     * @var integer
+     * @var int
      * @OA\Property(
      *    type="integer",
      * )
@@ -42,13 +40,15 @@ class AttributeValue extends BaseApiModel
     public function setId($id)
     {
         $this->id = $id;
+
         return $this;
     }
 
     /**
-     * "setAttributeAvId" alias to fit Thelia model
-
+     * "setAttributeAvId" alias to fit Thelia model.
+     *
      * @param int $id
+     *
      * @return AttributeValue
      */
     public function setAttributeAvId($id)

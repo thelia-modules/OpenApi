@@ -81,9 +81,7 @@ class PaymentController extends BaseFrontOpenApiController
         // Return formatted valid payment
         return OpenApiService::jsonResponse(
             array_map(
-                function ($module) use ($dispatcher, $modelFactory, $cart, $lang) {
-                    return $this->getPaymentModule($dispatcher, $modelFactory, $module, $cart, $lang);
-                },
+                fn ($module) => $this->getPaymentModule($dispatcher, $modelFactory, $module, $cart, $lang),
                 iterator_to_array($modules)
             )
         );

@@ -1,11 +1,10 @@
 <?php
 
-
 namespace OpenApi\Model\Api;
 
 use OpenApi\Service\ImageService;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Thelia\TaxEngine\TaxEngine;
 
 class Image extends File
@@ -23,6 +22,7 @@ class Image extends File
      * @param $theliaModel
      * @param null $locale
      * @param null $type
+     *
      * @return $this
      */
     public function createFromTheliaModel($theliaModel, $locale = null, $type = null)

@@ -14,11 +14,11 @@ class NotBlank extends \Symfony\Component\Validator\Constraints\NotBlank
     public function __construct($options = null)
     {
         parent::__construct($options);
-        $this->message = Translator::getInstance()->trans("This value should not be blank", [], OpenApi::DOMAIN_NAME);
+        $this->message = Translator::getInstance()->trans('This value should not be blank', [], OpenApi::DOMAIN_NAME);
     }
 
     public function validatedBy()
     {
-        return \get_parent_class().'Validator';
+        return get_parent_class().'Validator';
     }
 }

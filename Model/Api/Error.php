@@ -3,11 +3,10 @@
 namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
-use OpenApi\Constraint as Constraint;
 
 /**
- * Class Error
- * @package OpenApi\Model\Api
+ * Class Error.
+ *
  * @OA\Schema(
  *     description="An error"
  * )
@@ -51,11 +50,13 @@ class Error extends BaseApiModel
 
     /**
      * @param string $title
+     *
      * @return Error
      */
     public function setTitle($title)
     {
         $this->title = $title;
+
         return $this;
     }
 
@@ -69,11 +70,13 @@ class Error extends BaseApiModel
 
     /**
      * @param string $description
+     *
      * @return Error
      */
     public function setDescription($description)
     {
         $this->description = $description;
+
         return $this;
     }
 
@@ -87,11 +90,13 @@ class Error extends BaseApiModel
 
     /**
      * @param array $schemaViolations
+     *
      * @return Error
      */
     public function setSchemaViolations($schemaViolations)
     {
         $this->schemaViolations = $schemaViolations;
+
         return $this;
     }
 
@@ -103,6 +108,7 @@ class Error extends BaseApiModel
     public function appendViolation($schemaViolation)
     {
         $this->schemaViolations[] = $schemaViolation;
+
         return $this;
     }
 }

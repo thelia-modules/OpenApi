@@ -45,7 +45,6 @@ class OpenApiService
         RequestStack $requestStack,
         EventDispatcherInterface $dispatcher
     ) {
-
         $this->securityContext = $securityContext;
         $this->modelFactory = $modelFactory;
         $this->requestStack = $requestStack;
@@ -53,13 +52,14 @@ class OpenApiService
         $this->dispatcher = $dispatcher;
     }
 
-    public static function jsonResponse($data, $code = 200, $cors = "*")
+    public static function jsonResponse($data, $code = 200, $cors = '*')
     {
         $response = (new JsonResponse())
             ->setContent(json_encode($data));
 
         $response->headers->set('Access-Control-Allow-Origin', $cors);
         $response->setStatusCode($code);
+
         return $response;
     }
 
@@ -67,6 +67,7 @@ class OpenApiService
      * @param bool $throwExceptionIfNull
      *
      * @return \Thelia\Model\Customer
+     *
      * @throws OpenApiException
      */
     public function getCurrentCustomer($throwExceptionIfNull = true)
@@ -79,7 +80,7 @@ class OpenApiService
                 'Error',
                 [
                     'title' => Translator::getInstance()->trans('Invalid data', [], OpenApi::DOMAIN_NAME),
-                    'description' => Translator::getInstance()->trans("No customer found", [], OpenApi::DOMAIN_NAME),
+                    'description' => Translator::getInstance()->trans('No customer found', [], OpenApi::DOMAIN_NAME),
                 ]
             );
             throw new OpenApiException($error);
@@ -92,6 +93,7 @@ class OpenApiService
      * @param bool $throwExceptionIfNull
      *
      * @return \Thelia\Model\Cart
+     *
      * @throws OpenApiException
      */
     public function getSessionCart($throwExceptionIfNull = true)
@@ -104,7 +106,7 @@ class OpenApiService
                 'Error',
                 [
                     'title' => Translator::getInstance()->trans('Invalid data', [], OpenApi::DOMAIN_NAME),
-                    'description' => Translator::getInstance()->trans("No cart found", [], OpenApi::DOMAIN_NAME),
+                    'description' => Translator::getInstance()->trans('No cart found', [], OpenApi::DOMAIN_NAME),
                 ]
             );
             throw new OpenApiException($error);
@@ -124,7 +126,7 @@ class OpenApiService
         return $requestData[$key];
     }
 
-    public function buildOpenApiException($title, $description = ""): OpenApiException
+    public function buildOpenApiException($title, $description = ''): OpenApiException
     {
         /** @var Error $error */
         $error = $this->modelFactory->buildModel(
@@ -138,7 +140,7 @@ class OpenApiService
         return new OpenApiException($error);
     }
 
-    public  function getCurrentOpenApiCart()
+    public function getCurrentOpenApiCart()
     {
         $cart = $this->currentRequest->getSession()->getSessionCart($this->dispatcher);
 

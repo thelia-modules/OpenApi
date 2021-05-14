@@ -6,8 +6,8 @@ use OpenApi\Constraint as Constraint;
 use OpenApi\Model\Api\ModelTrait\translatable;
 
 /**
- * Class PaymentModule
- * @package OpenApi\Model\Api
+ * Class PaymentModule.
+ *
  * @OA\Schema(
  *     description="A module of type payment"
  * )
@@ -15,9 +15,9 @@ use OpenApi\Model\Api\ModelTrait\translatable;
 class PaymentModule extends BaseApiModel
 {
     use translatable;
-    
+
     /**
-     * @var integer
+     * @var int
      * @OA\Property(
      *    type="integer"
      * )
@@ -26,7 +26,7 @@ class PaymentModule extends BaseApiModel
     protected $id;
 
     /**
-     * @var boolean
+     * @var bool
      * @OA\Property(
      *    type="boolean"
      * )
@@ -34,7 +34,7 @@ class PaymentModule extends BaseApiModel
     protected $valid;
 
     /**
-     * @var integer
+     * @var int
      * @OA\Property(
      *    type="integer"
      * )
@@ -80,11 +80,13 @@ class PaymentModule extends BaseApiModel
 
     /**
      * @param int $id
+     *
      * @return PaymentModule
      */
     public function setId($id)
     {
         $this->id = $id;
+
         return $this;
     }
 
@@ -98,11 +100,13 @@ class PaymentModule extends BaseApiModel
 
     /**
      * @param bool $valid
+     *
      * @return PaymentModule
      */
     public function setValid($valid)
     {
         $this->valid = $valid;
+
         return $this;
     }
 
@@ -116,11 +120,13 @@ class PaymentModule extends BaseApiModel
 
     /**
      * @param int $code
+     *
      * @return PaymentModule
      */
     public function setCode($code)
     {
         $this->code = $code;
+
         return $this;
     }
 
@@ -134,11 +140,13 @@ class PaymentModule extends BaseApiModel
 
     /**
      * @param float $minimumAmount
+     *
      * @return PaymentModule
      */
     public function setMinimumAmount($minimumAmount)
     {
         $this->minimumAmount = $minimumAmount;
+
         return $this;
     }
 
@@ -152,11 +160,13 @@ class PaymentModule extends BaseApiModel
 
     /**
      * @param float $maximumAmount
+     *
      * @return PaymentModule
      */
     public function setMaximumAmount($maximumAmount)
     {
         $this->maximumAmount = $maximumAmount;
+
         return $this;
     }
 
@@ -170,11 +180,13 @@ class PaymentModule extends BaseApiModel
 
     /**
      * @param array $images
+     *
      * @return PaymentModule
      */
     public function setImages($images)
     {
         $this->images = $images;
+
         return $this;
     }
 }

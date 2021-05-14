@@ -3,6 +3,7 @@
 namespace OpenApi\Controller\Front;
 
 use Front\Front;
+use OpenApi\Annotations as OA;
 use OpenApi\Model\Api\Checkout;
 use OpenApi\Model\Api\ModelFactory;
 use OpenApi\OpenApi;
@@ -13,16 +14,15 @@ use Thelia\Core\Event\Delivery\DeliveryPostageEvent;
 use Thelia\Core\Event\Order\OrderEvent;
 use Thelia\Core\Event\TheliaEvents;
 use Thelia\Core\HttpFoundation\Request;
-use OpenApi\Annotations as OA;
 use Thelia\Core\HttpFoundation\Session\Session;
 use Thelia\Core\Security\SecurityContext;
 use Thelia\Core\Translation\Translator;
 use Thelia\Model\AddressQuery;
 use Thelia\Model\AreaDeliveryModuleQuery;
 use Thelia\Model\Cart;
+use Thelia\Model\ConfigQuery;
 use Thelia\Model\ModuleQuery;
 use Thelia\Model\Order;
-use Thelia\Model\ConfigQuery;
 use Thelia\Module\Exception\DeliveryException;
 
 /**
@@ -64,8 +64,7 @@ class CheckoutController extends BaseFrontOpenApiController
         SecurityContext $securityContext,
         OpenApiService $openApiService,
         ModelFactory $modelFactory
-    )
-    {
+    ) {
         // Allow to check if a customer is logged
         $openApiService->getCurrentCustomer();
 
@@ -110,7 +109,6 @@ class CheckoutController extends BaseFrontOpenApiController
         $responseCheckout = $checkout
             ->createFromOrder($orderEvent->getOrder());
 
-
         return OpenApiService::jsonResponse($responseCheckout);
     }
 
@@ -149,7 +147,7 @@ class CheckoutController extends BaseFrontOpenApiController
         SecurityContext $securityContext,
         Checkout $checkout,
         OrderEvent $orderEvent
-    ) {
+    ): void {
         $cart = $session->getSessionCart($dispatcher);
         $deliveryAddress = AddressQuery::create()->findPk($checkout->getDeliveryAddressId());
         $deliveryModule = ModuleQuery::create()->findPk($checkout->getDeliveryModuleId());
@@ -161,7 +159,7 @@ class CheckoutController extends BaseFrontOpenApiController
             if ($deliveryAddress->getCustomerId() !== $securityContext->getCustomerUser()->getId()) {
                 throw new \Exception(
                     Translator::getInstance()->trans(
-                        "Delivery address does not belong to the current customer",
+                        'Delivery address does not belong to the current customer',
                         [],
                         Front::MESSAGE_DOMAIN
                     )
@@ -176,7 +174,7 @@ class CheckoutController extends BaseFrontOpenApiController
                 )) {
                 throw new \Exception(
                     Translator::getInstance()->trans(
-                        "Delivery module cannot be use with selected delivery address",
+                        'Delivery module cannot be use with selected delivery address',
                         [],
                         Front::MESSAGE_DOMAIN
                     )
@@ -208,7 +206,7 @@ class CheckoutController extends BaseFrontOpenApiController
         $orderEvent->setDeliveryModule($deliveryModule !== null ? $deliveryModule->getId() : null);
         $orderEvent->setPostage($postage !== null ? $postage->getAmount() : 0.0);
         $orderEvent->setPostageTax($postage !== null ? $postage->getAmountTax() : 0.0);
-        $orderEvent->setPostageTaxRuleTitle($postage !== null ? $postage->getTaxRuleTitle() : "");
+        $orderEvent->setPostageTaxRuleTitle($postage !== null ? $postage->getTaxRuleTitle() : '');
 
         $dispatcher->dispatch($orderEvent, TheliaEvents::ORDER_SET_DELIVERY_ADDRESS);
         $dispatcher->dispatch($orderEvent, TheliaEvents::ORDER_SET_POSTAGE);
@@ -226,14 +224,14 @@ class CheckoutController extends BaseFrontOpenApiController
         SecurityContext $securityContext,
         Checkout $checkout,
         OrderEvent $orderEvent
-    ) {
+    ): void {
         $billingAddress = AddressQuery::create()->findPk($checkout->getBillingAddressId());
 
         if ($billingAddress) {
             if ($billingAddress->getCustomerId() !== $securityContext->getCustomerUser()->getId()) {
                 throw new \Exception(
                     Translator::getInstance()->trans(
-                        "Invoice address does not belong to the current customer",
+                        'Invoice address does not belong to the current customer',
                         [],
                         Front::MESSAGE_DOMAIN
                     )

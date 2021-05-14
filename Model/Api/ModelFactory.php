@@ -9,7 +9,7 @@ use Thelia\Log\Tlog;
 
 class ModelFactory
 {
-    /** @var Container  */
+    /** @var Container */
     protected $container;
 
     public function __construct(ContainerInterface $container)
@@ -23,10 +23,10 @@ class ModelFactory
             $openApiModels = $this->container->getParameter(OpenApi::OPEN_API_MODELS_PARAMETER_KEY);
 
             // If no correspondent OpenApi model was found
-            if (!is_array($openApiModels) || !array_key_exists($modelName, $openApiModels)) {
+            if (!\is_array($openApiModels) || !\array_key_exists($modelName, $openApiModels)) {
                 $modelName = rtrim($modelName, 's');
                 // Try to remove trailing "s" for plural
-                if (!array_key_exists($modelName, $openApiModels)) {
+                if (!\array_key_exists($modelName, $openApiModels)) {
                     return null;
                 }
             }
@@ -43,7 +43,8 @@ class ModelFactory
             return $model;
         } catch (\Exception $exception) {
             Tlog::getInstance()->addError("Error for building api model \"$modelName\" : ".$exception->getMessage());
-            return  null;
+
+            return null;
         }
     }
 
@@ -51,7 +52,7 @@ class ModelFactory
     {
         $openApiModels = $this->container->getParameter(OpenApi::OPEN_API_MODELS_PARAMETER_KEY);
 
-        if (!is_array($openApiModels) || !array_key_exists($modelName, $openApiModels)) {
+        if (!\is_array($openApiModels) || !\array_key_exists($modelName, $openApiModels)) {
             return false;
         }
 

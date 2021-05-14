@@ -1,6 +1,5 @@
 <?php
 
-
 namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
@@ -16,7 +15,7 @@ use OpenApi\Constraint as Constraint;
 class Lang extends BaseApiModel
 {
     /**
-     * @var integer
+     * @var int
      * @OA\Property(
      *    type="integer",
      * )
@@ -97,7 +96,7 @@ class Lang extends BaseApiModel
     protected $thousandsSeparator;
 
     /**
-     * @var boolean
+     * @var bool
      * @OA\Property(
      *    type="boolean",
      * )
@@ -105,7 +104,7 @@ class Lang extends BaseApiModel
     protected $active;
 
     /**
-     * @var boolean
+     * @var bool
      * @OA\Property(
      *    type="boolean",
      * )
@@ -121,7 +120,7 @@ class Lang extends BaseApiModel
     protected $decimals;
 
     /**
-     * @var boolean
+     * @var bool
      * @OA\Property(
      *    type="boolean",
      * )
@@ -138,11 +137,13 @@ class Lang extends BaseApiModel
 
     /**
      * @param int $id
+     *
      * @return Lang
      */
     public function setId($id)
     {
         $this->id = $id;
+
         return $this;
     }
 
@@ -156,11 +157,13 @@ class Lang extends BaseApiModel
 
     /**
      * @param string $title
+     *
      * @return Lang
      */
     public function setTitle($title)
     {
         $this->title = $title;
+
         return $this;
     }
 
@@ -174,11 +177,13 @@ class Lang extends BaseApiModel
 
     /**
      * @param string $code
+     *
      * @return Lang
      */
     public function setCode($code)
     {
         $this->code = $code;
+
         return $this;
     }
 
@@ -192,11 +197,13 @@ class Lang extends BaseApiModel
 
     /**
      * @param string $locale
+     *
      * @return Lang
      */
     public function setLocale($locale)
     {
         $this->locale = $locale;
+
         return $this;
     }
 
@@ -210,11 +217,13 @@ class Lang extends BaseApiModel
 
     /**
      * @param string $url
+     *
      * @return Lang
      */
     public function setUrl($url)
     {
         $this->url = $url;
+
         return $this;
     }
 
@@ -228,11 +237,13 @@ class Lang extends BaseApiModel
 
     /**
      * @param string $dateFormat
+     *
      * @return Lang
      */
     public function setDateFormat($dateFormat)
     {
         $this->dateFormat = $dateFormat;
+
         return $this;
     }
 
@@ -246,11 +257,13 @@ class Lang extends BaseApiModel
 
     /**
      * @param string $timeFormat
+     *
      * @return Lang
      */
     public function setTimeFormat($timeFormat)
     {
         $this->timeFormat = $timeFormat;
+
         return $this;
     }
 
@@ -264,11 +277,13 @@ class Lang extends BaseApiModel
 
     /**
      * @param string $datetimeFormat
+     *
      * @return Lang
      */
     public function setDatetimeFormat($datetimeFormat)
     {
         $this->datetimeFormat = $datetimeFormat;
+
         return $this;
     }
 
@@ -282,11 +297,13 @@ class Lang extends BaseApiModel
 
     /**
      * @param string $decimalSeparator
+     *
      * @return Lang
      */
     public function setDecimalSeparator($decimalSeparator)
     {
         $this->decimalSeparator = $decimalSeparator;
+
         return $this;
     }
 
@@ -300,11 +317,13 @@ class Lang extends BaseApiModel
 
     /**
      * @param string $thousandsSeparator
+     *
      * @return Lang
      */
     public function setThousandsSeparator($thousandsSeparator)
     {
         $this->thousandsSeparator = $thousandsSeparator;
+
         return $this;
     }
 
@@ -318,11 +337,13 @@ class Lang extends BaseApiModel
 
     /**
      * @param bool $active
+     *
      * @return Lang
      */
     public function setActive($active)
     {
         $this->active = $active;
+
         return $this;
     }
 
@@ -336,11 +357,13 @@ class Lang extends BaseApiModel
 
     /**
      * @param bool $visible
+     *
      * @return Lang
      */
     public function setVisible($visible)
     {
         $this->visible = $visible;
+
         return $this;
     }
 
@@ -354,11 +377,13 @@ class Lang extends BaseApiModel
 
     /**
      * @param string $decimals
+     *
      * @return Lang
      */
     public function setDecimals($decimals)
     {
         $this->decimals = $decimals;
+
         return $this;
     }
 
@@ -372,11 +397,13 @@ class Lang extends BaseApiModel
 
     /**
      * @param bool $byDefault
+     *
      * @return Lang
      */
     public function setByDefault($byDefault)
     {
         $this->byDefault = $byDefault;
+
         return $this;
     }
 }

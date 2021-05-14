@@ -3,15 +3,13 @@
 namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
-use OpenApi\Exception\OpenApiException;
 use OpenApi\OpenApi;
 use Thelia\Core\Translation\Translator;
 use Thelia\Model\Order;
-use OpenApi\Constraint as Constraint;
 
 /**
- * Class Checkout
- * @package OpenApi\Model\Api
+ * Class Checkout.
+ *
  * @OA\Schema(
  *     schema="Checkout",
  *     title="Checkout",
@@ -20,11 +18,10 @@ use OpenApi\Constraint as Constraint;
  */
 class Checkout extends BaseApiModel
 {
-
     protected $isComplete = false;
 
     /**
-     * @var integer
+     * @var int
      * @OA\Property(
      *    type="integer",
      *    description="id of the delivery module used by this checkout"
@@ -33,7 +30,7 @@ class Checkout extends BaseApiModel
     protected $deliveryModuleId;
 
     /**
-     * @var integer
+     * @var int
      * @OA\Property(
      *    type="integer",
      *    description="id of the payment module used by this checkout"
@@ -42,7 +39,7 @@ class Checkout extends BaseApiModel
     protected $paymentModuleId;
 
     /**
-     * @var integer
+     * @var int
      * @OA\Property(
      *    type="integer"
      * )
@@ -50,7 +47,7 @@ class Checkout extends BaseApiModel
     protected $billingAddressId;
 
     /**
-     * @var integer
+     * @var int
      * @OA\Property(
      *    type="integer"
      * )
@@ -74,7 +71,7 @@ class Checkout extends BaseApiModel
     protected $pickupAddress;
 
     /**
-     * @var boolean
+     * @var bool
      * @OA\Property(
      *    type="boolean"
      * )
@@ -98,7 +95,8 @@ class Checkout extends BaseApiModel
      *     description="Tell if a checkout has defined a Module and an Address for both delivery and billing",
      *     type="boolean"
      *  )
-     * @return boolean
+     *
+     * @return bool
      */
     public function getIsComplete()
     {
@@ -124,12 +122,12 @@ class Checkout extends BaseApiModel
     /**
      * @throws \Exception
      */
-    public function checkIsValid()
+    public function checkIsValid(): void
     {
         if (null === $this->getDeliveryModuleId()) {
             throw new \Exception(
                 Translator::getInstance()->trans(
-                    "You must choose a delivery module",
+                    'You must choose a delivery module',
                     [],
                     OpenApi::DOMAIN_NAME
                 )
@@ -139,7 +137,7 @@ class Checkout extends BaseApiModel
         if (null === $this->getPaymentModuleId()) {
             throw new \Exception(
                 Translator::getInstance()->trans(
-                    "You must choose a payment module",
+                    'You must choose a payment module',
                     [],
                     OpenApi::DOMAIN_NAME
                 )
@@ -149,7 +147,7 @@ class Checkout extends BaseApiModel
         if (null === $this->getDeliveryAddressId()) {
             throw new \Exception(
                 Translator::getInstance()->trans(
-                    "You must choose a delivery address",
+                    'You must choose a delivery address',
                     [],
                     OpenApi::DOMAIN_NAME
                 )
@@ -159,7 +157,7 @@ class Checkout extends BaseApiModel
         if (null === $this->getBillingAddressId()) {
             throw new \Exception(
                 Translator::getInstance()->trans(
-                    "You must choose a billing address",
+                    'You must choose a billing address',
                     [],
                     OpenApi::DOMAIN_NAME
                 )
@@ -169,7 +167,7 @@ class Checkout extends BaseApiModel
         if (false === $this->isAcceptedTermsAndConditions()) {
             throw new \Exception(
                 Translator::getInstance()->trans(
-                    "You must accept the terms and conditions",
+                    'You must accept the terms and conditions',
                     [],
                     OpenApi::DOMAIN_NAME
                 )
@@ -187,11 +185,13 @@ class Checkout extends BaseApiModel
 
     /**
      * @param int $deliveryModuleId
+     *
      * @return Checkout
      */
     public function setDeliveryModuleId($deliveryModuleId)
     {
         $this->deliveryModuleId = $deliveryModuleId;
+
         return $this;
     }
 
@@ -205,11 +205,13 @@ class Checkout extends BaseApiModel
 
     /**
      * @param int $paymentModuleId
+     *
      * @return Checkout
      */
     public function setPaymentModuleId($paymentModuleId)
     {
         $this->paymentModuleId = $paymentModuleId;
+
         return $this;
     }
 
@@ -223,11 +225,13 @@ class Checkout extends BaseApiModel
 
     /**
      * @param int $billingAddressId
+     *
      * @return Checkout
      */
     public function setBillingAddressId($billingAddressId)
     {
         $this->billingAddressId = $billingAddressId;
+
         return $this;
     }
 
@@ -241,11 +245,13 @@ class Checkout extends BaseApiModel
 
     /**
      * @param int $deliveryAddressId
+     *
      * @return Checkout
      */
     public function setDeliveryAddressId($deliveryAddressId)
     {
         $this->deliveryAddressId = $deliveryAddressId;
+
         return $this;
     }
 
@@ -259,29 +265,25 @@ class Checkout extends BaseApiModel
 
     /**
      * @param Address $pickupAddress
+     *
      * @return Checkout
      */
     public function setPickupAddress($pickupAddress)
     {
         $this->pickupAddress = $pickupAddress;
+
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isAcceptedTermsAndConditions(): bool
     {
         return $this->acceptedTermsAndConditions;
     }
 
-    /**
-     * @param bool $acceptedTermsAndConditions
-     * @return Checkout
-     */
-    public function setAcceptedTermsAndConditions(bool $acceptedTermsAndConditions): Checkout
+    public function setAcceptedTermsAndConditions(bool $acceptedTermsAndConditions): self
     {
         $this->acceptedTermsAndConditions = $acceptedTermsAndConditions;
+
         return $this;
     }
 

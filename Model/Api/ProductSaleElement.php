@@ -1,19 +1,18 @@
 <?php
 
-
 namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
+use OpenApi\Constraint as Constraint;
 use Propel\Runtime\Collection\Collection;
 use Thelia\Model\AttributeCombination;
 use Thelia\Model\Country;
 use Thelia\Model\ProductPriceQuery;
 use Thelia\Model\ProductSaleElements;
-use OpenApi\Constraint as Constraint;
 
 /**
- * Class ProductSaleElement
- * @package OpenApi\Model\Api
+ * Class ProductSaleElement.
+ *
  * @OA\Schema(
  *     description="A product sale element"
  * )
@@ -21,7 +20,7 @@ use OpenApi\Constraint as Constraint;
 class ProductSaleElement extends BaseApiModel
 {
     /**
-     * @var integer
+     * @var int
      * @OA\Property(
      *    type="integer",
      * )
@@ -30,7 +29,7 @@ class ProductSaleElement extends BaseApiModel
     protected $id;
 
     /**
-     * @var boolean
+     * @var bool
      * @OA\Property(
      *    type="boolean",
      * )
@@ -67,7 +66,7 @@ class ProductSaleElement extends BaseApiModel
     protected $quantity;
 
     /**
-     * @var boolean
+     * @var bool
      * @OA\Property(
      *     type="boolean"
      * )
@@ -84,7 +83,7 @@ class ProductSaleElement extends BaseApiModel
     protected $weight;
 
     /**
-     * @var boolean
+     * @var bool
      * @OA\Property(
      *     type="boolean"
      * )
@@ -141,22 +140,23 @@ class ProductSaleElement extends BaseApiModel
 
     /**
      * @param ProductSaleElements $theliaModel
-     * @param null $locale
+     * @param null                $locale
      *
      * @return ProductSaleElement|void
+     *
      * @throws \Propel\Runtime\Exception\PropelException
      */
     public function createFromTheliaModel($theliaModel, $locale = null)
     {
         $price = ProductPriceQuery::create()->filterByProductSaleElements($theliaModel)->findOne();
-        $theliaModel->setVirtualColumn('price_PRICE', (float)$price->getPrice());
-        $theliaModel->setVirtualColumn('price_PROMO_PRICE', (float)$price->getPromoPrice());
+        $theliaModel->setVirtualColumn('price_PRICE', (float) $price->getPrice());
+        $theliaModel->setVirtualColumn('price_PROMO_PRICE', (float) $price->getPromoPrice());
 
         parent::createFromTheliaModel($theliaModel, $locale);
 
         $modelFactory = $this->modelFactory;
         $this->attributes = array_map(
-            function (AttributeCombination $attributeCombination) use ($modelFactory){
+            function (AttributeCombination $attributeCombination) use ($modelFactory) {
                 $propelAttribute = $attributeCombination->getAttribute();
 
                 // Temporary set only pse attribute av to build good attribute av list
@@ -166,39 +166,40 @@ class ProductSaleElement extends BaseApiModel
 
                 // Reset attribute av to all for next use of attribute (because of propel "cache")
                 $propelAttribute->clearAttributeAvs();
+
                 return $attribute;
             },
             iterator_to_array($theliaModel->getAttributeCombinations())
         );
 
-        $this->isPromo = (bool)$theliaModel->getPromo();
-        $this->price = $this->modelFactory->buildModel('Price', ['untaxed' => $theliaModel->getPrice(), 'taxed' => $theliaModel->getTaxedPrice($this->country)]);;
-        $this->promoPrice = $this->modelFactory->buildModel('Price', ['untaxed' => $theliaModel->getPromoPrice(), 'taxed' => $theliaModel->getTaxedPromoPrice($this->country)]);;
+        $this->isPromo = (bool) $theliaModel->getPromo();
+        $this->price = $this->modelFactory->buildModel('Price', ['untaxed' => $theliaModel->getPrice(), 'taxed' => $theliaModel->getTaxedPrice($this->country)]);
+        $this->promoPrice = $this->modelFactory->buildModel('Price', ['untaxed' => $theliaModel->getPromoPrice(), 'taxed' => $theliaModel->getTaxedPromoPrice($this->country)]);
     }
 
     /**
-     * Create an OpenApi ProductSaleElement from a Thelia ProductSaleElements and a Country, then returns it
+     * Create an OpenApi ProductSaleElement from a Thelia ProductSaleElements and a Country, then returns it.
      *
-     * @param ProductSaleElements $pse
-     * @param Country $country
      * @return $this
+     *
      * @throws \Propel\Runtime\Exception\PropelException
      */
     public function fillFromTheliaPseAndCountry(ProductSaleElements $pse, Country $country)
     {
         $modelFactory = $this->modelFactory;
         $attributes = array_map(
-            function (AttributeCombination $attributeCombination) use ($modelFactory){
+            function (AttributeCombination $attributeCombination) use ($modelFactory) {
                 $attribute = $attributeCombination->getAttribute();
                 $attribute->setAttributeAvs((new Collection()));
                 $attribute->addAttributeAv($attributeCombination->getAttributeAv());
+
                 return $modelFactory->buildModel('Attribute', $attribute);
             },
             iterator_to_array($pse->getAttributeCombinations())
         );
 
         $this->id = $pse->getId();
-        $this->isPromo = (bool)$pse->getPromo();
+        $this->isPromo = (bool) $pse->getPromo();
 
         /** @var Price $price */
         $price = $this->modelFactory->buildModel('Price');
@@ -232,6 +233,7 @@ class ProductSaleElement extends BaseApiModel
     public function setId($id)
     {
         $this->id = $id;
+
         return $this;
     }
 
@@ -251,6 +253,7 @@ class ProductSaleElement extends BaseApiModel
     public function setIsPromo($isPromo)
     {
         $this->isPromo = $isPromo;
+
         return $this;
     }
 
@@ -270,9 +273,9 @@ class ProductSaleElement extends BaseApiModel
     public function setReference($reference)
     {
         $this->reference = $reference;
+
         return $this;
     }
-
 
     /**
      * @param $reference
@@ -300,6 +303,7 @@ class ProductSaleElement extends BaseApiModel
     public function setAttributes($attributes)
     {
         $this->attributes = $attributes;
+
         return $this;
     }
 
@@ -319,6 +323,7 @@ class ProductSaleElement extends BaseApiModel
     public function setQuantity($quantity)
     {
         $this->quantity = $quantity;
+
         return $this;
     }
 
@@ -338,6 +343,7 @@ class ProductSaleElement extends BaseApiModel
     public function setNewness($newness)
     {
         $this->newness = $newness;
+
         return $this;
     }
 
@@ -357,6 +363,7 @@ class ProductSaleElement extends BaseApiModel
     public function setWeight($weight)
     {
         $this->weight = $weight;
+
         return $this;
     }
 
@@ -376,6 +383,7 @@ class ProductSaleElement extends BaseApiModel
     public function setIsDefault($isDefault)
     {
         $this->isDefault = $isDefault;
+
         return $this;
     }
 
@@ -395,6 +403,7 @@ class ProductSaleElement extends BaseApiModel
     public function setEan($ean)
     {
         $this->ean = $ean;
+
         return $this;
     }
 
@@ -424,6 +433,7 @@ class ProductSaleElement extends BaseApiModel
     public function setImages($images)
     {
         $this->images = $images;
+
         return $this;
     }
 
@@ -443,6 +453,7 @@ class ProductSaleElement extends BaseApiModel
     public function setDocuments($documents)
     {
         $this->documents = $documents;
+
         return $this;
     }
 
@@ -462,6 +473,7 @@ class ProductSaleElement extends BaseApiModel
     public function setPrice($price)
     {
         $this->price = $price;
+
         return $this;
     }
 
@@ -481,6 +493,7 @@ class ProductSaleElement extends BaseApiModel
     public function setPromoPrice($promoPrice)
     {
         $this->promoPrice = $promoPrice;
+
         return $this;
     }
 }

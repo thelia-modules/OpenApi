@@ -34,6 +34,7 @@ class OpenApiException extends \Exception
     public function setHttpCode($httpCode)
     {
         $this->httpCode = $httpCode;
+
         return $this;
     }
 
@@ -53,6 +54,7 @@ class OpenApiException extends \Exception
     public function setError($error)
     {
         $this->error = $error;
+
         return $this;
     }
 }

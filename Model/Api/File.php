@@ -1,14 +1,13 @@
 <?php
 
-
 namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
 use OpenApi\Model\Api\ModelTrait\translatable;
 
 /**
- * Class File
- * @package OpenApi\Model\Api
+ * Class File.
+ *
  * @OA\Schema(
  *     description="A file for a product, brand, content, module, folder, category or PSE"
  * )
@@ -18,7 +17,7 @@ class File extends BaseApiModel
     use translatable;
 
     /**
-     * @var integer
+     * @var int
      * @OA\Property(
      *     type="integer",
      * )
@@ -35,16 +34,15 @@ class File extends BaseApiModel
     protected $url;
 
     /**
-     * @var integer
+     * @var int
      * @OA\Property(
      *     type="integer",
      * )
      */
     protected $position;
 
-
     /**
-     * @var boolean
+     * @var bool
      * @OA\Property(
      *     type="boolean",
      * )
@@ -67,6 +65,7 @@ class File extends BaseApiModel
     public function setId($id)
     {
         $this->id = $id;
+
         return $this;
     }
 
@@ -80,11 +79,13 @@ class File extends BaseApiModel
 
     /**
      * @param string $url
+     *
      * @return File
      */
     public function setUrl($url)
     {
         $this->url = $url;
+
         return $this;
     }
 
@@ -104,6 +105,7 @@ class File extends BaseApiModel
     public function setPosition($position)
     {
         $this->position = $position;
+
         return $this;
     }
 
@@ -123,6 +125,7 @@ class File extends BaseApiModel
     public function setVisible($visible)
     {
         $this->visible = $visible;
+
         return $this;
     }
 }

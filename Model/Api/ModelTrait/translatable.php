@@ -8,10 +8,9 @@ use OpenApi\Model\Api\ModelFactory;
 /**
  * @OA\Schema
  * Trait translatable
- * @package OpenApi\Model\Api\ModelTrait
  */
-trait translatable {
-
+trait translatable
+{
     /**
      * @var I18n
      * @OA\Property(
@@ -25,7 +24,7 @@ trait translatable {
      *
      * used to build an empty i18n model at model initialisation
      */
-    public function initI18n(ModelFactory $modelFactory)
+    public function initI18n(ModelFactory $modelFactory): void
     {
         $this->i18n = $modelFactory->buildModel('I18n');
     }
@@ -43,6 +42,7 @@ trait translatable {
     public function setTitle($title)
     {
         $this->i18n->setTitle($title);
+
         return $this;
     }
 
@@ -54,6 +54,7 @@ trait translatable {
     public function setDescription($description)
     {
         $this->i18n->setDescription($description);
+
         return $this;
     }
 
@@ -65,6 +66,7 @@ trait translatable {
     public function setChapo($chapo)
     {
         $this->i18n->setChapo($chapo);
+
         return $this;
     }
 
@@ -76,6 +78,7 @@ trait translatable {
     public function setPostscriptum($postscriptum)
     {
         $this->i18n->setPostscriptum($postscriptum);
+
         return $this;
     }
 
@@ -87,6 +90,7 @@ trait translatable {
     public function setMetaTitle($metaTitle)
     {
         $this->i18n->setMetaTitle($metaTitle);
+
         return $this;
     }
 
@@ -98,6 +102,7 @@ trait translatable {
     public function setMetaDescription($metaDescription)
     {
         $this->i18n->setMetaDescription($metaDescription);
+
         return $this;
     }
 
@@ -109,6 +114,7 @@ trait translatable {
     public function setMetaKeywords($metaKeywords)
     {
         $this->i18n->setMetaKeywords($metaKeywords);
+
         return $this;
     }
 }

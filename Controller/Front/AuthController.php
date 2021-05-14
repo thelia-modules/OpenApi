@@ -2,9 +2,9 @@
 
 namespace OpenApi\Controller\Front;
 
+use OpenApi\Annotations as OA;
 use OpenApi\Model\Api\ModelFactory;
 use OpenApi\OpenApi;
-use OpenApi\Annotations as OA;
 use OpenApi\Service\OpenApiService;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
@@ -87,10 +87,10 @@ class AuthController extends BaseFrontOpenApiController
             throw new \Exception(Translator::getInstance()->trans('Password incorrect.', [], OpenApi::DOMAIN_NAME));
         }
 
-        $dispatcher->dispatch(new CustomerLoginEvent($customer),TheliaEvents::CUSTOMER_LOGIN);
+        $dispatcher->dispatch(new CustomerLoginEvent($customer), TheliaEvents::CUSTOMER_LOGIN);
 
-        /** If the rememberMe property is set to true, we create a new cookie to store the information */
-        if (true === (bool)$data['rememberMe']) {
+        /* If the rememberMe property is set to true, we create a new cookie to store the information */
+        if (true === (bool) $data['rememberMe']) {
             (new CookieTokenProvider())->createCookie(
                 $customer,
                 ConfigQuery::read('customer_remember_me_cookie_name', 'crmcn'),
@@ -128,9 +128,9 @@ class AuthController extends BaseFrontOpenApiController
             throw new \Exception(Translator::getInstance()->trans('No user is currently logged in.'));
         }
 
-        $dispatcher->dispatch((new BaseAction()),TheliaEvents::CUSTOMER_LOGOUT);
+        $dispatcher->dispatch((new BaseAction()), TheliaEvents::CUSTOMER_LOGOUT);
         (new CookieTokenProvider())->clearCookie(ConfigQuery::read('customer_remember_me_cookie_name', 'crmcn'));
 
-        return OpenApiService::jsonResponse("Success", 204);
+        return OpenApiService::jsonResponse('Success', 204);
     }
 }

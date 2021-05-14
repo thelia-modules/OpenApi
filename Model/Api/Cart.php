@@ -2,17 +2,17 @@
 
 namespace OpenApi\Model\Api;
 
+use OpenApi\Annotations as OA;
+use OpenApi\Constraint as Constraint;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Thelia\Core\Event\Delivery\DeliveryPostageEvent;
 use Thelia\Core\Event\TheliaEvents;
 use Thelia\Model\AreaDeliveryModuleQuery;
 use Thelia\Model\Country;
-use OpenApi\Annotations as OA;
-use OpenApi\Constraint as Constraint;
 use Thelia\Model\CouponQuery;
 use Thelia\Model\ModuleQuery;
 use Thelia\Model\State;
@@ -21,8 +21,8 @@ use Thelia\Module\Exception\DeliveryException;
 use Thelia\TaxEngine\TaxEngine;
 
 /**
- * Class Cart
- * @package OpenApi\Model\Api
+ * Class Cart.
+ *
  * @OA\Schema(
  *     description="A cart"
  * )
@@ -30,7 +30,7 @@ use Thelia\TaxEngine\TaxEngine;
 class Cart extends BaseApiModel
 {
     /**
-     * @var integer
+     * @var int
      * @OA\Property(
      *    type="integer",
      * )
@@ -131,13 +131,12 @@ class Cart extends BaseApiModel
         EventDispatcherInterface $dispatcher,
         // Todo find a way to remove container here (only used to get module instance)
         ContainerInterface $container
-    )
-    {
+    ) {
         parent::__construct($modelFactory, $requestStack, $taxEngine, $dispatcher);
         $this->container = $container;
     }
 
-    public function createFromTheliaModel($theliaModel, $locale = null)
+    public function createFromTheliaModel($theliaModel, $locale = null): void
     {
         parent::createFromTheliaModel($theliaModel, $locale);
         $estimatedPostage = $this->getEstimatedPostageForCountry($theliaModel, $this->country, $this->state);
@@ -152,6 +151,7 @@ class Cart extends BaseApiModel
                 /** @var CartItem $cartItem */
                 $cartItem = $modelFactory->buildModel('CartItem', $theliaCartItem);
                 $cartItem->fillFromTheliaCartItemAndCountry($theliaCartItem, $deliveryCountry);
+
                 return $cartItem;
             },
             iterator_to_array($theliaModel->getCartItems())
@@ -177,11 +177,13 @@ class Cart extends BaseApiModel
 
     /**
      * @param int $id
+     *
      * @return Cart
      */
     public function setId($id)
     {
         $this->id = $id;
+
         return $this;
     }
 
@@ -195,11 +197,13 @@ class Cart extends BaseApiModel
 
     /**
      * @param float $taxes
+     *
      * @return Cart
      */
     public function setTaxes($taxes)
     {
         $this->taxes = $taxes;
+
         return $this;
     }
 
@@ -213,11 +217,13 @@ class Cart extends BaseApiModel
 
     /**
      * @param float $delivery
+     *
      * @return Cart
      */
     public function setDelivery($delivery)
     {
         $this->delivery = $delivery;
+
         return $this;
     }
 
@@ -231,11 +237,13 @@ class Cart extends BaseApiModel
 
     /**
      * @param array $coupons
+     *
      * @return Cart
      */
     public function setCoupons($coupons)
     {
         $this->coupons = $coupons;
+
         return $this;
     }
 
@@ -249,6 +257,7 @@ class Cart extends BaseApiModel
 
     /**
      * @param float $discount
+     *
      * @return Cart
      */
     public function setDiscount($discount)
@@ -285,11 +294,13 @@ class Cart extends BaseApiModel
 
     /**
      * @param float $total
+     *
      * @return Cart
      */
     public function setTotal($total)
     {
         $this->total = $total;
+
         return $this;
     }
 
@@ -303,11 +314,13 @@ class Cart extends BaseApiModel
 
     /**
      * @param string $currency
+     *
      * @return Cart
      */
     public function setCurrency($currency)
     {
         $this->currency = $currency;
+
         return $this;
     }
 
@@ -321,18 +334,21 @@ class Cart extends BaseApiModel
 
     /**
      * @param array $items
+     *
      * @return Cart
      */
     public function setItems($items)
     {
         $this->items = $items;
+
         return $this;
     }
 
     /**
-     * Creates an array of OpenApi coupons from an array of coupons codes, then returns it
+     * Creates an array of OpenApi coupons from an array of coupons codes, then returns it.
      *
      * @param $couponsCodes
+     *
      * @return array
      */
     protected function createOpenApiCouponsFromCouponsCodes($couponsCodes)
@@ -340,21 +356,18 @@ class Cart extends BaseApiModel
         $coupons = CouponQuery::create()->filterByCode($couponsCodes)->find();
 
         $factory = $this->modelFactory;
+
         return array_map(
-            function ($coupon) use ($factory) {
-                return $factory->buildModel('Coupon', $coupon);
-            },
+            fn ($coupon) => $factory->buildModel('Coupon', $coupon),
             iterator_to_array($coupons)
         );
     }
 
     /**
-     * Return the minimum expected postage for a cart in a given country
+     * Return the minimum expected postage for a cart in a given country.
      *
-     * @param \Thelia\Model\Cart $cart
-     * @param Country $country
-     * @param State|null $state
      * @return float|null
+     *
      * @throws \Propel\Runtime\Exception\PropelException
      */
     protected function getEstimatedPostageForCountry(\Thelia\Model\Cart $cart, Country $country, State $state = null)

@@ -27,10 +27,11 @@ class ImageService
     }
 
     /**
-     * Returns an image URL
+     * Returns an image URL.
      *
      * @param $imageModel
      * @param $imageType
+     *
      * @return string
      */
     public function getImageUrl($imageModel, $imageType = null)
@@ -40,20 +41,21 @@ class ImageService
 
     /**
      * Transform an image according to the parameters, and returns the
-     * transformed image URL
+     * transformed image URL.
      *
      * imageFile can be of type Thelia\Model\ProductImage, ContentImage etc
      *
      * @param ProductImage|ContentImage|BrandImage|CategoryImage|FolderImage|ModuleImage $imageModel
      * @param $imageType
-     * @param bool $allowZoom
+     * @param bool   $allowZoom
      * @param string $resize
-     * @param null $width
-     * @param null $height
-     * @param null $rotation
-     * @param null $backgroundColor
-     * @param null $quality
-     * @param null $effects
+     * @param null   $width
+     * @param null   $height
+     * @param null   $rotation
+     * @param null   $backgroundColor
+     * @param null   $quality
+     * @param null   $effects
+     *
      * @return string The transformed Image URL
      */
     public function transformImage(
@@ -67,8 +69,7 @@ class ImageService
         $backgroundColor = null,
         $quality = null,
         $effects = null
-    )
-    {
+    ) {
         switch ($resize) {
             case 'crop':
                 $resizeMode = \Thelia\Action\Image::EXACT_RATIO_WITH_CROP;
@@ -94,7 +95,7 @@ class ImageService
             ->setQuality($quality)
         ;
 
-        /** Needed as setting effects as null will throw an exception during dispatch */
+        /* Needed as setting effects as null will throw an exception during dispatch */
         if ($effects) {
             $event->setEffects($effects);
         }
@@ -106,7 +107,8 @@ class ImageService
 
     /**
      * @param ProductImage|ContentImage|BrandImage|CategoryImage|FolderImage|ModuleImage $imageModel
-     * @param null $imageType
+     * @param null                                                                       $imageType
+     *
      * @return ImageEvent
      */
     protected function createImageEvent($imageModel, $imageType = null)
@@ -115,13 +117,13 @@ class ImageService
         $baseSourceFilePath = ConfigQuery::read('images_library_path');
 
         if (null === $imageType) {
-            $imageType = str_replace(array('image', 'thelia\\model\\'), '', strtolower(get_class($imageModel)));
+            $imageType = str_replace(['image', 'thelia\\model\\'], '', strtolower(\get_class($imageModel)));
         }
 
         if ($baseSourceFilePath === null) {
-            $baseSourceFilePath = THELIA_LOCAL_DIR . 'media' . DS . 'images';
+            $baseSourceFilePath = THELIA_LOCAL_DIR.'media'.DS.'images';
         } else {
-            $baseSourceFilePath = THELIA_ROOT . $baseSourceFilePath;
+            $baseSourceFilePath = THELIA_ROOT.$baseSourceFilePath;
         }
 
         /** Put source image file path */

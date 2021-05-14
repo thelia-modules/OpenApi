@@ -2,16 +2,16 @@
 
 namespace OpenApi\Controller\Front;
 
+use OpenApi\Annotations as OA;
 use OpenApi\Model\Api\ModelFactory;
 use OpenApi\OpenApi;
 use OpenApi\Service\OpenApiService;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Thelia\Core\Event\Cart\CartEvent;
 use Thelia\Core\Event\TheliaEvents;
 use Thelia\Core\HttpFoundation\JsonResponse;
 use Thelia\Core\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
-use OpenApi\Annotations as OA;
 use Thelia\Core\Translation\Translator;
 use Thelia\Model\Cart;
 use Thelia\Model\CartItemQuery;
@@ -118,11 +118,11 @@ class CartController extends BaseFrontOpenApiController
         $event = new CartEvent($cart);
 
         $this->updateCartEventFromJson($request->getContent(), $event);
-        $dispatcher->dispatch($event,TheliaEvents::CART_ADDITEM);
+        $dispatcher->dispatch($event, TheliaEvents::CART_ADDITEM);
 
         return OpenApiService::jsonResponse([
             'cart' => $openApiService->getCurrentOpenApiCart(),
-            'cartItem' => $modelFactory->buildModel('CartItem', $event->getCartItem())
+            'cartItem' => $modelFactory->buildModel('CartItem', $event->getCartItem()),
         ]);
     }
 
@@ -179,7 +179,7 @@ class CartController extends BaseFrontOpenApiController
         $cartItem = CartItemQuery::create()->filterById($cartItemId)->findOne();
 
         if (null === $cartItem) {
-            throw new \Exception(Translator::getInstance()->trans("Deletion impossible : this cart item does not exists.", [], OpenApi::DOMAIN_NAME));
+            throw new \Exception(Translator::getInstance()->trans('Deletion impossible : this cart item does not exists.', [], OpenApi::DOMAIN_NAME));
         }
 
         $cartEvent = new CartEvent($cart);
@@ -247,10 +247,10 @@ class CartController extends BaseFrontOpenApiController
         $cartItem = CartItemQuery::create()->filterById($cartItemId)->findOne();
 
         if (null === $cartItem) {
-            throw new \Exception(Translator::getInstance()->trans("Modification impossible : this cart item does not exists.", [], OpenApi::DOMAIN_NAME));
+            throw new \Exception(Translator::getInstance()->trans('Modification impossible : this cart item does not exists.', [], OpenApi::DOMAIN_NAME));
         }
 
-        /** Check if cart item belongs to user's cart */
+        /* Check if cart item belongs to user's cart */
         if (!$cartItem || $cartItem->getCartId() !== $cart->getId()) {
             throw new \Exception(Translator::getInstance()->trans("This cartItem doesn't belong to this cart.", [], OpenApi::DOMAIN_NAME));
         }
@@ -265,20 +265,22 @@ class CartController extends BaseFrontOpenApiController
             );
         } else {
             $this->updateCartEventFromJson($request->getContent(), $event);
-            $dispatcher->dispatch($event,TheliaEvents::CART_UPDATEITEM);
+            $dispatcher->dispatch($event, TheliaEvents::CART_UPDATEITEM);
         }
 
         return OpenApiService::jsonResponse([
             'cart' => $openApiService->getCurrentOpenApiCart(),
-            'cartItem' => $modelFactory->buildModel('CartItem', $event->getCartItem())
+            'cartItem' => $modelFactory->buildModel('CartItem', $event->getCartItem()),
         ]);
     }
 
     /**
-     * Create a new JSON response of an OpenApi cart and returns it, from a Thelia Cart
+     * Create a new JSON response of an OpenApi cart and returns it, from a Thelia Cart.
      *
      * @param Cart $cart
+     *
      * @return JsonResponse
+     *
      * @throws \Propel\Runtime\Exception\PropelException
      */
     protected function createResponseFromCart(OpenApiService $openApiService)
@@ -287,12 +289,12 @@ class CartController extends BaseFrontOpenApiController
     }
 
     /**
-     * @param ProductSaleElements $pse
-     * @param integer $quantity
+     * @param int $quantity
+     *
      * @return bool
      */
-    protected function checkAvailableStock(ProductSaleElements $pse, $quantity) {
-
+    protected function checkAvailableStock(ProductSaleElements $pse, $quantity)
+    {
         if ($pse && $quantity) {
             return $quantity > $pse->getQuantity() && ConfigQuery::checkAvailableStock() && !$pse->getProduct()->getVirtual() === 0;
         }
@@ -301,13 +303,13 @@ class CartController extends BaseFrontOpenApiController
     }
 
     /**
-     * Update a Cart Event from a json
+     * Update a Cart Event from a json.
      *
      * @param $json
-     * @param CartEvent $event
+     *
      * @throws \Exception
      */
-    protected function updateCartEventFromJson($json, CartEvent $event)
+    protected function updateCartEventFromJson($json, CartEvent $event): void
     {
         $data = json_decode($json, true);
 
@@ -315,17 +317,18 @@ class CartController extends BaseFrontOpenApiController
             throw new \Exception(Translator::getInstance()->trans('A quantity is needed in the POST request to add an item to the cart.'));
         }
 
-        /** If the function was called from the PATCH route, we just update the quantity and return */
+        /* If the function was called from the PATCH route, we just update the quantity and return */
         if ($cartItemId = $event->getCartItemId()) {
             $cartItem = CartItemQuery::create()->filterById($cartItemId)->findOne();
             if ($this->checkAvailableStock($cartItem->getProductSaleElements(), $data['quantity'])) {
                 throw new \Exception(Translator::getInstance()->trans('Desired quantity exceed available stock'));
             }
             $event->setQuantity($data['quantity']);
-            return ;
+
+            return;
         }
 
-        /** If the function was called from the POST route, we need to set the pseId and append properties, as we need a new CartItem */
+        /* If the function was called from the POST route, we need to set the pseId and append properties, as we need a new CartItem */
         if (!isset($data['pseId'])) {
             throw new \Exception(Translator::getInstance()->trans('A PSE is needed in the POST request to add an item to the cart.'));
         }
@@ -340,7 +343,7 @@ class CartController extends BaseFrontOpenApiController
         }
 
         /** If newness then force new cart_item id */
-        $newness = isset($data['newness']) ? (bool)$data['newness'] : false;
+        $newness = isset($data['newness']) ? (bool) $data['newness'] : false;
 
         $event
             ->setProduct($pse->getProductId())

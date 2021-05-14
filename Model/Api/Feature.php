@@ -1,15 +1,14 @@
 <?php
 
-
 namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
-use OpenApi\Model\Api\ModelTrait\translatable;
 use OpenApi\Constraint as Constraint;
+use OpenApi\Model\Api\ModelTrait\translatable;
 
 /**
- * Class Feature
- * @package OpenApi\Model\Api
+ * Class Feature.
+ *
  * @OA\Schema(
  *     description="A feature"
  * )
@@ -19,7 +18,7 @@ class Feature extends BaseApiModel
     use translatable;
 
     /**
-     * @var integer
+     * @var int
      * @OA\Property(
      *    type="integer",
      * )
@@ -50,11 +49,13 @@ class Feature extends BaseApiModel
 
     /**
      * @param int $id
+     *
      * @return Feature
      */
     public function setId($id)
     {
         $this->id = $id;
+
         return $this;
     }
 
@@ -68,18 +69,21 @@ class Feature extends BaseApiModel
 
     /**
      * @param array $values
+     *
      * @return Feature
      */
     public function setValues($values)
     {
         $this->values = $values;
+
         return $this;
     }
 
     /**
-     * "setValues" alias to fit Thelia model
+     * "setValues" alias to fit Thelia model.
      *
      * @param array $values
+     *
      * @return Feature
      */
     public function setFeatureAvs($values)

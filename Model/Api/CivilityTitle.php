@@ -3,10 +3,8 @@
 namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
-use Symfony\Component\Validator\Constraints as Assert;
-use Thelia\Model\CustomerTitle;
 use OpenApi\Constraint as Constraint;
-use Thelia\Model\Lang as TheliaLang;
+use Thelia\Model\CustomerTitle;
 
 /**
  * @OA\Schema(
@@ -18,7 +16,7 @@ use Thelia\Model\Lang as TheliaLang;
 class CivilityTitle extends BaseApiModel
 {
     /**
-     * @var integer
+     * @var int
      * @OA\Property(
      *    type="integer"
      * ),
@@ -52,11 +50,13 @@ class CivilityTitle extends BaseApiModel
 
     /**
      * @param int $id
+     *
      * @return CivilityTitle
      */
     public function setId($id)
     {
         $this->id = $id;
+
         return $this;
     }
 
@@ -70,11 +70,13 @@ class CivilityTitle extends BaseApiModel
 
     /**
      * @param string $short
+     *
      * @return CivilityTitle
      */
     public function setShort($short)
     {
         $this->short = $short;
+
         return $this;
     }
 
@@ -88,11 +90,13 @@ class CivilityTitle extends BaseApiModel
 
     /**
      * @param string $long
+     *
      * @return CivilityTitle
      */
     public function setLong($long)
     {
         $this->long = $long;
+
         return $this;
     }
 

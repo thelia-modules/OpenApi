@@ -2,12 +2,12 @@
 
 namespace OpenApi\Model\Api;
 
-use OpenApi\Model\Api\ModelTrait\translatable;
 use OpenApi\Annotations as OA;
+use OpenApi\Model\Api\ModelTrait\translatable;
 
 /**
- * Class Content
- * @package OpenApi\Model\Api
+ * Class Content.
+ *
  * @OA\Schema(
  *     description="A Content"
  * )
@@ -17,7 +17,7 @@ class Content extends BaseApiModel
     use translatable;
 
     /**
-     * @var integer
+     * @var int
      * @OA\Property(
      *    type="integer",
      * )
@@ -26,7 +26,7 @@ class Content extends BaseApiModel
     protected $id;
 
     /**
-     * @var boolean
+     * @var bool
      * @OA\Property(
      *     type="boolean",
      * )
@@ -49,6 +49,7 @@ class Content extends BaseApiModel
     public function setId($id)
     {
         $this->id = $id;
+
         return $this;
     }
 
@@ -68,6 +69,7 @@ class Content extends BaseApiModel
     public function setVisible($visible)
     {
         $this->visible = $visible;
+
         return $this;
     }
 }

@@ -23,7 +23,7 @@ class OrderListener implements EventSubscriberInterface
         $this->modelFactory = $modelFactory;
     }
 
-    public function setPickupAddress(OrderEvent $event)
+    public function setPickupAddress(OrderEvent $event): void
     {
         /** @var Address $pickupAddress */
         $pickupAddressJson = $this->request->getSession()->get(OpenApi::PICKUP_ADDRESS_SESSION_KEY);
@@ -51,8 +51,8 @@ class OrderListener implements EventSubscriberInterface
 
     public static function getSubscribedEvents()
     {
-        return array(
-            TheliaEvents::ORDER_BEFORE_PAYMENT => array('setPickupAddress', 256),
-        );
+        return [
+            TheliaEvents::ORDER_BEFORE_PAYMENT => ['setPickupAddress', 256],
+        ];
     }
 }

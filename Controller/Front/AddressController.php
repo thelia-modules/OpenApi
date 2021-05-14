@@ -2,18 +2,18 @@
 
 namespace OpenApi\Controller\Front;
 
+use OpenApi\Annotations as OA;
+use OpenApi\Model\Api\Address as OpenApiAddress;
+use OpenApi\Model\Api\Customer as OpenApiCustomer;
 use OpenApi\Model\Api\ModelFactory;
 use OpenApi\OpenApi;
 use OpenApi\Service\OpenApiService;
 use Symfony\Component\Routing\Annotation\Route;
 use Thelia\Core\HttpFoundation\JsonResponse;
 use Thelia\Core\HttpFoundation\Request;
-use OpenApi\Annotations as OA;
 use Thelia\Core\Translation\Translator;
 use Thelia\Model\Address;
 use Thelia\Model\AddressQuery;
-use OpenApi\Model\Api\Address as OpenApiAddress;
-use OpenApi\Model\Api\Customer as OpenApiCustomer;
 
 /**
  * @Route("/address", name="address")
@@ -61,7 +61,8 @@ class AddressController extends BaseFrontOpenApiController
                     /** @var OpenApiAddress $openApiAddress */
                     $openApiAddress = $modelFactory->buildModel('Address', $address);
                     $openApiAddress->validate(self::GROUP_READ);
-                    return ($openApiAddress);
+
+                    return $openApiAddress;
                 },
                 iterator_to_array($addresses)
             )
@@ -253,7 +254,7 @@ class AddressController extends BaseFrontOpenApiController
             ->findOne();
 
         if (null === $theliaAddress || $theliaAddress->getIsDefault()) {
-            $errorDescription = $theliaAddress ? "Impossible to delete the default address." : "No address found for id $id for the current customer.";
+            $errorDescription = $theliaAddress ? 'Impossible to delete the default address.' : "No address found for id $id for the current customer.";
             throw $openApiService->buildOpenApiException(
                 Translator::getInstance()->trans('Invalid data', [], OpenApi::DOMAIN_NAME),
                 Translator::getInstance()->trans($errorDescription, [], OpenApi::DOMAIN_NAME)
@@ -262,6 +263,6 @@ class AddressController extends BaseFrontOpenApiController
 
         $theliaAddress->delete();
 
-        return new JsonResponse("Success", 204);
+        return new JsonResponse('Success', 204);
     }
 }

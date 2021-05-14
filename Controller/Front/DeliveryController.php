@@ -149,9 +149,7 @@ class DeliveryController extends BaseFrontOpenApiController
 
         return OpenApiService::jsonResponse(
             array_map(
-                function (PickupLocation $pickupLocation) {
-                    return $pickupLocation->toArray();
-                },
+                fn (PickupLocation $pickupLocation) => $pickupLocation->toArray(),
                 $pickupLocationEvent->getLocations()
             )
         );
@@ -190,7 +188,7 @@ class DeliveryController extends BaseFrontOpenApiController
 
         return OpenApiService::jsonResponse(
             array_map(
-                function (Module $module) use ($modelFactory)  {
+                function (Module $module) use ($modelFactory) {
                     /** @var AbstractDeliveryModule $moduleInstance */
                     $moduleInstance = $module->getDeliveryModuleInstance($this->container);
 
@@ -248,8 +246,7 @@ class DeliveryController extends BaseFrontOpenApiController
         SecurityContext $securityContext,
         EventDispatcherInterface $dispatcher,
         ModelFactory $modelFactory
-    )
-    {
+    ) {
         $deliveryAddress = $this->getDeliveryAddress($request, $securityContext);
 
         if (null === $deliveryAddress) {
@@ -271,11 +268,10 @@ class DeliveryController extends BaseFrontOpenApiController
         $modules = $moduleQuery->find();
 
         $class = $this;
+
         return OpenApiService::jsonResponse(
             array_map(
-                function ($module) use ($class, $cart, $modelFactory, $dispatcher, $deliveryAddress, $country, $state)  {
-                    return $class->getDeliveryModule($module, $dispatcher, $cart, $modelFactory, $deliveryAddress, $country, $state);
-                },
+                fn ($module) => $class->getDeliveryModule($module, $dispatcher, $cart, $modelFactory, $deliveryAddress, $country, $state),
                 iterator_to_array($modules)
             )
         );

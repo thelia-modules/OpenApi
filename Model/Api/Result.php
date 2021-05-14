@@ -3,8 +3,8 @@
 namespace OpenApi\Model\Api;
 
 /**
- * Class Result
- * @package OpenApi\Model\Api
+ * Class Result.
+ *
  * @OA\Schema(
  *     description="A result (to be in search object)"
  * )
@@ -54,6 +54,7 @@ class Result extends BaseApiModel
     public function setWeight($weight)
     {
         $this->weight = $weight;
+
         return $this;
     }
 
@@ -73,6 +74,7 @@ class Result extends BaseApiModel
     public function setType($type)
     {
         $this->type = $type;
+
         return $this;
     }
 
@@ -92,6 +94,7 @@ class Result extends BaseApiModel
     public function setObject($object)
     {
         $this->object = $object;
+
         return $this;
     }
 }

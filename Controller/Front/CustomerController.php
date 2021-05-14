@@ -2,17 +2,17 @@
 
 namespace OpenApi\Controller\Front;
 
+use OpenApi\Annotations as OA;
 use OpenApi\Model\Api\Address as OpenApiAddress;
 use OpenApi\Model\Api\Customer as OpenApiCustomer;
 use OpenApi\Model\Api\ModelFactory;
 use OpenApi\OpenApi;
 use OpenApi\Service\OpenApiService;
 use Propel\Runtime\Propel;
+use Symfony\Component\Routing\Annotation\Route;
 use Thelia\Core\HttpFoundation\Request;
 use Thelia\Core\Security\SecurityContext;
 use Thelia\Core\Translation\Translator;
-use Symfony\Component\Routing\Annotation\Route;
-use OpenApi\Annotations as OA;
 use Thelia\Model\Address;
 use Thelia\Model\Customer;
 
@@ -141,7 +141,7 @@ class CustomerController extends BaseFrontOpenApiController
             throw $exception;
         }
 
-        /** If everything went fine, we actually commit the changes to the base. */
+        /* If everything went fine, we actually commit the changes to the base. */
         $con->commit();
 
         return OpenApiService::jsonResponse($openApiCustomer);
@@ -205,7 +205,7 @@ class CustomerController extends BaseFrontOpenApiController
         $theliaCustomer = $openApiCustomer->toTheliaModel();
         $theliaCustomer->setNew(false);
 
-        if (array_key_exists('password', $data) && null !== $newPassword = $data['password']) {
+        if (\array_key_exists('password', $data) && null !== $newPassword = $data['password']) {
             $theliaCustomer->setPassword($newPassword);
         }
 

@@ -5,8 +5,8 @@ namespace OpenApi\Model\Api;
 use OpenApi\Model\Api\ModelTrait\translatable;
 
 /**
- * Class FeatureValue
- * @package OpenApi\Model\Api
+ * Class FeatureValue.
+ *
  * @OA\Schema(
  *     description="A feature value"
  * )
@@ -16,7 +16,7 @@ class FeatureValue extends BaseApiModel
     use translatable;
 
     /**
-     * @var integer
+     * @var int
      * @OA\Property(
      *    type="integer",
      * )
@@ -40,6 +40,7 @@ class FeatureValue extends BaseApiModel
     public function setId($id)
     {
         $this->id = $id;
+
         return $this;
     }
 }

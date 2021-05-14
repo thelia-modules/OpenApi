@@ -1,15 +1,13 @@
 <?php
 
-
 namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
 use OpenApi\Constraint as Constraint;
 
-
 /**
- * Class Coupon
- * @package OpenApi\Model\Api
+ * Class Coupon.
+ *
  * @OA\Schema(
  *     description="A coupon"
  * )
@@ -17,7 +15,7 @@ use OpenApi\Constraint as Constraint;
 class Coupon extends BaseApiModel
 {
     /**
-     * @var integer
+     * @var int
      * @OA\Property(
      *    type="integer",
      * )
@@ -54,11 +52,13 @@ class Coupon extends BaseApiModel
 
     /**
      * @param int $id
+     *
      * @return Coupon
      */
     public function setId($id)
     {
         $this->id = $id;
+
         return $this;
     }
 
@@ -72,11 +72,13 @@ class Coupon extends BaseApiModel
 
     /**
      * @param string $code
+     *
      * @return Coupon
      */
     public function setCode($code)
     {
         $this->code = $code;
+
         return $this;
     }
 
@@ -90,11 +92,13 @@ class Coupon extends BaseApiModel
 
     /**
      * @param float $amount
+     *
      * @return Coupon
      */
     public function setAmount($amount)
     {
         $this->amount = $amount;
+
         return $this;
     }
 }

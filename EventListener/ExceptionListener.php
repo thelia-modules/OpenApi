@@ -23,11 +23,9 @@ class ExceptionListener implements EventSubscriberInterface
     }
 
     /**
-     * Convert all exception to OpenApiException if route is an open api route
-     * @param ExceptionEvent $event
-     *
+     * Convert all exception to OpenApiException if route is an open api route.
      */
-    public function catchAllException(ExceptionEvent $event)
+    public function catchAllException(ExceptionEvent $event): void
     {
         // Do nothing if this is already an Open Api Exception
         if ($event->getThrowable() instanceof OpenApiException) {
@@ -44,7 +42,7 @@ class ExceptionListener implements EventSubscriberInterface
             'Error',
             [
                 'title' => Translator::getInstance()->trans('Unexpected error', [], OpenApi::DOMAIN_NAME),
-                'description' => $event->getThrowable()->getMessage()
+                'description' => $event->getThrowable()->getMessage(),
             ]
         );
 
@@ -52,11 +50,9 @@ class ExceptionListener implements EventSubscriberInterface
     }
 
     /**
-     * Format OpenApiException to JSON response
-     *
-     * @param ExceptionEvent $event
+     * Format OpenApiException to JSON response.
      */
-    public function catchOpenApiException(ExceptionEvent $event)
+    public function catchOpenApiException(ExceptionEvent $event): void
     {
         if (!$event->getThrowable() instanceof OpenApiException) {
             return;
@@ -73,9 +69,9 @@ class ExceptionListener implements EventSubscriberInterface
     {
         return [
             KernelEvents::EXCEPTION => [
-                ["catchOpenApiException", 256],
-                ["catchAllException", 512]
-            ]
+                ['catchOpenApiException', 256],
+                ['catchAllException', 512],
+            ],
         ];
     }
 }

@@ -1,20 +1,15 @@
 <?php
 
-
 namespace OpenApi\Events;
 
-
 use OpenApi\Model\Api\DeliveryModuleOption;
-use phpDocumentor\Reflection\Types\Boolean;
 use Thelia\Core\Event\ActionEvent;
 use Thelia\Core\Translation\Translator;
 use Thelia\Model\Address;
 use Thelia\Model\Cart;
 use Thelia\Model\Country;
 use Thelia\Model\Module;
-use Thelia\Model\OrderPostage;
 use Thelia\Model\State;
-use Thelia\Module\AbstractDeliveryModule;
 
 class DeliveryModuleOptionEvent extends ActionEvent
 {
@@ -35,7 +30,7 @@ class DeliveryModuleOptionEvent extends ActionEvent
 
     /** ------ */
 
-    /** @var array  */
+    /** @var array */
     protected $deliveryModuleOptions = [];
 
     public function __construct(
@@ -56,7 +51,7 @@ class DeliveryModuleOptionEvent extends ActionEvent
         }
 
         if (!$module->isDeliveryModule()) {
-            throw new \Exception(Translator::getInstance()->trans($module->getTitle() . ' is not a delivery module.'));
+            throw new \Exception(Translator::getInstance()->trans($module->getTitle().' is not a delivery module.'));
         }
     }
 
@@ -70,21 +65,25 @@ class DeliveryModuleOptionEvent extends ActionEvent
 
     /**
      * @param array $deliveryModuleOptions
+     *
      * @return DeliveryModuleOptionEvent
      */
     public function setDeliveryModuleOptions($deliveryModuleOptions)
     {
         $this->deliveryModuleOptions = $deliveryModuleOptions;
+
         return $this;
     }
 
     /**
      * @param DeliveryModuleOption $deliveryModuleOption
+     *
      * @return DeliveryModuleOptionEvent
      */
     public function appendDeliveryModuleOptions($deliveryModuleOption)
     {
         $this->deliveryModuleOptions[] = $deliveryModuleOption;
+
         return $this;
     }
 
@@ -98,11 +97,13 @@ class DeliveryModuleOptionEvent extends ActionEvent
 
     /**
      * @param Module $module
+     *
      * @return DeliveryModuleOptionEvent
      */
     public function setModule($module)
     {
         $this->module = $module;
+
         return $this;
     }
 
@@ -116,11 +117,13 @@ class DeliveryModuleOptionEvent extends ActionEvent
 
     /**
      * @param Cart $cart
+     *
      * @return DeliveryModuleOptionEvent
      */
     public function setCart($cart)
     {
         $this->cart = $cart;
+
         return $this;
     }
 
@@ -134,11 +137,13 @@ class DeliveryModuleOptionEvent extends ActionEvent
 
     /**
      * @param Address $address
+     *
      * @return DeliveryModuleOptionEvent
      */
     public function setAddress($address)
     {
         $this->address = $address;
+
         return $this;
     }
 
@@ -152,11 +157,13 @@ class DeliveryModuleOptionEvent extends ActionEvent
 
     /**
      * @param Country $country
+     *
      * @return DeliveryModuleOptionEvent
      */
     public function setCountry($country)
     {
         $this->country = $country;
+
         return $this;
     }
 
@@ -170,13 +177,13 @@ class DeliveryModuleOptionEvent extends ActionEvent
 
     /**
      * @param State $state
+     *
      * @return DeliveryModuleOptionEvent
      */
     public function setState($state)
     {
         $this->state = $state;
+
         return $this;
     }
-
-
 }

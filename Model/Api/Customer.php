@@ -1,11 +1,9 @@
 <?php
 
-
 namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
 use OpenApi\Constraint as Constraint;
-use Thelia\Model\Customer as TheliaCustomer;
 
 /**
  * @OA\Schema(
@@ -17,7 +15,7 @@ use Thelia\Model\Customer as TheliaCustomer;
 class Customer extends BaseApiModel
 {
     /**
-     * @var integer
+     * @var int
      * @OA\Property(
      *    type="integer",
      * )
@@ -82,7 +80,7 @@ class Customer extends BaseApiModel
     protected $email;
 
     /**
-     * @var boolean
+     * @var bool
      * @OA\Property(
      *    type="boolean",
      * )
@@ -100,7 +98,7 @@ class Customer extends BaseApiModel
     protected $discount;
 
     /**
-     * @var boolean
+     * @var bool
      * @OA\Property(
      *    type="boolean",
      * )
@@ -117,11 +115,13 @@ class Customer extends BaseApiModel
 
     /**
      * @param int $id
+     *
      * @return Customer
      */
     public function setId($id)
     {
         $this->id = $id;
+
         return $this;
     }
 
@@ -135,11 +135,13 @@ class Customer extends BaseApiModel
 
     /**
      * @param CivilityTitle $civilityTitle
+     *
      * @return Customer
      */
     public function setCivilityTitle($civilityTitle)
     {
         $this->civilityTitle = $civilityTitle;
+
         return $this;
     }
 
@@ -159,6 +161,7 @@ class Customer extends BaseApiModel
     public function setLang($lang)
     {
         $this->lang = $lang;
+
         return $this;
     }
 
@@ -172,11 +175,13 @@ class Customer extends BaseApiModel
 
     /**
      * @param string $reference
+     *
      * @return Customer
      */
     public function setReference($reference)
     {
         $this->reference = $reference;
+
         return $this;
     }
 
@@ -190,11 +195,13 @@ class Customer extends BaseApiModel
 
     /**
      * @param string $firstName
+     *
      * @return Customer
      */
     public function setFirstname($firstName)
     {
         $this->firstName = $firstName;
+
         return $this;
     }
 
@@ -208,11 +215,13 @@ class Customer extends BaseApiModel
 
     /**
      * @param string $lastName
+     *
      * @return Customer
      */
     public function setLastname($lastName)
     {
         $this->lastName = $lastName;
+
         return $this;
     }
 
@@ -226,11 +235,13 @@ class Customer extends BaseApiModel
 
     /**
      * @param string $email
+     *
      * @return Customer
      */
     public function setEmail($email)
     {
         $this->email = $email;
+
         return $this;
     }
 
@@ -244,11 +255,13 @@ class Customer extends BaseApiModel
 
     /**
      * @param bool $rememberMe
+     *
      * @return Customer
      */
     public function setRememberMe($rememberMe)
     {
         $this->rememberMe = $rememberMe;
+
         return $this;
     }
 
@@ -262,11 +275,13 @@ class Customer extends BaseApiModel
 
     /**
      * @param float $discount
+     *
      * @return Customer
      */
     public function setDiscount($discount)
     {
         $this->discount = $discount;
+
         return $this;
     }
 
@@ -280,16 +295,18 @@ class Customer extends BaseApiModel
 
     /**
      * @param bool $reseller
+     *
      * @return Customer
      */
     public function setReseller($reseller)
     {
         $this->reseller = $reseller;
+
         return $this;
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function getTitleId()
     {
@@ -297,7 +314,7 @@ class Customer extends BaseApiModel
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function getLangId()
     {
@@ -307,12 +324,14 @@ class Customer extends BaseApiModel
     public function setTitle(CivilityTitle $civilityTitle)
     {
         $this->civilityTitle = $civilityTitle;
+
         return $this;
     }
 
     public function setRef($ref)
     {
         $this->reference = $ref;
+
         return $this;
     }
 }

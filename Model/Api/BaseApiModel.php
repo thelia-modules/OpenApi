@@ -22,25 +22,25 @@ use Thelia\TaxEngine\TaxEngine;
 
 abstract class BaseApiModel implements \JsonSerializable
 {
-    /** @var ValidatorInterface  */
+    /** @var ValidatorInterface */
     protected $validator;
 
-    /** @var ModelFactory  */
+    /** @var ModelFactory */
     protected $modelFactory;
 
-    /** @var Request  */
+    /** @var Request */
     protected $request;
 
-    /** @var string  */
+    /** @var string */
     protected $locale;
 
-    /** @var Country  */
+    /** @var Country */
     protected $country;
 
-    /** @var State|null  */
+    /** @var State|null */
     protected $state;
 
-    /** @var EventDispatcherInterface  */
+    /** @var EventDispatcherInterface */
     protected $dispatcher;
 
     protected $extendedData;
@@ -75,6 +75,7 @@ abstract class BaseApiModel implements \JsonSerializable
      * @param $groups
      *
      * @return BaseApiModel
+     *
      * @throws OpenApiException
      */
     public function validate($groups, $recursively = true)
@@ -96,7 +97,7 @@ abstract class BaseApiModel implements \JsonSerializable
         throw new OpenApiException($error);
     }
 
-    public function getViolations($groups, $recursively = true, $propertyPatchPrefix = "")
+    public function getViolations($groups, $recursively = true, $propertyPatchPrefix = '')
     {
         $modelFactory = $this->modelFactory;
         $violations = array_map(function ($violation) use ($modelFactory, $propertyPatchPrefix) {
@@ -104,7 +105,7 @@ abstract class BaseApiModel implements \JsonSerializable
                 'SchemaViolation',
                 [
                     'key' => $propertyPatchPrefix.$violation->getPropertyPath(),
-                    'error' => $violation->getMessage()
+                    'error' => $violation->getMessage(),
                 ]
             );
         },
@@ -113,8 +114,8 @@ abstract class BaseApiModel implements \JsonSerializable
 
         if ($recursively === true) {
             foreach (get_object_vars($this) as $key => $value) {
-                if ($value instanceof BaseApiModel) {
-                    $violations = array_merge($violations, $value->getViolations("read", true, $propertyPatchPrefix.$key."."));
+                if ($value instanceof self) {
+                    $violations = array_merge($violations, $value->getViolations('read', true, $propertyPatchPrefix.$key.'.'));
                 }
             }
         }
@@ -130,28 +131,27 @@ abstract class BaseApiModel implements \JsonSerializable
         return $serializer->normalize($this, null);
     }
 
-
-    public function createOrUpdateFromData($data, $locale = null)
+    public function createOrUpdateFromData($data, $locale = null): void
     {
         if (null === $locale) {
             $locale = $this->locale;
         }
 
-        if (is_object($data)) {
+        if (\is_object($data)) {
             $this->createFromTheliaModel($data, $locale);
         }
 
-        if (is_string($data)) {
+        if (\is_string($data)) {
             $data = json_decode($data, true);
         }
 
-        if (is_array($data) || $data instanceof \Traversable) {
+        if (\is_array($data) || $data instanceof \Traversable) {
             foreach ($data as $key => $value) {
                 $setMethodName = 'set'.ucfirst($key);
                 $getMethodName = 'get'.ucfirst($key);
                 if (method_exists($this, $setMethodName)) {
-                    if (is_array($value)) {
-                        if (method_exists($this, $getMethodName) && $this->$getMethodName() instanceof BaseApiModel) {
+                    if (\is_array($value)) {
+                        if (method_exists($this, $getMethodName) && $this->$getMethodName() instanceof self) {
                             $this->$setMethodName($this->$getMethodName()->updateFromData($value));
                             continue;
                         }
@@ -177,27 +177,28 @@ abstract class BaseApiModel implements \JsonSerializable
     }
 
     /**
-     * Override to return the propel model associated with the OpenApi model instead of null
+     * Override to return the propel model associated with the OpenApi model instead of null.
      *
      * @return mixed
      */
     protected function getTheliaModel($propelModelName = null)
     {
         if (null === $propelModelName) {
-            $propelModelName = "Thelia\Model\\".basename(str_replace('\\', '/', get_class($this)));
+            $propelModelName = "Thelia\Model\\".basename(str_replace('\\', '/', static::class));
         }
 
         if (!class_exists($propelModelName)) {
             return null;
         }
 
-        if (null !== $id = $this->getId()) {
-            $theliaModelQueryName = $propelModelName . 'Query';
+        if (method_exists($this, 'getId') && null !== $id = $this->getId()) {
+            $theliaModelQueryName = $propelModelName.'Query';
+
             return $theliaModelQueryName::create()->filterById($id)->findOne();
         }
 
         /** @var ActiveRecordInterface $newTheliaModel */
-        $newTheliaModel = new $propelModelName;
+        $newTheliaModel = new $propelModelName();
         $newTheliaModel->setNew(true);
 
         return $newTheliaModel;
@@ -206,11 +207,11 @@ abstract class BaseApiModel implements \JsonSerializable
     public function toTheliaModel($locale = null)
     {
         if (null === $theliaModel = $this->getTheliaModel()) {
-            throw new \Exception(Translator::getInstance()->trans('Propel model not found automatically. Please override the getTheliaModel method to use the toTheliaModel method.', [], OpenApi::DOMAIN_NAME));
+            throw new \Exception(Translator::getInstance()->trans('Propel model not found automatically for class %className%. Please override the getTheliaModel method to use the toTheliaModel method.', ['%className%' => basename(static::class)], OpenApi::DOMAIN_NAME));
         }
 
         // If model need locale, set it
-        if (method_exists($theliaModel, "setLocale")) {
+        if (method_exists($theliaModel, 'setLocale')) {
             $theliaModel->setLocale($locale !== null ? $locale : $this->locale);
         }
 
@@ -222,32 +223,31 @@ abstract class BaseApiModel implements \JsonSerializable
             // If it's not a getter skip it
             if (0 === strncasecmp('get', $methodName, 3)) {
                 // Build thelia setter name
-                $setter = 'set' . substr($getter, 3);
+                $setter = 'set'.substr($getter, 3);
             }
 
             // For boolean method like "isVisible"
             if ($setter === null && 0 === strncasecmp('is', $methodName, 2)) {
                 // Build thelia setter name
-                $setter = 'set' . substr($getter, 2);
+                $setter = 'set'.substr($getter, 2);
             }
 
             // Check if setter exist in Thelia model
             if (null === $setter || !method_exists($theliaModel, $setter)) {
-                continue ;
+                continue;
             }
 
             $value = $this->$getter();
 
             // If Values are the same skip this property
             if (method_exists($theliaModel, $getter) && $theliaModel->$getter() === $value) {
-                continue ;
+                continue;
             }
 
             // if the property is another Api model
-            if ($value instanceof BaseApiModel) {
+            if ($value instanceof self) {
                 // If it doesn't have a correspondant thelia model skip it
-                if (null === $value->getTheliaModel())
-                {
+                if (null === $value->getTheliaModel()) {
                     continue;
                 }
 
@@ -260,6 +260,11 @@ abstract class BaseApiModel implements \JsonSerializable
                 $value = $value->getId();
             }
 
+            // Todo transform array to collection
+            if (is_array($value)) {
+                continue;
+            }
+
             $theliaModel->$setter($value);
         }
 
@@ -268,7 +273,7 @@ abstract class BaseApiModel implements \JsonSerializable
 
     public function createFromTheliaModel($theliaModel, $locale = null)
     {
-        if (method_exists($theliaModel, "setLocale")) {
+        if (method_exists($theliaModel, 'setLocale')) {
             $theliaModel->setLocale($locale !== null ? $locale : $this->locale);
         }
 
@@ -279,14 +284,14 @@ abstract class BaseApiModel implements \JsonSerializable
 
                 // List all possible getters for this property in propel
                 $propelPossibleMethods = [                                                                                                       //  EXAMPLE :
-                    'get' . $property,                                                                                                           //  getProductSaleElements
-                    'get' . $property.'s',                                                                                                       //  getProductSaleElementss
-                    'get' . $lowercaseProperty,                                                                                                  //  getProductsaleelements
-                    'get' . $lowercaseProperty.'s',                                                                                              //  getProductsaleelementss
-                    'get' . $property . 'Model',                                                                                                 //  getProductSaleElementsModel
-                    'get' . $lowercaseProperty . 'Model',                                                                                        //  getProductsaleelementsModel
-                    'get' . substr(get_class($theliaModel), strrpos(get_class($theliaModel), "\\") + 1) . $property,                //  getCartProductSaleElements
-                    'get' . substr(get_class($theliaModel), strrpos(get_class($theliaModel), "\\") + 1) . $lowercaseProperty        //  getCartProductsaleelements
+                    'get'.$property,                                                                                                           //  getProductSaleElements
+                    'get'.$property.'s',                                                                                                       //  getProductSaleElementss
+                    'get'.$lowercaseProperty,                                                                                                  //  getProductsaleelements
+                    'get'.$lowercaseProperty.'s',                                                                                              //  getProductsaleelementss
+                    'get'.$property.'Model',                                                                                                 //  getProductSaleElementsModel
+                    'get'.$lowercaseProperty.'Model',                                                                                        //  getProductsaleelementsModel
+                    'get'.substr(\get_class($theliaModel), strrpos(\get_class($theliaModel), '\\') + 1).$property,                //  getCartProductSaleElements
+                    'get'.substr(\get_class($theliaModel), strrpos(\get_class($theliaModel), '\\') + 1).$lowercaseProperty,        //  getCartProductsaleelements
                 ];
 
                 $availableMethods = array_filter(array_intersect($propelPossibleMethods, get_class_methods($theliaModel)));
@@ -301,14 +306,12 @@ abstract class BaseApiModel implements \JsonSerializable
 
                     $theliaValue = $theliaModel->$theliaMethod();
 
-                    if ($theliaValue instanceof  Collection) {
-                        $theliaValue = array_filter(array_map(function ($value) use ($property) {
-                            return $this->modelFactory->buildModel($property, $value);
-                        }, iterator_to_array($theliaValue)));
+                    if ($theliaValue instanceof Collection) {
+                        $theliaValue = array_filter(array_map(fn ($value) => $this->modelFactory->buildModel($property, $value), iterator_to_array($theliaValue)));
                         continue;
                     }
 
-                    if (is_object($theliaValue) && $this->modelFactory->modelExists($property)) {
+                    if (\is_object($theliaValue) && $this->modelFactory->modelExists($property)) {
                         $theliaValue = $this->modelFactory->buildModel($property, $theliaValue);
                     }
                 }
@@ -334,7 +337,7 @@ abstract class BaseApiModel implements \JsonSerializable
 
     protected function snakeCaseName()
     {
-        $name = basename(str_replace('\\', '/', get_class($this)));
+        $name = basename(str_replace('\\', '/', static::class));
 
         preg_match_all('!([A-Z][A-Z0-9]*(?=$|[A-Z][a-z0-9])|[A-Za-z][a-z0-9]+)!', $name, $matches);
         $ret = $matches[0];

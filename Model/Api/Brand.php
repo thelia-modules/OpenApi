@@ -5,8 +5,8 @@ namespace OpenApi\Model\Api;
 use OpenApi\Model\Api\ModelTrait\translatable;
 
 /**
- * Class Brand
- * @package OpenApi\Model\Api
+ * Class Brand.
+ *
  * @OA\Schema(
  *     description="A Brand"
  * )
@@ -16,7 +16,7 @@ class Brand extends BaseApiModel
     use translatable;
 
     /**
-     * @var integer
+     * @var int
      * @OA\Property(
      *    type="integer",
      * )
@@ -25,7 +25,7 @@ class Brand extends BaseApiModel
     protected $id;
 
     /**
-     * @var boolean
+     * @var bool
      * @OA\Property(
      *     type="boolean",
      * )
@@ -48,6 +48,7 @@ class Brand extends BaseApiModel
     public function setId($id)
     {
         $this->id = $id;
+
         return $this;
     }
 
@@ -67,6 +68,7 @@ class Brand extends BaseApiModel
     public function setVisible($visible)
     {
         $this->visible = $visible;
+
         return $this;
     }
 }

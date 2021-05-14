@@ -1,18 +1,14 @@
 <?php
 
-
 namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
-use OpenApi\Model\Api\ModelTrait\translatable;
-use Thelia\Model\AttributeAv;
-use Thelia\Model\AttributeAvQuery;
-use Thelia\Model\AttributeCombination;
 use OpenApi\Constraint as Constraint;
+use OpenApi\Model\Api\ModelTrait\translatable;
 
 /**
- * Class Attribute
- * @package OpenApi\Model\Api
+ * Class Attribute.
+ *
  * @OA\Schema(
  *     description="An attribute"
  * )
@@ -22,7 +18,7 @@ class Attribute extends BaseApiModel
     use translatable;
 
     /**
-     * @var integer
+     * @var int
      * @OA\Property(
      *    type="integer",
      * )
@@ -51,11 +47,13 @@ class Attribute extends BaseApiModel
 
     /**
      * @param int $id
+     *
      * @return Attribute
      */
     public function setId($id)
     {
         $this->id = $id;
+
         return $this;
     }
 
@@ -69,18 +67,21 @@ class Attribute extends BaseApiModel
 
     /**
      * @param array $values
+     *
      * @return Attribute
      */
     public function setValues($values)
     {
         $this->values = $values;
+
         return $this;
     }
 
     /**
-     * "setAttributeId" alias to fit Thelia model
-
+     * "setAttributeId" alias to fit Thelia model.
+     *
      * @param int $id
+     *
      * @return Attribute
      */
     public function setAttributeId($id)
@@ -89,9 +90,10 @@ class Attribute extends BaseApiModel
     }
 
     /**
-     * "setValues" alias to fit Thelia model
+     * "setValues" alias to fit Thelia model.
      *
      * @param array $values
+     *
      * @return Attribute
      */
     public function setAttributeAvs($values)

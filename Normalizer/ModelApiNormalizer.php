@@ -6,7 +6,7 @@ use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
 class ModelApiNormalizer extends ObjectNormalizer
 {
-    public function normalize($object, $format = null, array $context = array())
+    public function normalize($object, $format = null, array $context = [])
     {
         $data = parent::normalize($object, $format, $context);
 

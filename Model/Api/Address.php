@@ -4,8 +4,8 @@ namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
 use OpenApi\Constraint as Constraint;
-use Thelia\Model\CountryQuery;
 use Thelia\Model\Address as TheliaAddress;
+use Thelia\Model\CountryQuery;
 
 /**
  * @OA\Schema(
@@ -13,12 +13,11 @@ use Thelia\Model\Address as TheliaAddress;
  *     title="Address",
  *     description="Address model"
  * )
- *
  */
 class Address extends BaseApiModel
 {
     /**
-     * @var integer
+     * @var int
      * @OA\Property(
      *    type="integer"
      * )
@@ -27,7 +26,7 @@ class Address extends BaseApiModel
     protected $id;
 
     /**
-     * @var boolean
+     * @var bool
      * @OA\Property(
      *    type="boolean"
      * )
@@ -172,8 +171,10 @@ class Address extends BaseApiModel
 
     /**
      * @param TheliaAddress $address
-     * @param string $locale
+     * @param string        $locale
+     *
      * @return $this|Address
+     *
      * @throws \Propel\Runtime\Exception\PropelException
      */
     public function createFromTheliaModel($address, $locale = 'en_US')
@@ -204,11 +205,13 @@ class Address extends BaseApiModel
 
     /**
      * @param int $id
+     *
      * @return Address
      */
     public function setId($id)
     {
         $this->id = $id;
+
         return $this;
     }
 
@@ -222,11 +225,13 @@ class Address extends BaseApiModel
 
     /**
      * @param bool $isDefault
+     *
      * @return Address
      */
     public function setIsDefault($isDefault)
     {
         $this->isDefault = $isDefault;
+
         return $this;
     }
 
@@ -240,11 +245,13 @@ class Address extends BaseApiModel
 
     /**
      * @param string $label
+     *
      * @return Address
      */
     public function setLabel($label)
     {
         $this->label = $label;
+
         return $this;
     }
 
@@ -258,11 +265,13 @@ class Address extends BaseApiModel
 
     /**
      * @param Customer $customer
+     *
      * @return Address
      */
     public function setCustomer($customer)
     {
         $this->customer = $customer;
+
         return $this;
     }
 
@@ -276,11 +285,13 @@ class Address extends BaseApiModel
 
     /**
      * @param CivilityTitle $civilityTitle
+     *
      * @return Address
      */
     public function setCivilityTitle($civilityTitle)
     {
         $this->civilityTitle = $civilityTitle;
+
         return $this;
     }
 
@@ -294,11 +305,13 @@ class Address extends BaseApiModel
 
     /**
      * @param string $firstName
+     *
      * @return Address
      */
     public function setFirstName($firstName)
     {
         $this->firstName = $firstName;
+
         return $this;
     }
 
@@ -312,11 +325,13 @@ class Address extends BaseApiModel
 
     /**
      * @param string $lastName
+     *
      * @return Address
      */
     public function setLastName($lastName)
     {
         $this->lastName = $lastName;
+
         return $this;
     }
 
@@ -330,11 +345,13 @@ class Address extends BaseApiModel
 
     /**
      * @param string $cellphoneNumber
+     *
      * @return Address
      */
     public function setCellphoneNumber($cellphoneNumber)
     {
         $this->cellphoneNumber = $cellphoneNumber;
+
         return $this;
     }
 
@@ -348,11 +365,13 @@ class Address extends BaseApiModel
 
     /**
      * @param string $phoneNumber
+     *
      * @return Address
      */
     public function setPhoneNumber($phoneNumber)
     {
         $this->phoneNumber = $phoneNumber;
+
         return $this;
     }
 
@@ -366,11 +385,13 @@ class Address extends BaseApiModel
 
     /**
      * @param string $company
+     *
      * @return Address
      */
     public function setCompany($company)
     {
         $this->company = $company;
+
         return $this;
     }
 
@@ -384,11 +405,13 @@ class Address extends BaseApiModel
 
     /**
      * @param string $address1
+     *
      * @return Address
      */
     public function setAddress1($address1)
     {
         $this->address1 = $address1;
+
         return $this;
     }
 
@@ -402,11 +425,13 @@ class Address extends BaseApiModel
 
     /**
      * @param string $address2
+     *
      * @return Address
      */
     public function setAddress2($address2)
     {
         $this->address2 = $address2;
+
         return $this;
     }
 
@@ -420,11 +445,13 @@ class Address extends BaseApiModel
 
     /**
      * @param string $address3
+     *
      * @return Address
      */
     public function setAddress3($address3)
     {
         $this->address3 = $address3;
+
         return $this;
     }
 
@@ -438,11 +465,13 @@ class Address extends BaseApiModel
 
     /**
      * @param string $zipCode
+     *
      * @return Address
      */
     public function setZipCode($zipCode)
     {
         $this->zipCode = $zipCode;
+
         return $this;
     }
 
@@ -456,11 +485,13 @@ class Address extends BaseApiModel
 
     /**
      * @param string $city
+     *
      * @return Address
      */
     public function setCity($city)
     {
         $this->city = $city;
+
         return $this;
     }
 
@@ -474,11 +505,13 @@ class Address extends BaseApiModel
 
     /**
      * @param string $countryCode
+     *
      * @return Address
      */
     public function setCountryCode($countryCode)
     {
         $this->countryCode = $countryCode;
+
         return $this;
     }
 
@@ -492,11 +525,13 @@ class Address extends BaseApiModel
 
     /**
      * @param object $additionalData
+     *
      * @return Address
      */
     public function setAdditionalData($additionalData)
     {
         $this->additionalData = $additionalData;
+
         return $this;
     }
 
@@ -508,6 +543,7 @@ class Address extends BaseApiModel
     public function getTitleId()
     {
         $civilityTitle = $this->getCivilityTitle();
+
         return null !== $civilityTitle ? $civilityTitle->getId() : null;
     }
 
@@ -517,12 +553,14 @@ class Address extends BaseApiModel
     public function getCustomerId()
     {
         $customer = $this->getCustomer();
+
         return null !== $customer ? $customer->getId() : null;
     }
 
     public function getCountryId()
     {
         $country = CountryQuery::create()->filterByIsoalpha2($this->getCountryCode())->findOne();
+
         return null !== $country ? $country->getId() : null;
     }
 
@@ -539,13 +577,14 @@ class Address extends BaseApiModel
     public function setPhone($phoneNumber)
     {
         $this->phoneNumber = $phoneNumber;
+
         return $this;
     }
 
     public function setCellphone($cellphoneNumber)
     {
         $this->cellphoneNumber = $cellphoneNumber;
+
         return $this;
     }
-
 }

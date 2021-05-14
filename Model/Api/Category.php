@@ -2,13 +2,13 @@
 
 namespace OpenApi\Model\Api;
 
-use OpenApi\Model\Api\ModelTrait\translatable;
 use OpenApi\Annotations as OA;
 use OpenApi\Constraint as Constraint;
+use OpenApi\Model\Api\ModelTrait\translatable;
 
 /**
- * Class Category
- * @package OpenApi\Model\Api
+ * Class Category.
+ *
  * @OA\Schema(
  *     description="A Category"
  * )
@@ -18,7 +18,7 @@ class Category extends BaseApiModel
     use translatable;
 
     /**
-     * @var integer
+     * @var int
      * @OA\Property(
      *    type="integer",
      * )
@@ -27,7 +27,7 @@ class Category extends BaseApiModel
     protected $id;
 
     /**
-     * @var boolean
+     * @var bool
      * @OA\Property(
      *     type="boolean",
      * )
@@ -50,6 +50,7 @@ class Category extends BaseApiModel
     public function setId($id)
     {
         $this->id = $id;
+
         return $this;
     }
 
@@ -69,6 +70,7 @@ class Category extends BaseApiModel
     public function setVisible($visible)
     {
         $this->visible = $visible;
+
         return $this;
     }
 }

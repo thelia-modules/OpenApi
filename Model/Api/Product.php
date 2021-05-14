@@ -3,18 +3,14 @@
 namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
-use OpenApi\Model\Api\ModelTrait\translatable;
-use OpenApi\Service\ImageService;
-use Propel\Runtime\Collection\Collection;
-use Thelia\Model\Base\ProductCategory;
-use Thelia\Model\Country;
-use Thelia\Model\FeatureProduct;
-use Thelia\Model\ProductSaleElements;
 use OpenApi\Constraint as Constraint;
+use OpenApi\Model\Api\ModelTrait\translatable;
+use Thelia\Model\Base\ProductCategory;
+use Thelia\Model\FeatureProduct;
 
 /**
- * Class Product
- * @package OpenApi\Model\Api
+ * Class Product.
+ *
  * @OA\Schema(
  *     description="A product"
  * )
@@ -24,7 +20,7 @@ class Product extends BaseApiModel
     use translatable;
 
     /**
-     * @var integer
+     * @var int
      * @OA\Property(
      *    type="integer",
      * )
@@ -49,7 +45,7 @@ class Product extends BaseApiModel
     protected $url;
 
     /**
-     * @var boolean
+     * @var bool
      * @OA\Property(
      *     type="boolean",
      * )
@@ -57,7 +53,7 @@ class Product extends BaseApiModel
     protected $virtual;
 
     /**
-     * @var boolean
+     * @var bool
      * @OA\Property(
      *     type="boolean",
      * )
@@ -148,9 +144,10 @@ class Product extends BaseApiModel
 
     /**
      * @param \Thelia\Model\Product $theliaModel
-     * @param null $locale
+     * @param null                  $locale
      *
      * @return Product|void
+     *
      * @throws \Propel\Runtime\Exception\PropelException
      */
     public function createFromTheliaModel($theliaModel, $locale = null)
@@ -160,7 +157,7 @@ class Product extends BaseApiModel
         $modelFactory = $this->modelFactory;
         $this->features = array_filter(
             array_map(
-                function (FeatureProduct $featureProduct) use ($modelFactory){
+                function (FeatureProduct $featureProduct) use ($modelFactory) {
                     $propelFeature = $featureProduct->getFeature();
                     if(null === $propelFeature){
                         return false;
@@ -171,18 +168,18 @@ class Product extends BaseApiModel
                     }
                     $feature = $modelFactory->buildModel('Feature', $propelFeature);
 
-                    $propelFeature->clearFeatureAvs();
-                    return $feature;
-                },
-                iterator_to_array($theliaModel->getFeatureProducts())
-            ),
+                $propelFeature->clearFeatureAvs();
+
+                return $feature;
+            },
+            iterator_to_array($theliaModel->getFeatureProducts())),
             function($value){
                 return $value;
             }
         );
 
         $this->categories = array_map(
-            function (ProductCategory  $productCategory) use ($modelFactory){
+            function (ProductCategory $productCategory) use ($modelFactory) {
                 $propelCategory = $productCategory->getCategory();
 
                 $category = $modelFactory->buildModel('Category', $propelCategory);
@@ -195,7 +192,6 @@ class Product extends BaseApiModel
             },
             iterator_to_array($theliaModel->getProductCategories())
         );
-
     }
 
     /**
@@ -208,11 +204,13 @@ class Product extends BaseApiModel
 
     /**
      * @param int $id
+     *
      * @return Product
      */
     public function setId($id)
     {
         $this->id = $id;
+
         return $this;
     }
 
@@ -226,16 +224,19 @@ class Product extends BaseApiModel
 
     /**
      * @param string $reference
+     *
      * @return Product
      */
     public function setReference($reference)
     {
         $this->reference = $reference;
+
         return $this;
     }
 
     /**
-     * Method alias to match thelia getter name
+     * Method alias to match thelia getter name.
+     *
      * @param string $reference
      *
      * @return Product
@@ -243,6 +244,7 @@ class Product extends BaseApiModel
     public function setRef($reference)
     {
         $this->setReference($reference);
+
         return $this;
     }
 
@@ -256,11 +258,13 @@ class Product extends BaseApiModel
 
     /**
      * @param string $url
+     *
      * @return Product
      */
     public function setUrl($url)
     {
         $this->url = $url;
+
         return $this;
     }
 
@@ -274,11 +278,13 @@ class Product extends BaseApiModel
 
     /**
      * @param array $images
+     *
      * @return Product
      */
     public function setImages($images)
     {
         $this->images = $images;
+
         return $this;
     }
 
@@ -298,42 +304,31 @@ class Product extends BaseApiModel
     public function setProductSaleElements($productSaleElements)
     {
         $this->productSaleElements = $productSaleElements;
+
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isVirtual(): bool
     {
         return $this->virtual;
     }
 
-    /**
-     * @param bool $virtual
-     * @return Product
-     */
-    public function setVirtual(bool $virtual): Product
+    public function setVirtual(bool $virtual): self
     {
         $this->virtual = $virtual;
+
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isVisible(): bool
     {
         return $this->visible;
     }
 
-    /**
-     * @param bool $visible
-     * @return Product
-     */
-    public function setVisible(bool $visible): Product
+    public function setVisible(bool $visible): self
     {
         $this->visible = $visible;
+
         return $this;
     }
 
@@ -347,100 +342,70 @@ class Product extends BaseApiModel
 
     /**
      * @param Brand $brand
-     * @return Product
      */
-    public function setBrand(Brand $brand = null): Product
+    public function setBrand(Brand $brand = null): self
     {
         $this->brand = $brand;
+
         return $this;
     }
 
-    /**
-     * @return Category
-     */
     public function getDefaultCategory(): Category
     {
         return $this->defaultCategory;
     }
 
-    /**
-     * @param Category $defaultCategory
-     * @return Product
-     */
-    public function setDefaultCategory(Category $defaultCategory): Product
+    public function setDefaultCategory(Category $defaultCategory): self
     {
         $this->defaultCategory = $defaultCategory;
+
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getCategories(): array
     {
         return $this->categories;
     }
 
-    /**
-     * @param array $categories
-     * @return Product
-     */
-    public function setCategories(array $categories): Product
+    public function setCategories(array $categories): self
     {
         $this->categories = $categories;
+
         return $this;
     }
 
     /**
-     * Method alias to match thelia getter name
-     * @param array $categories
-     *
-     * @return Product
+     * Method alias to match thelia getter name.
      */
-    public function setProductCategories(array $categories = []): Product
+    public function setProductCategories(array $categories = []): self
     {
         return $this->setCategories($categories);
     }
 
-    /**
-     * @return array
-     */
     public function getContents(): array
     {
         return $this->contents;
     }
 
-    /**
-     * @param array $contents
-     * @return Product
-     */
-    public function setContents(array $contents = []): Product
+    public function setContents(array $contents = []): self
     {
         $this->contents = $contents;
+
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getDocuments(): array
     {
         return $this->documents;
     }
 
-    /**
-     * @param array $documents
-     * @return Product
-     */
-    public function setDocuments(array $documents = []): Product
+    public function setDocuments(array $documents = []): self
     {
         $this->documents = $documents;
+
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getFeatures(): array
     {
         return $this->features;

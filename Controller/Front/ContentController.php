@@ -3,11 +3,11 @@
 namespace OpenApi\Controller\Front;
 
 use Exception;
+use OpenApi\Annotations as OA;
 use OpenApi\Model\Api\ModelFactory;
 use OpenApi\OpenApi;
-use Thelia\Core\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
-use OpenApi\Annotations as OA;
+use Thelia\Core\HttpFoundation\JsonResponse;
 use Thelia\Core\Translation\Translator;
 use Thelia\Model\ContentQuery;
 
@@ -43,6 +43,7 @@ class ContentController extends BaseFrontOpenApiController
      *          @OA\JsonContent(ref="#/components/schemas/Error")
      *     )
      * )
+     *
      * @throws Exception
      */
     public function getContent(ModelFactory $modelFactory, $id)
@@ -52,7 +53,7 @@ class ContentController extends BaseFrontOpenApiController
         $apiContent = $modelFactory->buildModel('Content', $content);
 
         if (null === $content) {
-            throw new Exception(Translator::getInstance()->trans("Content does not exist.", [], OpenApi::DOMAIN_NAME));
+            throw new Exception(Translator::getInstance()->trans('Content does not exist.', [], OpenApi::DOMAIN_NAME));
         }
 
         return new JsonResponse($apiContent);

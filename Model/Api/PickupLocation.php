@@ -14,7 +14,7 @@ use OpenApi\Constraint as Constraint;
 class PickupLocation extends BaseApiModel
 {
     /**
-     * @var integer
+     * @var int
      * @OA\Property(
      *    type="integer",
      * )
@@ -66,11 +66,13 @@ class PickupLocation extends BaseApiModel
 
     /**
      * @param int $id
+     *
      * @return PickupLocation
      */
     public function setId($id)
     {
         $this->id = $id;
+
         return $this;
     }
 
@@ -84,11 +86,13 @@ class PickupLocation extends BaseApiModel
 
     /**
      * @param float $latitude
+     *
      * @return PickupLocation
      */
     public function setLatitude($latitude)
     {
         $this->latitude = $latitude;
+
         return $this;
     }
 
@@ -102,11 +106,13 @@ class PickupLocation extends BaseApiModel
 
     /**
      * @param float $longitude
+     *
      * @return PickupLocation
      */
     public function setLongitude($longitude)
     {
         $this->longitude = $longitude;
+
         return $this;
     }
 
@@ -120,11 +126,13 @@ class PickupLocation extends BaseApiModel
 
     /**
      * @param string $title
+     *
      * @return PickupLocation
      */
     public function setTitle($title)
     {
         $this->title = $title;
+
         return $this;
     }
 
@@ -138,11 +146,13 @@ class PickupLocation extends BaseApiModel
 
     /**
      * @param Address $address
+     *
      * @return PickupLocation
      */
     public function setAddress($address)
     {
         $this->address = $address;
+
         return $this;
     }
 }

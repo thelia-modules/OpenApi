@@ -3,8 +3,8 @@
 namespace OpenApi\Model\Api;
 
 /**
- * Class Search
- * @package OpenApi\Model\Api
+ * Class Search.
+ *
  * @OA\Schema(
  *     description="A search response"
  * )
@@ -23,7 +23,7 @@ class Search extends BaseApiModel
     protected $results;
 
     /**
-     * @var integer
+     * @var int
      * @OA\Property(
      *     type="number",
      *     format="integer"
@@ -32,7 +32,7 @@ class Search extends BaseApiModel
     protected $page;
 
     /**
-     * @var integer
+     * @var int
      * @OA\Property(
      *     type="number",
      *     format="integer",
@@ -42,7 +42,7 @@ class Search extends BaseApiModel
     protected $pageTotal;
 
     /**
-     * @var integer
+     * @var int
      * @OA\Property(
      *     type="number",
      *     format="integer",
@@ -67,6 +67,7 @@ class Search extends BaseApiModel
     public function setResults($results)
     {
         $this->results = $results;
+
         return $this;
     }
 
@@ -86,6 +87,7 @@ class Search extends BaseApiModel
     public function setPage($page)
     {
         $this->page = $page;
+
         return $this;
     }
 
@@ -105,6 +107,7 @@ class Search extends BaseApiModel
     public function setPageTotal($pageTotal)
     {
         $this->pageTotal = $pageTotal;
+
         return $this;
     }
 
@@ -124,6 +127,7 @@ class Search extends BaseApiModel
     public function setTotal($total)
     {
         $this->total = $total;
+
         return $this;
     }
 }

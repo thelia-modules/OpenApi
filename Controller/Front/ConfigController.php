@@ -2,10 +2,10 @@
 
 namespace OpenApi\Controller\Front;
 
+use OpenApi\Annotations as OA;
+use Symfony\Component\Routing\Annotation\Route;
 use Thelia\Core\HttpFoundation\JsonResponse;
 use Thelia\Core\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
-use OpenApi\Annotations as OA;
 use Thelia\Model\ConfigQuery;
 
 /**

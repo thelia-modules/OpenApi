@@ -19,7 +19,7 @@ class RequestListener implements EventSubscriberInterface
         $this->securityContext = $securityContext;
     }
 
-    public function markRequestAsOpenApi(ControllerEvent $event)
+    public function markRequestAsOpenApi(ControllerEvent $event): void
     {
         $controller = $event->getController();
         if (isset($controller[0]) && $controller[0] instanceof BaseFrontOpenApiController || $controller[0] instanceof BaseFrontOpenApiController) {
@@ -31,7 +31,7 @@ class RequestListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::CONTROLLER
+            KernelEvents::CONTROLLER,
         ];
     }
 }

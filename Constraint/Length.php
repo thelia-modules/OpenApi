@@ -4,7 +4,6 @@ namespace OpenApi\Constraint;
 
 use OpenApi\OpenApi;
 use Thelia\Core\Translation\Translator;
-use Symfony\Component\Validator\Constraints\NotNullValidator;
 
 /**
  * @Annotation
@@ -25,6 +24,6 @@ class Length extends \Symfony\Component\Validator\Constraints\Length
 
     public function validatedBy()
     {
-        return \get_parent_class().'Validator';
+        return get_parent_class().'Validator';
     }
 }

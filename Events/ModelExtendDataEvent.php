@@ -4,11 +4,10 @@ namespace OpenApi\Events;
 
 use OpenApi\Model\Api\BaseApiModel;
 use Thelia\Core\Event\ActionEvent;
-use Thelia\Core\Event\TheliaEvents;
 
 class ModelExtendDataEvent extends ActionEvent
 {
-    const ADD_EXTEND_DATA_PREFIX = "add_extend_data_";
+    const ADD_EXTEND_DATA_PREFIX = 'add_extend_data_';
 
     protected $data;
 
@@ -35,6 +34,7 @@ class ModelExtendDataEvent extends ActionEvent
     public function setData($data)
     {
         $this->data = $data;
+
         return $this;
     }
 
@@ -54,6 +54,7 @@ class ModelExtendDataEvent extends ActionEvent
     public function setLocale($locale)
     {
         $this->locale = $locale;
+
         return $this;
     }
 
@@ -73,6 +74,7 @@ class ModelExtendDataEvent extends ActionEvent
     public function setModel($model)
     {
         $this->model = $model;
+
         return $this;
     }
 
@@ -84,7 +86,6 @@ class ModelExtendDataEvent extends ActionEvent
         return $this->extendedData;
     }
 
-
     /**
      * @param $key
      * @param $value
@@ -94,8 +95,7 @@ class ModelExtendDataEvent extends ActionEvent
     public function setExtendDataKeyValue($key, $value)
     {
         $this->extendedData[$key] = $value;
+
         return $this;
     }
-
-
 }

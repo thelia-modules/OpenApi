@@ -5,8 +5,8 @@ namespace OpenApi\Model\Api;
 use OpenApi\Annotations as OA;
 
 /**
- * Class I18n
- * @package OpenApi\Model\Api
+ * Class I18n.
+ *
  * @OA\Schema(
  *     description="Translatable fields for multiple object"
  * )
@@ -85,6 +85,7 @@ class I18n extends BaseApiModel
     public function setTitle($title)
     {
         $this->title = $title;
+
         return $this;
     }
 
@@ -104,6 +105,7 @@ class I18n extends BaseApiModel
     public function setDescription($description)
     {
         $this->description = $description;
+
         return $this;
     }
 
@@ -123,6 +125,7 @@ class I18n extends BaseApiModel
     public function setChapo($chapo)
     {
         $this->chapo = $chapo;
+
         return $this;
     }
 
@@ -142,6 +145,7 @@ class I18n extends BaseApiModel
     public function setPostscriptum($postscriptum)
     {
         $this->postscriptum = $postscriptum;
+
         return $this;
     }
 
@@ -161,6 +165,7 @@ class I18n extends BaseApiModel
     public function setMetaTitle($metaTitle)
     {
         $this->metaTitle = $metaTitle;
+
         return $this;
     }
 
@@ -180,6 +185,7 @@ class I18n extends BaseApiModel
     public function setMetaDescription($metaDescription)
     {
         $this->metaDescription = $metaDescription;
+
         return $this;
     }
 
@@ -199,6 +205,7 @@ class I18n extends BaseApiModel
     public function setMetaKeywords($metaKeywords)
     {
         $this->metaKeywords = $metaKeywords;
+
         return $this;
     }
 }

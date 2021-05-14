@@ -127,7 +127,6 @@ class ProductController extends BaseFrontOpenApiController
     ) {
         $productQuery = ProductQuery::create();
 
-
         if (null !== $id = $request->get('id')) {
             $productQuery->filterById($id);
         }
@@ -150,10 +149,10 @@ class ProductController extends BaseFrontOpenApiController
             ->offset($request->get('offset', 0));
 
         switch ($order) {
-            case 'created' :
+            case 'created':
                 $productQuery->orderByCreatedAt();
                 break;
-            case 'created_reverse' :
+            case 'created_reverse':
                 $productQuery->orderByCreatedAt(Criteria::DESC);
                 break;
         }
@@ -164,26 +163,26 @@ class ProductController extends BaseFrontOpenApiController
                 ->filterByLocale($locale);
 
             if (null !== $title) {
-                $productI18nQuery->filterByTitle('%' . $title . '%', Criteria::LIKE);
+                $productI18nQuery->filterByTitle('%'.$title.'%', Criteria::LIKE);
             }
 
             if (null !== $description) {
-                $productI18nQuery->filterByDescription('%' . $description . '%', Criteria::LIKE);
+                $productI18nQuery->filterByDescription('%'.$description.'%', Criteria::LIKE);
             }
 
             if (null !== $chapo) {
-                $productI18nQuery->filterByChapo('%' . $chapo . '%', Criteria::LIKE);
+                $productI18nQuery->filterByChapo('%'.$chapo.'%', Criteria::LIKE);
             }
 
             if (null !== $postscriptum) {
-                $productI18nQuery->filterByPostscriptum('%' . $postscriptum . '%', Criteria::LIKE);
+                $productI18nQuery->filterByPostscriptum('%'.$postscriptum.'%', Criteria::LIKE);
             }
 
             switch ($order) {
-                case 'alpha' :
+                case 'alpha':
                     $productI18nQuery->orderByTitle();
                     break;
-                case 'alpha_reverse' :
+                case 'alpha_reverse':
                     $productI18nQuery->orderByTitle(Criteria::DESC);
                     break;
             }
@@ -193,9 +192,7 @@ class ProductController extends BaseFrontOpenApiController
 
         $products = $productQuery->find();
 
-        $products = array_map(function ($product) use ($modelFactory) {
-            return $modelFactory->buildModel('Product', $product);
-        }, iterator_to_array($products));
+        $products = array_map(fn ($product) => $modelFactory->buildModel('Product', $product), iterator_to_array($products));
 
         return OpenApiService::jsonResponse($products);
     }

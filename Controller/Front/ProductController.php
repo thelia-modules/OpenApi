@@ -20,7 +20,7 @@ class ProductController extends BaseFrontOpenApiController
      *
      * @OA\Get(
      *     path="/product/search",
-     *     tags={"product", "search"},
+     *     tags={"Product", "Search"},
      *     summary="Search products",
      *     @OA\Parameter(
      *          name="id",

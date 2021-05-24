@@ -2,30 +2,25 @@
 
 namespace OpenApi\Controller\Front;
 
-use Exception;
 use OpenApi\Annotations as OA;
 use OpenApi\Model\Api\ModelFactory;
-use OpenApi\OpenApi;
 use OpenApi\Service\OpenApiService;
 use OpenApi\Service\SearchService;
 use Symfony\Component\Routing\Annotation\Route;
-use Thelia\Core\HttpFoundation\JsonResponse;
 use Thelia\Core\HttpFoundation\Request;
-use Thelia\Core\Translation\Translator;
-use Thelia\Model\ContentQuery;
 
 /**
- * @Route("/content", name="content")
+ * @Route("/folder", name="folder")
  */
-class ContentController extends BaseFrontOpenApiController
+class FolderController extends BaseFrontOpenApiController
 {
     /**
-     * @Route("/search", name="content_search", methods="GET")
+     * @Route("/search", name="_search", methods="GET")
      *
      * @OA\Get(
-     *     path="/content/search",
-     *     tags={"Content", "Search"},
-     *     summary="Search contents",
+     *     path="/folder/search",
+     *     tags={"Folder", "Search"},
+     *     summary="Search folders",
      *     @OA\Parameter(
      *          name="id",
      *          in="query",
@@ -107,7 +102,7 @@ class ContentController extends BaseFrontOpenApiController
      *          @OA\JsonContent(
      *                  type="array",
      *                  @OA\Items(
-     *                      ref="#/components/schemas/Content"
+     *                      ref="#/components/schemas/Folder"
      *                  )
      *          )
      *     ),
@@ -123,57 +118,10 @@ class ContentController extends BaseFrontOpenApiController
         ModelFactory $modelFactory,
         SearchService $searchService
     ) {
-        $query = $searchService->baseSearchItems("content", $request);
-        $contents = $query->find();
-
+        $query = $searchService->baseSearchItems("folder", $request);
+        $folders = $query->find();
         return OpenApiService::jsonResponse(
-            array_map(fn ($content) => $modelFactory->buildModel('Content', $content), iterator_to_array($contents))
+            array_map(fn ($folder) => $modelFactory->buildModel('Folder', $folder), iterator_to_array($folders))
         );
     }
-
-
-    /**
-     * @Route("/{id}", name="get_content", methods="GET", requirements={"collectionId"="\d+"})
-     *
-     * @OA\Get(
-     *     path="/content/{id}",
-     *     tags={"content"},
-     *     summary="Get content values by ID",
-     *      @OA\Parameter(
-     *          name="id",
-     *          in="path",
-     *          required=true,
-     *          example="1",
-     *          @OA\Schema(
-     *              type="integer"
-     *          )
-     *     ),
-     *     @OA\Response(
-     *          response="200",
-     *          description="Success",
-     *          @OA\JsonContent(ref="#/components/schemas/Content")
-     *     ),
-     *     @OA\Response(
-     *          response="400",
-     *          description="Bad request",
-     *          @OA\JsonContent(ref="#/components/schemas/Error")
-     *     )
-     * )
-     *
-     * @throws Exception
-     */
-    public function getContent(ModelFactory $modelFactory, $id)
-    {
-        $content = ContentQuery::create()
-            ->findOneById($id);
-        $apiContent = $modelFactory->buildModel('Content', $content);
-
-        if (null === $content) {
-            throw new Exception(Translator::getInstance()->trans('Content does not exist.', [], OpenApi::DOMAIN_NAME));
-        }
-
-        return new JsonResponse($apiContent);
-    }
-
-
 }

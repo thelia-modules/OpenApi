@@ -76,6 +76,12 @@
             <tag name="open_api.model" alias="Image"/>
             <tag name="open_api.model" alias="Images"/>
         </service>
+        <service id="open_api.model.document" class="OpenApi\Model\Api\Document" parent="open_api.base.model"  public="true" shared="false">
+            <argument type="service" id="OpenApi\Service\DocumentService"/>
+            <tag name="open_api.model" alias="Document"/>
+            <tag name="open_api.model" alias="Documents"/>
+            <tag name="open_api.model" alias="ProductDocuments"/>
+        </service>
         <service id="open_api.model.language" class="OpenApi\Model\Api\Lang" parent="open_api.base.model"  public="true" shared="false">
             <tag name="open_api.model" alias="Language"/>
             <tag name="open_api.model" alias="Lang"/>

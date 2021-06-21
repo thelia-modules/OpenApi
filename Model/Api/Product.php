@@ -409,6 +409,14 @@ class Product extends BaseApiModel
         return $this;
     }
 
+    /**
+     * Method alias to match thelia getter name.
+     */
+    public function setProductDocuments(array $documents = []): self
+    {
+        return $this->setDocuments($documents);
+    }
+
     public function getFeatures(): array
     {
         return $this->features;

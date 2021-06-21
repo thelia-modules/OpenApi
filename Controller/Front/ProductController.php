@@ -30,6 +30,16 @@ class ProductController extends BaseFrontOpenApiController
      *          )
      *     ),
      *     @OA\Parameter(
+     *          name="ids[]",
+     *          in="query",
+     *          @OA\Schema(
+     *              type="array",
+     *              @OA\Items(
+     *                  type="integer"
+     *              )
+     *          )
+     *     ),
+     *     @OA\Parameter(
      *          name="reference",
      *          in="query",
      *          @OA\Schema(
@@ -131,11 +141,15 @@ class ProductController extends BaseFrontOpenApiController
             $productQuery->filterById($id);
         }
 
+        if (null !== $ids = $request->get('ids')) {
+            $productQuery->filterById($ids, Criteria::IN);
+        }
+
         if (null !== $reference = $request->get('reference')) {
             $productQuery->filterByRef($reference);
         }
 
-        $productQuery->filterByVisible($request->get('visible', true));
+        $productQuery->filterByVisible((bool) json_decode(json_encode($request->get('visible', true))));
 
         $order = $request->get('order', 'alpha');
         $locale = $request->get('locale', $request->getSession()->getLang()->getLocale());

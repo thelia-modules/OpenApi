@@ -27,13 +27,11 @@ class Feature extends BaseApiModel
     protected $id;
 
     /**
-     * @var array
+     * @var FeatureValue[]
      * @OA\Property(
      *     type="array",
      *     @OA\Items(
-     *         @OA\Property(
-     *             type="string",
-     *         )
+     *        ref="#/components/schemas/FeatureValue"
      *     )
      * )
      */

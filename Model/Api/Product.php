@@ -159,13 +159,16 @@ class Product extends BaseApiModel
             array_map(
                 function (FeatureProduct $featureProduct) use ($modelFactory) {
                     $propelFeature = $featureProduct->getFeature();
-                    if(null === $propelFeature){
+                    if (null === $propelFeature){
                         return false;
                     }
+
                     if (null !== $featureProduct->getFeatureAv()) {
                         // Temporary set only product feature av to build good feature av list
                         $propelFeature->addFeatureAv($featureProduct->getFeatureAv());
                     }
+                    $propelFeature->resetPartialFeatureAvs(false);
+
                     $feature = $modelFactory->buildModel('Feature', $propelFeature);
 
                 $propelFeature->clearFeatureAvs();

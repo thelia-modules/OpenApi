@@ -3,6 +3,8 @@
 namespace OpenApi\Controller\Front;
 
 use OpenApi\Annotations as OA;
+use OpenApi\Model\Api\ModelFactory;
+use OpenApi\Service\OpenApiService;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Symfony\Component\Routing\Annotation\Route;
 use Thelia\Core\HttpFoundation\Request;
@@ -18,13 +20,20 @@ class ProductController extends BaseFrontOpenApiController
      *
      * @OA\Get(
      *     path="/product/search",
-     *     tags={"product", "search"},
+     *     tags={"Product", "Search"},
      *     summary="Search products",
      *     @OA\Parameter(
      *          name="id",
      *          in="query",
      *          @OA\Schema(
      *              type="integer"
+     *          )
+     *     ),
+*          @OA\Parameter(
+     *          name="ids",
+     *          in="query",
+     *          @OA\Schema(
+     *              type="string"
      *          )
      *     ),
      *     @OA\Parameter(
@@ -119,13 +128,18 @@ class ProductController extends BaseFrontOpenApiController
      *     )
      * )
      */
-    public function search(Request $request)
-    {
+    public function search(
+        Request $request,
+        ModelFactory $modelFactory
+    ) {
         $productQuery = ProductQuery::create();
-
 
         if (null !== $id = $request->get('id')) {
             $productQuery->filterById($id);
+        }
+
+        if (null !== $ids = $request->get('ids')) {
+            $productQuery->filterById(explode(",", $ids));
         }
 
         if (null !== $reference = $request->get('reference')) {
@@ -146,10 +160,10 @@ class ProductController extends BaseFrontOpenApiController
             ->offset($request->get('offset', 0));
 
         switch ($order) {
-            case 'created' :
+            case 'created':
                 $productQuery->orderByCreatedAt();
                 break;
-            case 'created_reverse' :
+            case 'created_reverse':
                 $productQuery->orderByCreatedAt(Criteria::DESC);
                 break;
         }
@@ -160,26 +174,26 @@ class ProductController extends BaseFrontOpenApiController
                 ->filterByLocale($locale);
 
             if (null !== $title) {
-                $productI18nQuery->filterByTitle('%' . $title . '%', Criteria::LIKE);
+                $productI18nQuery->filterByTitle('%'.$title.'%', Criteria::LIKE);
             }
 
             if (null !== $description) {
-                $productI18nQuery->filterByDescription('%' . $description . '%', Criteria::LIKE);
+                $productI18nQuery->filterByDescription('%'.$description.'%', Criteria::LIKE);
             }
 
             if (null !== $chapo) {
-                $productI18nQuery->filterByChapo('%' . $chapo . '%', Criteria::LIKE);
+                $productI18nQuery->filterByChapo('%'.$chapo.'%', Criteria::LIKE);
             }
 
             if (null !== $postscriptum) {
-                $productI18nQuery->filterByPostscriptum('%' . $postscriptum . '%', Criteria::LIKE);
+                $productI18nQuery->filterByPostscriptum('%'.$postscriptum.'%', Criteria::LIKE);
             }
 
             switch ($order) {
-                case 'alpha' :
+                case 'alpha':
                     $productI18nQuery->orderByTitle();
                     break;
-                case 'alpha_reverse' :
+                case 'alpha_reverse':
                     $productI18nQuery->orderByTitle(Criteria::DESC);
                     break;
             }
@@ -188,12 +202,9 @@ class ProductController extends BaseFrontOpenApiController
         }
 
         $products = $productQuery->find();
-        $modelFactory = $this->getModelFactory();
 
-        $products = array_map(function ($product) use ($modelFactory) {
-            return $modelFactory->buildModel('Product', $product);
-        }, iterator_to_array($products));
+        $products = array_map(fn ($product) => $modelFactory->buildModel('Product', $product), iterator_to_array($products));
 
-        return $this->jsonResponse($products);
+        return OpenApiService::jsonResponse($products);
     }
 }

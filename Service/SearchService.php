@@ -19,6 +19,14 @@ class SearchService
             $itemQuery->filterById($id);
         }
 
+        if (null !== $ids = $request->get('ids')) {
+            $itemQuery->filterById($ids, Criteria::IN);
+        }
+
+        if ((null !== $parentsIds = $request->get('parentsIds')) && method_exists($itemQuery, "filterByParent")) {
+            $itemQuery->filterByParent($parentsIds, Criteria::IN);
+        }
+
         $itemQuery->filterByVisible((bool) json_decode(json_encode($request->get('visible', true))));
 
         $order = $request->get('order', 'alpha');

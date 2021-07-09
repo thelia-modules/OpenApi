@@ -29,6 +29,26 @@ class CategoryController extends BaseFrontOpenApiController
      *          )
      *     ),
      *     @OA\Parameter(
+     *          name="ids[]",
+     *          in="query",
+     *          @OA\Schema(
+     *              type="array",
+     *              @OA\Items(
+     *                  type="integer"
+     *              )
+     *          )
+     *     ),
+     *     @OA\Parameter(
+     *          name="parentsIds[]",
+     *          in="query",
+     *          @OA\Schema(
+     *              type="array",
+     *              @OA\Items(
+     *                  type="integer"
+     *              )
+     *          )
+     *     ),
+     *     @OA\Parameter(
      *          name="visible",
      *          in="query",
      *          @OA\Schema(

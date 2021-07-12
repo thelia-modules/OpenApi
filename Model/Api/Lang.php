@@ -14,6 +14,8 @@ use OpenApi\Constraint as Constraint;
  */
 class Lang extends BaseApiModel
 {
+    static $serviceAliases = ["Language"];
+
     /**
      * @var int
      * @OA\Property(

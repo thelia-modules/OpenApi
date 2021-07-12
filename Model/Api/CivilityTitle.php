@@ -15,6 +15,8 @@ use Thelia\Model\CustomerTitle;
  */
 class CivilityTitle extends BaseApiModel
 {
+    static $serviceAliases = ["Title"];
+
     /**
      * @var int
      * @OA\Property(

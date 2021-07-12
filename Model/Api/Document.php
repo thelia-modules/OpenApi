@@ -9,6 +9,8 @@ use Thelia\TaxEngine\TaxEngine;
 
 class Document extends File
 {
+    protected $serviceAliases = ["ProductDocuments"];
+    
     /** @var DocumentService */
     protected $documentService;
 

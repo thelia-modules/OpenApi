@@ -13,6 +13,8 @@ use OpenApi\Model\Api\ModelTrait\translatable;
  */
 class AttributeValue extends BaseApiModel
 {
+    static $serviceAliases = ["AttributeAv"];
+
     use translatable;
 
     /**

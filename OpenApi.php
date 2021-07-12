@@ -56,6 +56,9 @@ class OpenApi extends BaseModule
     public static function loadConfiguration(ContainerBuilder $containerBuilder): void
     {
         $containerBuilder->registerForAutoconfiguration(BaseApiModel::class)
+            ->setPublic(true)
+            ->setShared(false)
+            ->setParent("open_api.base.model")
             ->addTag('open_api.model');
     }
 

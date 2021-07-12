@@ -2,6 +2,7 @@
 
 namespace OpenApi\Compiler;
 
+use OpenApi\Model\Api\Address;
 use OpenApi\OpenApi;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -19,9 +20,11 @@ class ModelPass implements CompilerPassInterface
                 $modelAlias = $attributes['alias'] ?? end($classParts);
                 $modelServices[$modelAlias] = $id;
             }
-            $definition = $containerBuilder->getDefinition($id);
-            $definition->setPublic(true)
-                ->setShared(false);
+            if (property_exists($id, "serviceAliases")) {
+                foreach ($id::$serviceAliases as $alias) {
+                    $modelServices[$alias] = $id;
+                }
+            }
         }
 
         $containerBuilder->setParameter(OpenApi::OPEN_API_MODELS_PARAMETER_KEY, $modelServices);

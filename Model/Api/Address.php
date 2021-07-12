@@ -16,6 +16,8 @@ use Thelia\Model\CountryQuery;
  */
 class Address extends BaseApiModel
 {
+    static $serviceAliases = ["PickupAddress"];
+
     /**
      * @var int
      * @OA\Property(

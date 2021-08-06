@@ -14,6 +14,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Thelia\Core\Event\Delivery\DeliveryPostageEvent;
 use Thelia\Core\Event\Delivery\PickupLocationEvent;
 use Thelia\Core\Event\TheliaEvents;
+use Thelia\Core\HttpFoundation\JsonResponse;
 use Thelia\Core\HttpFoundation\Request;
 use Thelia\Core\Security\SecurityContext;
 use Thelia\Core\Translation\Translator;
@@ -275,6 +276,47 @@ class DeliveryController extends BaseFrontOpenApiController
                 iterator_to_array($modules)
             )
         );
+    }
+
+    /**
+     * @Route("/set-delivery", name="set_delivery_modules", methods="GET")
+     *
+     * @OA\Get(
+     *     path="/delivery/set-delivery",
+     *     tags={"delivery", "modules"},
+     *     summary="Set delivery module on session to calculate postage",
+     *     @OA\Parameter(
+     *          name="delivery_module_id",
+     *          in="query",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *     ),
+     *     @OA\Response(
+     *          response="200",
+     *          description="Success",
+     *     ),
+     *     @OA\Response(
+     *          response="400",
+     *          description="Bad request",
+     *          @OA\JsonContent(ref="#/components/schemas/Error")
+     *     )
+     * )
+     */
+    public function setDeliveryModules(Request $request)
+    {
+        $deliveryModuleId = $request->get('delivery_module_id');
+        $session = $request->getSession();
+        $order = $session->getOrder();
+
+        if (!$order) {
+            return new JsonResponse();
+        }
+
+        $order->setDeliveryModuleId($deliveryModuleId);
+        $session->setOrder($order);
+
+        return new JsonResponse();
     }
 
     protected function getDeliveryModule(

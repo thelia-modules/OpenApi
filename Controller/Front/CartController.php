@@ -71,6 +71,10 @@ class CartController extends BaseFrontOpenApiController
      *                     type="integer"
      *                 ),
      *                 @OA\Property(
+     *                     property="productId",
+     *                     type="integer"
+     *                 ),
+     *                 @OA\Property(
      *                     property="quantity",
      *                     type="integer"
      *                 ),
@@ -82,7 +86,7 @@ class CartController extends BaseFrontOpenApiController
      *                     property="newness",
      *                     type="boolean"
      *                 ),
-     *                 example={"pseId": 18, "quantity": 2, "append": true, "newness": true}
+     *                 example={"pseId": 18, "productId": 54, "quantity": 2, "append": true, "newness": true}
      *             )
      *         )
      *     ),
@@ -324,14 +328,27 @@ class CartController extends BaseFrontOpenApiController
         }
 
         /** If the function was called from the POST route, we need to set the pseId and append properties, as we need a new CartItem */
-        if (!isset($data['pseId'])) {
-            throw new \Exception(Translator::getInstance()->trans('A PSE is needed in the POST request to add an item to the cart.'));
+        if (!isset($data['pseId']) && !isset($data['productId'])) {
+            throw new \Exception(Translator::getInstance()->trans('A PSE or Product is needed in the POST request to add an item to the cart.'));
         }
         if (!isset($data['append'])) {
             throw new \Exception(Translator::getInstance()->trans('You need to set the append value in the POST request to add an item to the cart.'));
         }
 
-        $pse = ProductSaleElementsQuery::create()->findPk($data['pseId']);
+        $pseQuery = ProductSaleElementsQuery::create();
+        if (isset($data['pseId'])) {
+            $pseQuery
+                ->filterById($data['pseId']);
+        } else {
+            $pseQuery
+                ->filterByProductId($data['productId'])
+                ->filterByIsDefault(1);
+        }
+        $pse = $pseQuery->findOne();
+
+        if ($pse === null) {
+            throw new \Exception(Translator::getInstance()->trans('PSE not found'));
+        }
 
         if ($this->checkAvailableStock($pse, $data['quantity'])) {
             throw new \Exception(Translator::getInstance()->trans('Desired quantity exceed available stock'));
@@ -342,7 +359,7 @@ class CartController extends BaseFrontOpenApiController
 
         $event
             ->setProduct($pse->getProductId())
-            ->setProductSaleElementsId($data['pseId'])
+            ->setProductSaleElementsId($pse->getId())
             ->setQuantity($data['quantity'])
             ->setAppend($data['append'])
             ->setNewness($newness)

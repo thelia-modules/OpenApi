@@ -7,6 +7,7 @@ use OpenApi\OpenApi;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Thelia\Core\Event\TheliaEvents;
 use Thelia\Core\Security\SecurityContext;
 
 class RequestListener implements EventSubscriberInterface
@@ -22,7 +23,7 @@ class RequestListener implements EventSubscriberInterface
     public function markRequestAsOpenApi(ControllerEvent $event): void
     {
         $controller = $event->getController();
-        if (isset($controller[0]) && $controller[0] instanceof BaseFrontOpenApiController || $controller[0] instanceof BaseFrontOpenApiController) {
+        if (is_array($controller) && isset($controller[0]) && $controller[0] instanceof BaseFrontOpenApiController) {
             $currentRequest = $event->getRequest();
             $currentRequest->attributes->set(OpenApi::OPEN_API_ROUTE_REQUEST_KEY, true);
         }
@@ -31,7 +32,9 @@ class RequestListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::CONTROLLER,
+            KernelEvents::CONTROLLER => [
+                ['markRequestAsOpenApi', 512],
+            ],
         ];
     }
 }

@@ -6,6 +6,7 @@ use OpenApi\Annotations as OA;
 use OpenApi\Constraint as Constraint;
 use Thelia\Model\Address as TheliaAddress;
 use Thelia\Model\CountryQuery;
+use Thelia\Model\StateQuery;
 
 /**
  * @OA\Schema(
@@ -162,6 +163,14 @@ class Address extends BaseApiModel
      * )
      */
     protected $countryCode;
+
+    /**
+     * @var string
+     * @OA\Property(
+     *     type="string",
+     * )
+     */
+    protected $stateCode;
 
     /**
      * @var object
@@ -589,4 +598,28 @@ class Address extends BaseApiModel
 
         return $this;
     }
+
+    /**
+     * @return string
+     */
+    public function getStateCode(): string
+    {
+        return $this->stateCode;
+    }
+
+    /**
+     * @param string $stateCode
+     */
+    public function setStateCode(string $stateCode): void
+    {
+        $this->stateCode = $stateCode;
+    }
+
+    public function getStateId()
+    {
+        $state = StateQuery::create()->filterByCountryId($this->getCountryId())->filterByIsocode($this->getStateCode())->findOne();
+
+        return null !== $state ? $state->getId() : null;
+    }
+
 }

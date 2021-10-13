@@ -201,6 +201,7 @@ class Address extends BaseApiModel
         $this
             ->setCivilityTitle($civ)
             ->setCountryCode($address->getCountry()->getIsoalpha2())
+            ->setStateCode($address->getState() ? $address->getState()->getIsocode() : null)
         ;
 
         return $this;
@@ -600,17 +601,17 @@ class Address extends BaseApiModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getStateCode(): string
+    public function getStateCode(): ?string
     {
         return $this->stateCode;
     }
 
     /**
-     * @param string $stateCode
+     * @param string|null $stateCode
      */
-    public function setStateCode(string $stateCode): void
+    public function setStateCode(string $stateCode = null): void
     {
         $this->stateCode = $stateCode;
     }

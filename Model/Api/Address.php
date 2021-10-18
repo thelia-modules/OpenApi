@@ -173,6 +173,14 @@ class Address extends BaseApiModel
     protected $stateCode;
 
     /**
+     * @var string
+     * @OA\Property(
+     *     type="string",
+     * )
+     */
+    protected $stateName;
+
+    /**
      * @var object
      * @OA\Property(
      *     type="object"
@@ -201,8 +209,12 @@ class Address extends BaseApiModel
         $this
             ->setCivilityTitle($civ)
             ->setCountryCode($address->getCountry()->getIsoalpha2())
-            ->setStateCode($address->getState() ? $address->getState()->getIsocode() : null)
         ;
+        if (null !== $state = $address->getState()){
+            $this
+                ->setStateCode($state->getIsocode())
+                ->setStateName($state->setLocale($locale)->getTitle());
+        }
 
         return $this;
     }
@@ -611,9 +623,11 @@ class Address extends BaseApiModel
     /**
      * @param string|null $stateCode
      */
-    public function setStateCode(string $stateCode = null): void
+    public function setStateCode(string $stateCode = null)
     {
         $this->stateCode = $stateCode;
+
+        return $this;
     }
 
     public function getStateId()
@@ -622,5 +636,25 @@ class Address extends BaseApiModel
 
         return null !== $state ? $state->getId() : null;
     }
+
+    /**
+     * @return string
+     */
+    public function getStateName(): ?string
+    {
+        return $this->stateName;
+    }
+
+    /**
+     * @param string $stateName
+     */
+    public function setStateName(string $stateName = null)
+    {
+        $this->stateName = $stateName;
+
+        return $this;
+    }
+
+
 
 }

@@ -210,6 +210,7 @@ class ProductSaleElement extends BaseApiModel
         $promoPrice = $this->modelFactory->buildModel('Price');
         $promoPrice->fillFromTheliaPseAndCountry($pse, $country);
         $this->promoPrice = $price;
+        $this->weight = $pse->getWeight();
 
         $this->reference = $pse->getRef();
         $this->attributes = $attributes;

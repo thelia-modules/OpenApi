@@ -60,6 +60,11 @@ class ConfigController extends BaseFrontOpenApiController
      */
     public function getConfig(Request $request, $key)
     {
-        return new JsonResponse(ConfigQuery::read($key));
+        $config = ConfigQuery::create()->filterByName($key)->findOne();
+        if ($config && in_array($config->getId(), explode(',', OpenApi::getConfigValue('config_variables')))) {
+            return new JsonResponse($config->getValue());
+        }
+
+        return new JsonResponse(Translator::getInstance()->trans('You are not allowed to access this config'), 401);
     }
 }

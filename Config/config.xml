@@ -11,9 +11,7 @@
     </loops>
 
     <forms>
-        <!--
-        <form name="MyFormName" class="OpenApi\Form\MySuperForm" />
-        -->
+        <form name="open_api_config_form" class="OpenApi\Form\ConfigForm" />
     </forms>
 
     <commands>
@@ -147,13 +145,12 @@
             <tag name="open_api.model" alias="Result"/>
         </service>
     </services>
-    <!--
+
     <hooks>
-        <hook id="openapi.hook" class="OpenApi\Hook\MySuperHook">
-            <tag name="hook.event_listener" event="main.body.bottom" type="front|back|pdf|email" method="onMainBodyBottom" />
+        <hook id="openapi.back.hook" class="OpenApi\Hook\BackHook">
+            <tag name="hook.event_listener" event="module.configuration" type="back" method="onModuleConfiguration" />
         </hook>
     </hooks>
-    -->
 
     <!--
     <exports>

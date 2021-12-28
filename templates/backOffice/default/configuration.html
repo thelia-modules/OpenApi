@@ -1,0 +1,42 @@
+<div class="general-block-decorator col-md-12">
+    <div class="title title-without-tabs">{intl l="OpenAPI configurations" d="openapi.bo.default"}</div>
+    {form name="openapi_form_config_form"}
+        <form action="{url path="/open_api/admin/module/OpenApi/save"}" method="POST">
+            {include
+            file = "includes/inner-form-toolbar.html"
+            hide_submit_buttons = false
+            hide_flags = true
+            hide_save_and_close_button = true
+
+            page_url  = {url path="/admin/module/OpenApi"}
+            close_url = {url path="/admin/modules"}
+            }
+            {if $form_error|default:null}<div class="alert alert-danger">{$form_error_message}</div>{/if}
+            <div class="col-md-4">
+                {form_hidden_fields}
+                {render_form_field field="success_url" value={url path='/admin/module/OpenApi'}}
+                {render_form_field field="error_url" value={url path='/admin/module/OpenApi'}}
+                <table class="table table-striped table-condensed">
+                    <thead>
+                    <tr>
+                        <th>{intl l="Active" d="openapi.bo.default"}</th>
+                        <th>{intl l="Name" d="openapi.bo.default"}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {loop type="config" name="config-loop"}
+                        <tr>
+                            <td>
+                                {form_field field="enable_config" value_key=$ID}
+                                    <input type="checkbox" name="{$name}" class="checkbox form-control" value="{$ID}" {if in_array($ID, $configs)}checked{/if}>
+                                {/form_field}
+                            </td>
+                            <td>{$NAME}</td>
+                        </tr>
+                    {/loop}
+                    </tbody>
+                </table>
+            </div>
+        </form>
+    {/form}
+</div>

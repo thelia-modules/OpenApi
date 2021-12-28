@@ -3,9 +3,11 @@
 namespace OpenApi\Controller\Front;
 
 use OpenApi\Annotations as OA;
+use OpenApi\OpenApi;
 use Symfony\Component\Routing\Annotation\Route;
 use Thelia\Core\HttpFoundation\JsonResponse;
 use Thelia\Core\HttpFoundation\Request;
+use Thelia\Core\Translation\Translator;
 use Thelia\Model\ConfigQuery;
 
 /**
@@ -42,6 +44,11 @@ class ConfigController extends BaseFrontOpenApiController
      */
     public function getConfig($key)
     {
-        return new JsonResponse(ConfigQuery::read($key));
+        $config = ConfigQuery::create()->filterByName($key)->findOne();
+        if ($config && in_array($config->getId(), explode(',', OpenApi::getConfigValue('config_variables')))) {
+            return new JsonResponse($config->getValue());
+        }
+
+        return new JsonResponse(Translator::getInstance()->trans('You are not allowed to access this config'), 401);
     }
 }

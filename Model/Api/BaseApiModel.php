@@ -3,6 +3,7 @@
 namespace OpenApi\Model\Api;
 
 use OpenApi\Events\ModelExtendDataEvent;
+use OpenApi\Events\ModelValidationEvent;
 use OpenApi\Exception\OpenApiException;
 use OpenApi\Normalizer\ModelApiNormalizer;
 use OpenApi\OpenApi;
@@ -114,7 +115,10 @@ abstract class BaseApiModel implements \JsonSerializable
             }
         }
 
-        return $violations;
+        $event = new ModelValidationEvent($this, $modelFactory, $propertyPatchPrefix);
+        $this->dispatcher->dispatch(ModelValidationEvent::MODEL_VALIDATION_EVENT_PREFIX.$this->snakeCaseName(), $event);
+
+        return array_merge($violations, $event->getViolations());
     }
 
     public function jsonSerialize()

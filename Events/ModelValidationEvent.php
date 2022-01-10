@@ -22,18 +22,21 @@ class ModelValidationEvent extends ActionEvent
     /** @var array $violations  */
     protected $violations;
 
+    protected $groups;
+
     /**
      * @param BaseApiModel $model
      * @param ModelFactory $modelFactory
      * @param $propertyPatchPrefix
      * @param array $violations
      */
-    public function __construct(BaseApiModel $model, ModelFactory $modelFactory, string $propertyPatchPrefix = "", array $violations = [])
+    public function __construct(BaseApiModel $model, ModelFactory $modelFactory, $groups, string $propertyPatchPrefix = "", array $violations = [])
     {
         $this->model = $model;
         $this->modelFactory = $modelFactory;
         $this->propertyPatchPrefix = $propertyPatchPrefix;
         $this->violations = $violations;
+        $this->groups = $groups;
     }
 
 
@@ -99,6 +102,22 @@ class ModelValidationEvent extends ActionEvent
     public function setPropertyPatchPrefix(string $propertyPatchPrefix): void
     {
         $this->propertyPatchPrefix = $propertyPatchPrefix;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getGroups()
+    {
+        return $this->groups;
+    }
+
+    /**
+     * @param mixed $groups
+     */
+    public function setGroups($groups): void
+    {
+        $this->groups = $groups;
     }
 
 }

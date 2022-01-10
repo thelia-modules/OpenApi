@@ -115,7 +115,7 @@ abstract class BaseApiModel implements \JsonSerializable
             }
         }
 
-        $event = new ModelValidationEvent($this, $modelFactory, $propertyPatchPrefix);
+        $event = new ModelValidationEvent($this, $modelFactory, $groups, $propertyPatchPrefix);
         $this->dispatcher->dispatch(ModelValidationEvent::MODEL_VALIDATION_EVENT_PREFIX.$this->snakeCaseName(), $event);
 
         return array_merge($violations, $event->getViolations());

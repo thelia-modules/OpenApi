@@ -136,6 +136,7 @@ class Address extends BaseApiModel
      *     type="string",
      * ),
      * @Constraint\NotBlank(groups={"create","update"})
+     * @Constraint\Zipcode(groups={"create","update"})
      */
     protected $zipCode;
 
@@ -547,5 +548,4 @@ class Address extends BaseApiModel
         $this->cellphoneNumber = $cellphoneNumber;
         return $this;
     }
-
 }

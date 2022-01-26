@@ -5,8 +5,8 @@ namespace OpenApi\Model\Api;
 use OpenApi\Annotations as OA;
 
 /**
- * Class SchemaViolation
- * @package OpenApi\Model\Api
+ * Class SchemaViolation.
+ *
  * @OA\Schema(
  *     description="A schema violation"
  * )
@@ -19,49 +19,25 @@ class SchemaViolation extends BaseApiModel
      *    type="string"
      * )
      */
-    protected $key;
-
-    /**
-     * @var string
-     * @OA\Property(
-     *    type="string"
-     * )
-     */
-    protected $error;
+    protected $message;
 
     /**
      * @return string
      */
-    public function getKey()
+    public function getMessage()
     {
-        return $this->key;
+        return $this->message;
     }
 
     /**
-     * @param string $key
+     * @param string $message
+     *
      * @return SchemaViolation
      */
-    public function setKey($key)
+    public function setMessage($message)
     {
-        $this->key = $key;
-        return $this;
-    }
+        $this->message = $message;
 
-    /**
-     * @return string
-     */
-    public function getError()
-    {
-        return $this->error;
-    }
-
-    /**
-     * @param string $error
-     * @return SchemaViolation
-     */
-    public function setError($error)
-    {
-        $this->error = $error;
         return $this;
     }
 }

@@ -17,7 +17,7 @@ use Thelia\Model\StateQuery;
  */
 class Address extends BaseApiModel
 {
-    static $serviceAliases = ["PickupAddress"];
+    public static $serviceAliases = ["PickupAddress"];
 
     /**
      * @var int
@@ -138,6 +138,7 @@ class Address extends BaseApiModel
      *     type="string",
      * ),
      * @Constraint\NotBlank(groups={"create","update"})
+     * @Constraint\Zipcode(groups={"create","update"})
      */
     protected $zipCode;
 
@@ -210,7 +211,7 @@ class Address extends BaseApiModel
             ->setCivilityTitle($civ)
             ->setCountryCode($address->getCountry()->getIsoalpha2())
         ;
-        if (null !== $state = $address->getState()){
+        if (null !== $state = $address->getState()) {
             $this
                 ->setStateCode($state->getIsocode())
                 ->setStateName($state->setLocale($locale)->getTitle());
@@ -654,7 +655,4 @@ class Address extends BaseApiModel
 
         return $this;
     }
-
-
-
 }

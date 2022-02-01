@@ -101,16 +101,13 @@ abstract class BaseApiModel implements \JsonSerializable
     public function getViolations($groups, $recursively = true, $propertyPatchPrefix = '')
     {
         $modelFactory = $this->modelFactory;
-        $violations = array_map(function ($violation) use ($modelFactory, $propertyPatchPrefix) {
-            return $modelFactory->buildModel(
-                'SchemaViolation',
-                [
-                    'key' => $propertyPatchPrefix.$violation->getPropertyPath(),
-                    'error' => $violation->getMessage(),
-                ]
-            );
-        },
-            iterator_to_array($this->validator->validate($this, null, $groups))
+        $violations = array_reduce(
+            iterator_to_array($this->validator->validate($this, null, $groups)),
+            function ($carry, $violation) use ($modelFactory, $propertyPatchPrefix) {
+                $carry[$propertyPatchPrefix.$violation->getPropertyPath()] = $modelFactory->buildModel('SchemaViolation', ['message' => $violation->getMessage()]);
+                return $carry;
+            },
+            []
         );
 
         if ($recursively === true) {

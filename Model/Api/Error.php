@@ -32,10 +32,11 @@ class Error extends BaseApiModel
     /**
      * @var array
      * @OA\Property(
-     *    type="array",
-     *     @OA\Items(
-     *          ref="#/components/schemas/SchemaViolation"
-     *     )
+     *    type="object",
+     *     @OA\AdditionalProperties(
+     *          ref="#/components/schemas/SchemaViolation",
+     *     ),
+     *     example={"field_1": {"message":"Bad format"}, "field_2": {"message":"This value should not be blank"}, "...": {"message":"Other fields errors"}}
      * )
      */
     protected $schemaViolations;

@@ -3,6 +3,7 @@
 namespace OpenApi\Controller;
 
 use OpenApi\Annotations as OA;
+use Thelia\Core\HttpFoundation\JsonResponse;
 use function OpenApi\scan;
 use Symfony\Component\Routing\Annotation\Route;
 use Thelia\Controller\Front\BaseFrontController;

@@ -19,52 +19,24 @@ class SchemaViolation extends BaseApiModel
      *    type="string"
      * )
      */
-    protected $key;
-
-    /**
-     * @var string
-     * @OA\Property(
-     *    type="string"
-     * )
-     */
-    protected $error;
+    protected $message;
 
     /**
      * @return string
      */
-    public function getKey()
+    public function getMessage()
     {
-        return $this->key;
+        return $this->message;
     }
 
     /**
-     * @param string $key
+     * @param string $message
      *
      * @return SchemaViolation
      */
-    public function setKey($key)
+    public function setMessage($message)
     {
-        $this->key = $key;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getError()
-    {
-        return $this->error;
-    }
-
-    /**
-     * @param string $error
-     *
-     * @return SchemaViolation
-     */
-    public function setError($error)
-    {
-        $this->error = $error;
+        $this->message = $message;
 
         return $this;
     }

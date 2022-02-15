@@ -1,9 +1,19 @@
 <?php
 
+/*
+ * This file is part of the Thelia package.
+ * http://www.thelia.net
+ *
+ * (c) OpenStudio <info@thelia.net>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
-use OpenApi\Constraint as Constraint;
+use OpenApi\Constraint;
 use Thelia\Model\Address as TheliaAddress;
 use Thelia\Model\CountryQuery;
 use Thelia\Model\StateQuery;
@@ -17,7 +27,7 @@ use Thelia\Model\StateQuery;
  */
 class Address extends BaseApiModel
 {
-    public static $serviceAliases = ["PickupAddress"];
+    public static $serviceAliases = ['PickupAddress'];
 
     /**
      * @var int
@@ -89,7 +99,7 @@ class Address extends BaseApiModel
      *     type="string",
      * )
      */
-    protected $cellphoneNumber;
+    protected $cellphone;
 
     /**
      * @var string
@@ -97,7 +107,7 @@ class Address extends BaseApiModel
      *     type="string",
      * )
      */
-    protected $phoneNumber;
+    protected $phone;
 
     /**
      * @var string
@@ -363,46 +373,6 @@ class Address extends BaseApiModel
     /**
      * @return string
      */
-    public function getCellphoneNumber()
-    {
-        return $this->cellphoneNumber;
-    }
-
-    /**
-     * @param string $cellphoneNumber
-     *
-     * @return Address
-     */
-    public function setCellphoneNumber($cellphoneNumber)
-    {
-        $this->cellphoneNumber = $cellphoneNumber;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getPhoneNumber()
-    {
-        return $this->phoneNumber;
-    }
-
-    /**
-     * @param string $phoneNumber
-     *
-     * @return Address
-     */
-    public function setPhoneNumber($phoneNumber)
-    {
-        $this->phoneNumber = $phoneNumber;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
     public function getCompany()
     {
         return $this->company;
@@ -589,41 +559,51 @@ class Address extends BaseApiModel
         return null !== $country ? $country->getId() : null;
     }
 
+    /*
+    * @return string
+    */
     public function getPhone()
     {
-        return $this->phoneNumber;
+        return $this->phone;
     }
 
+    /*
+    * @return string
+    */
     public function getCellPhone()
     {
-        return $this->cellphoneNumber;
+        return $this->cellphone;
     }
 
-    public function setPhone($phoneNumber)
+    /**
+     * @param string $phone
+     *
+     * @return Address
+     */
+    public function setPhone($phone)
     {
-        $this->phoneNumber = $phoneNumber;
-
-        return $this;
-    }
-
-    public function setCellphone($cellphoneNumber)
-    {
-        $this->cellphoneNumber = $cellphoneNumber;
+        $this->phone = $phone;
 
         return $this;
     }
 
     /**
-     * @return string|null
+     * @param string $cellphone
+     *
+     * @return Address
      */
+    public function setCellphone($cellphone)
+    {
+        $this->cellphone = $cellphone;
+
+        return $this;
+    }
+
     public function getStateCode(): ?string
     {
         return $this->stateCode;
     }
 
-    /**
-     * @param string|null $stateCode
-     */
     public function setStateCode(string $stateCode = null)
     {
         $this->stateCode = $stateCode;

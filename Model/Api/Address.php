@@ -570,7 +570,7 @@ class Address extends BaseApiModel
     /*
     * @return string
     */
-    public function getCellPhone()
+    public function getCellphone()
     {
         return $this->cellphone;
     }

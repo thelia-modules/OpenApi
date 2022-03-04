@@ -129,6 +129,8 @@ class CustomerController extends BaseFrontOpenApiController
             $openApiAddress = $modelFactory->buildModel('Address', $data['address']);
             $openApiAddress->setCustomer($openApiCustomer)->validate(self::GROUP_CREATE);
 
+            
+
             /** @var Address $theliaAddress */
             $theliaAddress = $openApiAddress->toTheliaModel();
             $theliaAddress
@@ -143,6 +145,13 @@ class CustomerController extends BaseFrontOpenApiController
 
         /* If everything went fine, we actually commit the changes to the base. */
         $con->commit();
+
+        try {
+            $openApiCustomer->setDefaultAddressId($theliaAddress->getId());
+        } catch (\Exception $exception) {
+            throw $exception;
+        }
+
 
         return OpenApiService::jsonResponse($openApiCustomer);
     }

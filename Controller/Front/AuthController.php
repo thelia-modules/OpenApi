@@ -17,6 +17,7 @@ use Thelia\Core\Security\Token\CookieTokenProvider;
 use Thelia\Core\Translation\Translator;
 use Thelia\Model\ConfigQuery;
 use Thelia\Model\CustomerQuery;
+use OpenApi\Model\Api\Customer as OpenApiCustomer;
 
 /**
  * @Route("", name="auth")
@@ -98,7 +99,16 @@ class AuthController extends BaseFrontOpenApiController
             );
         }
 
-        return OpenApiService::jsonResponse($modelFactory->buildModel('Customer', $customer));
+        /** @var OpenApiCustomer $openApiCustomer */
+        $openApiCustomer = $modelFactory->buildModel('Customer', $customer);
+
+        try {
+            $openApiCustomer->setDefaultAddressId($customer->getDefaultAddress()->getId());
+        } catch (\Exception $exception) {
+            throw $exception;
+        }
+
+        return OpenApiService::jsonResponse($openApiCustomer);
     }
 
     /**

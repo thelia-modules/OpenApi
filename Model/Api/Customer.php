@@ -106,6 +106,14 @@ class Customer extends BaseApiModel
     protected $reseller;
 
     /**
+     * @var int
+     * @OA\Property(
+     *    type="integer",
+     * )
+     */
+    protected $defaultAddressId;
+
+    /**
      * @return int
      */
     public function getId()
@@ -332,6 +340,26 @@ class Customer extends BaseApiModel
     {
         $this->reference = $ref;
 
+        return $this;
+    }
+
+
+    /**
+     * @return int
+     */
+    public function getDefaultAddressId()
+    {
+        return $this->defaultAddressId;
+    }
+
+    /**
+     * @param integer $id
+     *
+     * @return Customer
+     */
+    public function setDefaultAddressId($id)
+    {
+        $this->defaultAddressId = $id;
         return $this;
     }
 }

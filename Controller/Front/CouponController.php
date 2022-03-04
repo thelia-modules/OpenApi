@@ -9,6 +9,7 @@ use OpenApi\OpenApi;
 use OpenApi\Service\OpenApiService;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\Event;
 use Thelia\Core\Event\Coupon\CouponConsumeEvent;
 use Thelia\Core\Event\TheliaEvents;
 use Thelia\Core\HttpFoundation\Request;
@@ -83,5 +84,40 @@ class CouponController extends BaseFrontOpenApiController
         }
 
         return OpenApiService::jsonResponse($openApiCoupon);
+    }
+
+    /**
+     * @Route("/clear_all", name="clear_all_coupon", methods="GET")
+     *
+     * @OA\Get(
+     *     path="/coupon/clear_all",
+     *     tags={"coupon"},
+     *     summary="Clear all coupons",
+     *
+     *     @OA\Response(
+     *          response="200",
+     *          description="Success",
+     *          @OA\JsonContent(ref="#/components/schemas/Cart")
+     *     ),
+     *     @OA\Response(
+     *          response="400",
+     *          description="Bad request",
+     *          @OA\JsonContent(ref="#/components/schemas/Error")
+     *     )
+     * )
+     */
+    public function clearAllCoupon(
+        Request $request,
+        EventDispatcherInterface $dispatcher,
+        ModelFactory $modelFactory
+    ) {
+        $cart = $request->getSession()->getSessionCart($dispatcher);
+        try {
+            $dispatcher->dispatch((new Event()), TheliaEvents::COUPON_CLEAR_ALL);
+        } catch (\Exception $exception) {
+            throw new \Exception(Translator::getInstance()->trans('An error occurred while clearing coupons : ') . $exception->getMessage());
+        }
+
+        return OpenApiService::jsonResponse($modelFactory->buildModel('Cart', $cart));
     }
 }

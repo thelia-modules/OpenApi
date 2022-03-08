@@ -1,9 +1,19 @@
 <?php
 
+/*
+ * This file is part of the Thelia package.
+ * http://www.thelia.net
+ *
+ * (c) OpenStudio <info@thelia.net>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
-use OpenApi\Constraint as Constraint;
+use OpenApi\Constraint;
 
 /**
  * @OA\Schema(
@@ -112,6 +122,12 @@ class Customer extends BaseApiModel
      * )
      */
     protected $defaultAddressId;
+
+    public function createFromTheliaModel($theliaModel, $locale = null): void
+    {
+        parent::createFromTheliaModel($theliaModel, $locale);
+        $this->setDefaultAddressId($theliaModel->getDefaultAddress()->getId());
+    }
 
     /**
      * @return int
@@ -343,7 +359,6 @@ class Customer extends BaseApiModel
         return $this;
     }
 
-
     /**
      * @return int
      */
@@ -353,13 +368,14 @@ class Customer extends BaseApiModel
     }
 
     /**
-     * @param integer $id
+     * @param int $id
      *
      * @return Customer
      */
     public function setDefaultAddressId($id)
     {
         $this->defaultAddressId = $id;
+
         return $this;
     }
 }

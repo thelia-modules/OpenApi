@@ -1,8 +1,19 @@
 <?php
 
+/*
+ * This file is part of the Thelia package.
+ * http://www.thelia.net
+ *
+ * (c) OpenStudio <info@thelia.net>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace OpenApi\Controller\Front;
 
 use OpenApi\Annotations as OA;
+use OpenApi\Model\Api\Customer as OpenApiCustomer;
 use OpenApi\Model\Api\ModelFactory;
 use OpenApi\OpenApi;
 use OpenApi\Service\OpenApiService;
@@ -98,7 +109,11 @@ class AuthController extends BaseFrontOpenApiController
             );
         }
 
-        return OpenApiService::jsonResponse($modelFactory->buildModel('Customer', $customer));
+        /** @var OpenApiCustomer $openApiCustomer */
+        $openApiCustomer = $modelFactory->buildModel('Customer', $customer);
+        $openApiCustomer->setDefaultAddressId($customer->getDefaultAddress()->getId());
+
+        return OpenApiService::jsonResponse($openApiCustomer);
     }
 
     /**

@@ -1,5 +1,15 @@
 <?php
 
+/*
+ * This file is part of the Thelia package.
+ * http://www.thelia.net
+ *
+ * (c) OpenStudio <info@thelia.net>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace OpenApi\Controller\Front;
 
 use OpenApi\Annotations as OA;
@@ -143,6 +153,8 @@ class CustomerController extends BaseFrontOpenApiController
 
         /* If everything went fine, we actually commit the changes to the base. */
         $con->commit();
+
+        $openApiCustomer->setDefaultAddressId($theliaAddress->getId());
 
         return OpenApiService::jsonResponse($openApiCustomer);
     }

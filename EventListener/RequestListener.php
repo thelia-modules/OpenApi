@@ -25,6 +25,7 @@ class RequestListener implements EventSubscriberInterface
         $controller = $event->getController();
         if (is_array($controller) && isset($controller[0]) && $controller[0] instanceof BaseFrontOpenApiController) {
             $currentRequest = $event->getRequest();
+            $currentRequest->attributes->set('_previous_url', 'dont-save');
             $currentRequest->attributes->set(OpenApi::OPEN_API_ROUTE_REQUEST_KEY, true);
         }
     }

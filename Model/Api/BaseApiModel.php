@@ -32,9 +32,6 @@ abstract class BaseApiModel implements \JsonSerializable
     /** @var Request */
     protected $request;
 
-    /** @var string */
-    protected $locale;
-
     /** @var Country */
     protected $country;
 
@@ -63,13 +60,17 @@ abstract class BaseApiModel implements \JsonSerializable
 
         $this->modelFactory = $modelFactory;
         $this->request = $requestStack->getCurrentRequest();
-        $this->locale = $this->request->getSession()->getLang(true)->getLocale();
         $this->country = $taxEngine->getDeliveryCountry();
         $this->state = $taxEngine->getDeliveryState();
 
         if (method_exists($this, 'initI18n')) {
             $this->initI18n($modelFactory);
         }
+    }
+
+    public function getCurrentLocale()
+    {
+        return $this->request->getSession()->getLang(true)->getLocale();
     }
 
     /**
@@ -135,7 +136,7 @@ abstract class BaseApiModel implements \JsonSerializable
     public function createOrUpdateFromData($data, $locale = null): void
     {
         if (null === $locale) {
-            $locale = $this->locale;
+            $locale = $this->getCurrentLocale();
         }
 
         if (\is_object($data)) {
@@ -213,7 +214,7 @@ abstract class BaseApiModel implements \JsonSerializable
 
         // If model need locale, set it
         if (method_exists($theliaModel, 'setLocale')) {
-            $theliaModel->setLocale($locale !== null ? $locale : $this->locale);
+            $theliaModel->setLocale($locale !== null ? $locale : $this->getCurrentLocale());
         }
 
         // Look all method of Open API model
@@ -275,7 +276,7 @@ abstract class BaseApiModel implements \JsonSerializable
     public function createFromTheliaModel($theliaModel, $locale = null)
     {
         if (method_exists($theliaModel, 'setLocale')) {
-            $theliaModel->setLocale($locale !== null ? $locale : $this->locale);
+            $theliaModel->setLocale($locale !== null ? $locale : $this->getCurrentLocale());
         }
 
         foreach (get_class_methods($this) as $modelMethod) {

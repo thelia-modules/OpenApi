@@ -358,10 +358,19 @@ class Cart extends BaseApiModel
      */
     protected function getEstimatedPostageForCountry(\Thelia\Model\Cart $cart, Country $country, State $state = null)
     {
-        $deliveryModules = ModuleQuery::create()
-            ->filterByActivate(1)
-            ->filterByType(BaseModule::DELIVERY_MODULE_TYPE, Criteria::EQUAL)
-            ->find();
+        $orderSession = $this->request->getSession()->getOrder();
+        $deliveryModules = [];
+
+        if ($deliveryModule = ModuleQuery::create()->findPk($orderSession->getDeliveryModuleId())) {
+            $deliveryModules[] = $deliveryModule;
+        }
+
+        if (empty($deliveryModules)) {
+            $deliveryModules = ModuleQuery::create()
+                ->filterByActivate(1)
+                ->filterByType(BaseModule::DELIVERY_MODULE_TYPE, Criteria::EQUAL)
+                ->find();
+        }
 
         $virtual = $cart->isVirtual();
         $postage = null;

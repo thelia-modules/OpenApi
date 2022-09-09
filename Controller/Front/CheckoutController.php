@@ -65,51 +65,56 @@ class CheckoutController extends BaseFrontOpenApiController
         OpenApiService $openApiService,
         ModelFactory $modelFactory
     ) {
-        // Allow to check if a customer is logged
-        $openApiService->getCurrentCustomer();
+        try {
+            // Allow to check if a customer is logged
+            $openApiService->getCurrentCustomer();
 
-        $cart = $session->getSessionCart($dispatcher);
-        if ($cart === null || $cart->countCartItems() === 0) {
-            throw new \Exception(Translator::getInstance()->trans('Cart is empty', [], OpenApi::DOMAIN_NAME));
-        }
-
-        if (true === ConfigQuery::checkAvailableStock()) {
-            if (!$this->checkStockNotEmpty($cart)) {
-                throw new \Exception(Translator::getInstance()->trans('Not enough stock', [], OpenApi::DOMAIN_NAME));
+            $cart = $session->getSessionCart($dispatcher);
+            if ($cart === null || $cart->countCartItems() === 0) {
+                throw new \Exception(Translator::getInstance()->trans('Cart is empty', [], OpenApi::DOMAIN_NAME));
             }
+
+            if (true === ConfigQuery::checkAvailableStock()) {
+                if (!$this->checkStockNotEmpty($cart)) {
+                    throw new \Exception(Translator::getInstance()->trans('Not enough stock', [], OpenApi::DOMAIN_NAME));
+                }
+            }
+
+            $decodedContent = json_decode($request->getContent(), true);
+
+            /** @var Checkout $checkout */
+            $checkout = $modelFactory->buildModel('Checkout', $decodedContent);
+
+            if (isset($decodedContent['needValidate']) && true === $decodedContent['needValidate']) {
+                $checkout->checkIsValid();
+            }
+
+            $order = $this->getOrder($request);
+            $orderEvent = new OrderEvent($order);
+
+            $this->setOrderDeliveryPart(
+                $request,
+                $session,
+                $dispatcher,
+                $securityContext,
+                $checkout,
+                $orderEvent
+            );
+            $this->setOrderInvoicePart(
+                $dispatcher,
+                $securityContext,
+                $checkout,
+                $orderEvent
+            );
+
+            $responseCheckout = $checkout
+                ->createFromOrder($orderEvent->getOrder());
+
+            return OpenApiService::jsonResponse($responseCheckout);
+        } catch (\Throwable $th) {
+            Tlog::getInstance()->addWarning($th->getMessage());
+            return OpenApiService::jsonResponse(null, 500);
         }
-
-        $decodedContent = json_decode($request->getContent(), true);
-
-        /** @var Checkout $checkout */
-        $checkout = $modelFactory->buildModel('Checkout', $decodedContent);
-
-        if (isset($decodedContent['needValidate']) && true === $decodedContent['needValidate']) {
-            $checkout->checkIsValid();
-        }
-
-        $order = $this->getOrder($request);
-        $orderEvent = new OrderEvent($order);
-
-        $this->setOrderDeliveryPart(
-            $request,
-            $session,
-            $dispatcher,
-            $securityContext,
-            $checkout,
-            $orderEvent
-        );
-        $this->setOrderInvoicePart(
-            $dispatcher,
-            $securityContext,
-            $checkout,
-            $orderEvent
-        );
-
-        $responseCheckout = $checkout
-            ->createFromOrder($orderEvent->getOrder());
-
-        return OpenApiService::jsonResponse($responseCheckout);
     }
 
     /**

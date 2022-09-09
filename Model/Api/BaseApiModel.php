@@ -70,7 +70,7 @@ abstract class BaseApiModel implements \JsonSerializable
 
     public function getCurrentLocale()
     {
-        return $this->request->getSession()->getLang(true)->getLocale();
+        return $this->request?->getSession()?->getLang(true)->getLocale();
     }
 
     /**

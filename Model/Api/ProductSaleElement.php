@@ -214,6 +214,8 @@ class ProductSaleElement extends BaseApiModel
 
         $this->reference = $pse->getRef();
         $this->attributes = $attributes;
+        
+        $this->quantity = $pse->getQuantity();
 
         return $this;
     }

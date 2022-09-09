@@ -112,8 +112,11 @@ class CheckoutController extends BaseFrontOpenApiController
 
             return OpenApiService::jsonResponse($responseCheckout);
         } catch (\Throwable $th) {
-            Tlog::getInstance()->addWarning($th->getMessage());
-            return OpenApiService::jsonResponse(null, 500);
+            Tlog::getInstance()->addError($th->getMessage());
+            throw $openApiService->buildOpenApiException(
+                'Invalid data',
+                $th->getMessage()
+            );
         }
     }
 

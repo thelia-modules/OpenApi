@@ -201,9 +201,9 @@ class CheckoutController extends BaseFrontOpenApiController
 
             $postage = $deliveryPostageEvent->getPostage();
         }
-
-        $orderEvent->setDeliveryAddress($deliveryAddress !== null ? $deliveryAddress->getId() : null);
-        $orderEvent->setDeliveryModule($deliveryModule !== null ? $deliveryModule->getId() : null);
+        
+        $orderEvent->setDeliveryAddress($deliveryAddress !== null ? $deliveryAddress->getId() : $securityContext->getCustomerUser()?->getDefaultAddress()?->getId());
+        $orderEvent->setDeliveryModule($deliveryModule?->getId());
         $orderEvent->setPostage($postage !== null ? $postage->getAmount() : 0.0);
         $orderEvent->setPostageTax($postage !== null ? $postage->getAmountTax() : 0.0);
         $orderEvent->setPostageTaxRuleTitle($postage !== null ? $postage->getTaxRuleTitle() : '');

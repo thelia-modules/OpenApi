@@ -195,6 +195,10 @@ class Product extends BaseApiModel
             },
             iterator_to_array($theliaModel->getProductCategories())
         );
+
+        usort($this->images, function ($item1, $item2) {
+            return $item1->getPosition() <=> $item2->getPosition();
+        });
     }
 
     /**

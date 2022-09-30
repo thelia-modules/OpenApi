@@ -129,7 +129,7 @@ class CouponController extends BaseFrontOpenApiController
      * @OA\Get(
      *     path="/coupon/clear/{id}",
      *     tags={"coupon"},
-     *     summary="Clear a specific coupon from cart"
+     *     summary="Clear a specific coupon from cart",
      *      @OA\Parameter(
      *          name="id",
      *          in="path",
@@ -142,7 +142,7 @@ class CouponController extends BaseFrontOpenApiController
      *     @OA\Response(
      *          response="200",
      *          description="Success",
-     *          @OA\JsonCocalontent(ref="#/components/schemas/Cart")
+     *          @OA\JsonContent(ref="#/components/schemas/Cart")
      *     ),
      *     @OA\Response(
      *          response="400",

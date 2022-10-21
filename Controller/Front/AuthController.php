@@ -90,12 +90,8 @@ class AuthController extends BaseFrontOpenApiController
             ->findOne()
         ;
 
-        if (null === $customer) {
-            throw new \Exception(Translator::getInstance()->trans('No customer found for this email.', [], OpenApi::DOMAIN_NAME));
-        }
-
-        if (!$customer->checkPassword($data['password'])) {
-            throw new \Exception(Translator::getInstance()->trans('Password incorrect.', [], OpenApi::DOMAIN_NAME));
+        if ($customer === null || !$customer->checkPassword($data['password'])) {
+            throw new \Exception(Translator::getInstance()->trans('Your username/password pair, does not correspond to any account', [], OpenApi::DOMAIN_NAME));
         }
 
         $dispatcher->dispatch(new CustomerLoginEvent($customer), TheliaEvents::CUSTOMER_LOGIN);

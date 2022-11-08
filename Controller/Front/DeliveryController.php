@@ -160,7 +160,7 @@ class DeliveryController extends BaseFrontOpenApiController
      * @Route("/simple-modules", name="delivery_simple_modules", methods="GET")
      *
      * @OA\Get(
-     *     path="/delivery/simpleModules",
+     *     path="/delivery/simple-modules",
      *     tags={"delivery", "modules"},
      *     summary="List all delivery modules as simple list (without postages and options)",
      *     @OA\Response(

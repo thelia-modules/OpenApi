@@ -60,6 +60,17 @@ class Cart extends BaseApiModel
     protected $delivery;
 
     /**
+     * @var float
+     * @OA\Property(
+     *    type="number",
+     *    format="float",
+     *    description="The estimated delivery tax price for this cart",
+     * )
+     * @Constraint\NotBlank(groups={"create", "update"})
+     */
+    protected $deliveryTax;
+
+    /**
      * @var array
      * @OA\Property(
      *    type="array",
@@ -139,7 +150,9 @@ class Cart extends BaseApiModel
     public function createFromTheliaModel($theliaModel, $locale = null): void
     {
         parent::createFromTheliaModel($theliaModel, $locale);
-        $estimatedPostage = $this->getEstimatedPostageForCountry($theliaModel, $this->country, $this->state);
+        $postageInfo = $this->getEstimatedPostageForCountry($theliaModel, $this->country, $this->state);
+        $estimatedPostage = $postageInfo['postage'];
+        $postageTax = $postageInfo['tax'];
 
         $consumedCoupons = $this->request->getSession()->getConsumedCoupons();
         $coupons = $this->createOpenApiCouponsFromCouponsCodes($consumedCoupons);
@@ -158,6 +171,7 @@ class Cart extends BaseApiModel
         );
 
         $this
+            ->setDeliveryTax($postageTax)
             ->setTaxes($theliaModel->getTotalVAT($deliveryCountry, null, false))
             ->setDelivery($estimatedPostage)
             ->setCoupons($coupons)
@@ -246,6 +260,26 @@ class Cart extends BaseApiModel
 
         return $this;
     }
+
+    /**
+     * @return float
+     */
+    public function getDeliveryTax()
+    {
+        return $this->deliveryTax;
+    }
+
+    /**
+     * @param float $deliveryTax
+     */
+    public function setDeliveryTax($deliveryTax)
+    {
+        $this->deliveryTax = $deliveryTax;
+
+        return $this;
+    }
+
+
 
     /**
      * @return float
@@ -366,7 +400,7 @@ class Cart extends BaseApiModel
     /**
      * Return the minimum expected postage for a cart in a given country.
      *
-     * @return float|null
+     * @return array
      *
      * @throws \Propel\Runtime\Exception\PropelException
      */
@@ -388,6 +422,7 @@ class Cart extends BaseApiModel
 
         $virtual = $cart->isVirtual();
         $postage = null;
+        $postageTax = null;
 
         /** @var \Thelia\Model\Module $deliveryModule */
         foreach ($deliveryModules as $deliveryModule) {
@@ -415,7 +450,8 @@ class Cart extends BaseApiModel
                     $modulePostage = $deliveryPostageEvent->getPostage();
 
                     if (null === $postage || $postage > $modulePostage->getAmount()) {
-                        $postage = $modulePostage->getAmount();
+                        $postage = $modulePostage->getAmount() - $modulePostage->getAmountTax();
+                        $postageTax = $modulePostage->getAmountTax();
                     }
                 }
             } catch (DeliveryException $ex) {
@@ -423,6 +459,9 @@ class Cart extends BaseApiModel
             }
         }
 
-        return $postage;
+        return [
+            'postage' => $postage,
+            'tax' => $postageTax
+        ];
     }
 }

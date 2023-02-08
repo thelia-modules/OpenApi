@@ -2,6 +2,7 @@
 
 namespace OpenApi\Controller\Front;
 
+use Exception;
 use OpenApi\Annotations as OA;
 use OpenApi\Model\Api\ModelFactory;
 use OpenApi\OpenApi;
@@ -84,7 +85,6 @@ class CartController extends BaseFrontOpenApiController
      *          response="200",
      *          description="Success",
      *          @OA\JsonContent(
-     *              type="array",
      *              @OA\Items(
      *                 type="object",
      *                 @OA\Property(
@@ -117,8 +117,9 @@ class CartController extends BaseFrontOpenApiController
         }
 
         $event = new CartEvent($cart);
+        $data = json_decode($request->getContent(), true);
 
-        $this->updateCartEventFromJson($request->getContent(), $event);
+        $this->updateCartEventFromJson($data, $event);
         $dispatcher->dispatch($event, TheliaEvents::CART_ADDITEM);
 
         return OpenApiService::jsonResponse([
@@ -128,45 +129,83 @@ class CartController extends BaseFrontOpenApiController
     }
 
     /**
-     * @Route("/{cartItemId}", name="delete_cartitem", methods="DELETE")
-     *
-     * @OA\Delete(
-     *     path="/cart/{cartItemId}",
-     *     tags={"cart"},
-     *     summary="Delete an item in the current cart",
-     *     @OA\Parameter(
-     *          name="cartItemId",
-     *          in="path",
-     *          required=true,
-     *          @OA\Schema(
-     *              type="integer"
-     *          )
-     *     ),
-     *     @OA\Response(
-     *          response="200",
-     *          description="Success",
-     *          @OA\JsonContent(
-     *              type="array",
-     *              @OA\Items(
-     *                 type="object",
-     *                 @OA\Property(
-     *                     property="cart",
-     *                     ref="#/components/schemas/Cart"
-     *                 ),
-     *                 @OA\Property(
-     *                     property="cartItem",
-     *                     ref="#/components/schemas/CartItem"
-     *                 )
-     *              )
-     *          )
-     *     ),
-     *     @OA\Response(
-     *          response="400",
-     *          description="Bad request",
-     *          @OA\JsonContent(ref="#/components/schemas/Error")
-     *     )
-     * )
+     * @Route("/add_multiple", name="add_cartitem_mutliple", methods="POST")
      */
+
+     public function cartAddMultiple(
+         Request $request,
+         EventDispatcherInterface $dispatcher,
+         OpenApiService $openApiService
+     ) {
+         $cart = $request->getSession()->getSessionCart($dispatcher);
+         if (null === $cart) {
+             throw new \Exception(Translator::getInstance()->trans('No cart found', [], OpenApi::DOMAIN_NAME));
+         }
+
+         $data = json_decode($request->getContent(), true);
+
+         $errors = [];
+
+         foreach ($data as $item) {
+             try {
+                 $event = new CartEvent($cart);
+                 $this->updateCartEventFromJson($item, $event);
+                 $dispatcher->dispatch($event, TheliaEvents::CART_ADDITEM);
+             } catch (\Throwable $th) {
+                 $errors[$item["id"]] = $th->getMessage();
+             }
+         }
+
+         if (count($errors) > 0) {
+             throw new Exception(json_encode($errors));
+         }
+
+
+         return OpenApiService::jsonResponse([
+             'cart' => $openApiService->getCurrentOpenApiCart(),
+             'errors' => $errors,
+         ]);
+     }
+
+    /**
+      * @Route("/{cartItemId}", name="delete_cartitem", methods="DELETE")
+      *
+      * @OA\Delete(
+      *     path="/cart/{cartItemId}",
+      *     tags={"cart"},
+      *     summary="Delete an item in the current cart",
+      *     @OA\Parameter(
+      *          name="cartItemId",
+      *          in="path",
+      *          required=true,
+      *          @OA\Schema(
+      *              type="integer"
+      *          )
+      *     ),
+      *     @OA\Response(
+      *          response="200",
+      *          description="Success",
+      *          @OA\JsonContent(
+      *              @OA\Items(
+      *                 type="object",
+      *                 @OA\Property(
+      *                     property="cart",
+      *                     ref="#/components/schemas/Cart"
+      *                 ),
+      *                 @OA\Property(
+      *                     property="cartItem",
+      *                     ref="#/components/schemas/CartItem"
+      *                 )
+      *              )
+      *          )
+      *     ),
+      *     @OA\Response(
+      *          response="400",
+      *          description="Bad request",
+      *          @OA\JsonContent(ref="#/components/schemas/Error")
+      *     )
+      * )
+      */
     public function cartDeleteCartItem(
         Request $request,
         EventDispatcherInterface $dispatcher,
@@ -266,7 +305,8 @@ class CartController extends BaseFrontOpenApiController
                 TheliaEvents::CART_DELETEITEM
             );
         } else {
-            $this->updateCartEventFromJson($request->getContent(), $event);
+            $data = json_decode($request->getContent(), true);
+            $this->updateCartEventFromJson($data, $event);
             $dispatcher->dispatch($event, TheliaEvents::CART_UPDATEITEM);
         }
 
@@ -311,10 +351,8 @@ class CartController extends BaseFrontOpenApiController
      *
      * @throws \Exception
      */
-    protected function updateCartEventFromJson($json, CartEvent $event): void
+    protected function updateCartEventFromJson($data, CartEvent $event): void
     {
-        $data = json_decode($json, true);
-
         if (!isset($data['quantity'])) {
             throw new \Exception(Translator::getInstance()->trans('A quantity is needed in the POST request to add an item to the cart.'));
         }

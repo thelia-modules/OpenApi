@@ -85,17 +85,15 @@ class CartController extends BaseFrontOpenApiController
      *          response="200",
      *          description="Success",
      *          @OA\JsonContent(
-     *              @OA\Items(
-     *                 type="object",
-     *                 @OA\Property(
-     *                     property="cart",
-     *                     ref="#/components/schemas/Cart"
-     *                 ),
-     *                 @OA\Property(
-     *                     property="cartItem",
-     *                     ref="#/components/schemas/CartItem"
-     *                 )
-     *              )
+     *             type="object",
+     *             @OA\Property(
+     *                 property="cart",
+     *                 ref="#/components/schemas/Cart"
+     *             ),
+     *             @OA\Property(
+     *                 property="cartItem",
+     *                 ref="#/components/schemas/CartItem"
+     *             )
      *          )
      *     ),
      *     @OA\Response(
@@ -130,8 +128,57 @@ class CartController extends BaseFrontOpenApiController
 
     /**
      * @Route("/add_multiple", name="add_cartitem_mutliple", methods="POST")
+     *
+     * @OA\Post(
+     *     path="/cart/add_multiple",
+     *     tags={"cart"},
+     *     summary="Add multiple PSE in a cart",
+     *
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *              type="array",
+     *              @OA\Items(
+     *                 @OA\Property(
+     *                     property="pseId",
+     *                     type="integer"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="quantity",
+     *                     type="integer"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="append",
+     *                     type="boolean"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="newness",
+     *                     type="boolean"
+     *                 ),
+     *                 example={"pseId": 18, "quantity": 2, "append": true, "newness": true}
+     *              )
+     *           )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *          response="200",
+     *          description="Success",
+     *          @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                property="cart",
+     *                ref="#/components/schemas/Cart"
+     *             )
+     *          )
+     *     ),
+     *     @OA\Response(
+     *          response="400",
+     *          description="Bad request",
+     *          @OA\JsonContent(ref="#/components/schemas/Error")
+     *     )
+     * )
      */
-
      public function cartAddMultiple(
          Request $request,
          EventDispatcherInterface $dispatcher,
@@ -146,13 +193,17 @@ class CartController extends BaseFrontOpenApiController
 
          $errors = [];
 
-         foreach ($data as $item) {
+         foreach ($data as $index => $item) {
              try {
                  $event = new CartEvent($cart);
                  $this->updateCartEventFromJson($item, $event);
                  $dispatcher->dispatch($event, TheliaEvents::CART_ADDITEM);
              } catch (\Throwable $th) {
-                 $errors[$item["id"]] = $th->getMessage();
+                 if (isset($item['pseId'])) {
+                     $errors['pses'][$item['pseId']] = $th->getMessage();
+                 } else {
+                     $errors['unknown'][$index] = $th->getMessage();
+                 }
              }
          }
 
@@ -160,10 +211,8 @@ class CartController extends BaseFrontOpenApiController
              throw new Exception(json_encode($errors));
          }
 
-
          return OpenApiService::jsonResponse([
-             'cart' => $openApiService->getCurrentOpenApiCart(),
-             'errors' => $errors,
+             'cart' => $openApiService->getCurrentOpenApiCart()
          ]);
      }
 

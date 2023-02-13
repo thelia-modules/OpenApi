@@ -47,16 +47,15 @@ abstract class BaseApiModel implements \JsonSerializable
         ModelFactory $modelFactory,
         RequestStack $requestStack,
         TaxEngine $taxEngine,
-        EventDispatcherInterface $dispatcher
+        EventDispatcherInterface $dispatcher,
+        ValidatorInterface $validator
     ) {
         if (class_exists(AnnotationRegistry::class)) {
             AnnotationRegistry::registerLoader('class_exists');
         }
 
         $this->dispatcher = $dispatcher;
-        $this->validator = Validation::createValidatorBuilder()
-            ->enableAnnotationMapping()
-            ->getValidator();
+        $this->validator = $validator;
 
         $this->modelFactory = $modelFactory;
         $this->request = $requestStack->getCurrentRequest();

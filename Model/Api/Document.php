@@ -4,6 +4,7 @@ namespace OpenApi\Model\Api;
 
 use OpenApi\Service\DocumentService;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Thelia\TaxEngine\TaxEngine;
 
@@ -14,9 +15,17 @@ class Document extends File
     /** @var DocumentService */
     protected $documentService;
 
-    public function __construct(ModelFactory $modelFactory, RequestStack $requestStack, TaxEngine $taxEngine, EventDispatcherInterface $dispatcher, DocumentService $documentService)
+
+    public function __construct(
+        ModelFactory $modelFactory,
+        RequestStack $requestStack,
+        TaxEngine $taxEngine,
+        EventDispatcherInterface $dispatcher,
+        ValidatorInterface $validator,
+        DocumentService $documentService
+    )
     {
-        parent::__construct($modelFactory, $requestStack, $taxEngine, $dispatcher);
+        parent::__construct($modelFactory, $requestStack, $taxEngine, $dispatcher, $validator);
         $this->documentService = $documentService;
     }
 

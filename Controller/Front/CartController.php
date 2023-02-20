@@ -235,6 +235,7 @@ class CartController extends BaseFrontOpenApiController
       *          response="200",
       *          description="Success",
       *          @OA\JsonContent(
+      *              type="array",
       *              @OA\Items(
       *                 type="object",
       *                 @OA\Property(

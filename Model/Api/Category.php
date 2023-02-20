@@ -56,6 +56,17 @@ class Category extends BaseApiModel
     protected $url;
 
     /**
+     * @var array
+     * @OA\Property(
+     *    type="array",
+     *     @OA\Items(
+     *          ref="#/components/schemas/File"
+     *     )
+     * )
+     */
+    protected $images = [];
+
+    /**
      * @return int
      */
     public function getId()
@@ -113,5 +124,34 @@ class Category extends BaseApiModel
         $this->url = $url;
 
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getImages()
+    {
+        return $this->images;
+    }
+
+    /**
+     * @param array $images
+     *
+     * @return Category
+     */
+    public function setImages($images)
+    {
+        $this->images = $images;
+
+        return $this;
+    }
+
+    public function createFromTheliaModel($theliaModel, $locale = null)
+    {
+        parent::createFromTheliaModel($theliaModel, $locale);
+
+        usort($this->images, function ($item1, $item2) {
+            return $item1->getPosition() <=> $item2->getPosition();
+        });
     }
 }

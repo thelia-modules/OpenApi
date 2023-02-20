@@ -35,6 +35,17 @@ class Folder extends BaseApiModel
     protected $visible;
 
     /**
+     * @var array
+     * @OA\Property(
+     *    type="array",
+     *     @OA\Items(
+     *          ref="#/components/schemas/File"
+     *     )
+     * )
+     */
+    protected $images = [];
+
+    /**
      * @return int
      */
     public function getId()
@@ -72,5 +83,34 @@ class Folder extends BaseApiModel
         $this->visible = $visible;
 
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getImages()
+    {
+        return $this->images;
+    }
+
+    /**
+     * @param array $images
+     *
+     * @return Folder
+     */
+    public function setImages($images)
+    {
+        $this->images = $images;
+
+        return $this;
+    }
+
+    public function createFromTheliaModel($theliaModel, $locale = null)
+    {
+        parent::createFromTheliaModel($theliaModel, $locale);
+
+        usort($this->images, function ($item1, $item2) {
+            return $item1->getPosition() <=> $item2->getPosition();
+        });
     }
 }

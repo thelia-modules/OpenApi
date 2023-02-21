@@ -4,6 +4,7 @@ namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
 use OpenApi\Constraint as Constraint;
+use OpenApi\Model\Api\ModelTrait\hasImages;
 use OpenApi\Model\Api\ModelTrait\translatable;
 use Thelia\Model\Base\ProductCategory;
 use Thelia\Model\FeatureProduct;
@@ -18,6 +19,7 @@ use Thelia\Model\FeatureProduct;
 class Product extends BaseApiModel
 {
     use translatable;
+    use hasImages;
 
     /**
      * @var int
@@ -107,17 +109,6 @@ class Product extends BaseApiModel
      *     )
      * )
      */
-    protected $images = [];
-
-    /**
-     * @var array
-     * @OA\Property(
-     *    type="array",
-     *     @OA\Items(
-     *          ref="#/components/schemas/File"
-     *     )
-     * )
-     */
     protected $documents = [];
 
     /**
@@ -195,10 +186,6 @@ class Product extends BaseApiModel
             },
             iterator_to_array($theliaModel->getProductCategories())
         );
-
-        usort($this->images, function ($item1, $item2) {
-            return $item1->getPosition() <=> $item2->getPosition();
-        });
     }
 
     /**
@@ -271,26 +258,6 @@ class Product extends BaseApiModel
     public function setUrl($url)
     {
         $this->url = $url;
-
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getImages()
-    {
-        return $this->images;
-    }
-
-    /**
-     * @param array $images
-     *
-     * @return Product
-     */
-    public function setImages($images)
-    {
-        $this->images = $images;
 
         return $this;
     }

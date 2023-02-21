@@ -3,6 +3,7 @@
 namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
+use OpenApi\Model\Api\ModelTrait\hasImages;
 use OpenApi\Model\Api\ModelTrait\translatable;
 
 /**
@@ -15,6 +16,7 @@ use OpenApi\Model\Api\ModelTrait\translatable;
 class Content extends BaseApiModel
 {
     use translatable;
+    use hasImages;
 
     /**
      * @var int

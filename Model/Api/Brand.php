@@ -2,6 +2,7 @@
 
 namespace OpenApi\Model\Api;
 
+use OpenApi\Model\Api\ModelTrait\hasImages;
 use OpenApi\Model\Api\ModelTrait\translatable;
 
 /**
@@ -14,6 +15,7 @@ use OpenApi\Model\Api\ModelTrait\translatable;
 class Brand extends BaseApiModel
 {
     use translatable;
+    use hasImages;
 
     /**
      * @var int

@@ -8,6 +8,7 @@ use Propel\Runtime\ActiveQuery\Criteria;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Thelia\Core\Event\Delivery\DeliveryPostageEvent;
 use Thelia\Core\Event\TheliaEvents;
@@ -140,10 +141,12 @@ class Cart extends BaseApiModel
         RequestStack $requestStack,
         TaxEngine $taxEngine,
         EventDispatcherInterface $dispatcher,
+        ValidatorInterface $validator,
         // Todo find a way to remove container here (only used to get module instance)
         ContainerInterface $container
-    ) {
-        parent::__construct($modelFactory, $requestStack, $taxEngine, $dispatcher);
+    )
+    {
+        parent::__construct($modelFactory, $requestStack, $taxEngine, $dispatcher, $validator);
         $this->container = $container;
     }
 

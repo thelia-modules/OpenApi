@@ -278,10 +278,6 @@ abstract class BaseApiModel implements \JsonSerializable
             $theliaModel->setLocale($locale !== null ? $locale : $this->getCurrentLocale());
         }
 
-        if (method_exists($theliaModel, 'createImagesFromTheliaModel')) {
-            $theliaModel->createImagesFromTheliaModel();
-        }
-
         foreach (get_class_methods($this) as $modelMethod) {
             if (0 === strncasecmp('set', $modelMethod, 3)) {
                 $property = ucfirst(substr($modelMethod, 3));
@@ -323,6 +319,10 @@ abstract class BaseApiModel implements \JsonSerializable
 
                 $this->$modelMethod($theliaValue);
             }
+        }
+
+        if (method_exists($this, 'sortImagesByPosition')) {
+            $this->sortImagesByPosition();
         }
 
         return $this;

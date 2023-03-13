@@ -29,6 +29,8 @@
         <service id="open_api.image.service" class="OpenApi\Service\ImageService">
             <argument type="service" id="event_dispatcher"/>
         </service>
+        <service id="open_api.search.service" class="OpenApi\Service\SearchService">
+        </service>
 
         <!--   LISTENERS     -->
         <service id="foo.action" class="OpenApi\EventListener\FooEventListener" >
@@ -107,6 +109,9 @@
         </service>
         <service id="open_api.model.content" class="OpenApi\Model\Api\Content" parent="open_api.base.model"  shared="false">
             <tag name="open_api.model" alias="Content"/>
+        </service>
+        <service id="open_api.model.folder" class="OpenApi\Model\Api\Folder" parent="open_api.base.model"  shared="false">
+            <tag name="open_api.model" alias="Folder"/>
         </service>
         <service id="open_api.model.price" class="OpenApi\Model\Api\Price" parent="open_api.base.model"  shared="false">
             <tag name="open_api.model" alias="Price"/>

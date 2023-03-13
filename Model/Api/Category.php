@@ -2,6 +2,7 @@
 
 namespace OpenApi\Model\Api;
 
+use OpenApi\Model\Api\ModelTrait\hasImages;
 use OpenApi\Model\Api\ModelTrait\translatable;
 use OpenApi\Annotations as OA;
 use OpenApi\Constraint as Constraint;
@@ -16,6 +17,7 @@ use OpenApi\Constraint as Constraint;
 class Category extends BaseApiModel
 {
     use translatable;
+    use hasImages;
 
     /**
      * @var integer

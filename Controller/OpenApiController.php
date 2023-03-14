@@ -3,6 +3,8 @@
 namespace OpenApi\Controller;
 
 use OpenApi\Annotations as OA;
+use OpenApi\Generator;
+use OpenApi\Util;
 use Thelia\Core\HttpFoundation\JsonResponse;
 use function OpenApi\scan;
 use Symfony\Component\Routing\Annotation\Route;
@@ -21,11 +23,13 @@ class OpenApiController extends BaseFrontController
     {
         header('Access-Control-Allow-Origin: *');
 
-        $annotations = scan([
+        $annotations = Generator::scan(Util::finder([
             THELIA_MODULE_DIR.'/*/Model/Api',
             THELIA_MODULE_DIR.'/*/EventListener',
+            THELIA_MODULE_DIR.'/*/ApiExtend',
             THELIA_MODULE_DIR.'/*/Controller',
-        ]);
+        ]));
+
         $annotations = json_decode($annotations->toJson(), true);
 
         $modelAnnotations = $annotations['components']['schemas'];

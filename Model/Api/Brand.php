@@ -2,6 +2,7 @@
 
 namespace OpenApi\Model\Api;
 
+use OpenApi\Model\Api\ModelTrait\hasImages;
 use OpenApi\Model\Api\ModelTrait\translatable;
 
 /**
@@ -14,6 +15,7 @@ use OpenApi\Model\Api\ModelTrait\translatable;
 class Brand extends BaseApiModel
 {
     use translatable;
+    use hasImages;
 
     /**
      * @var integer
@@ -68,5 +70,19 @@ class Brand extends BaseApiModel
     {
         $this->visible = $visible;
         return $this;
+    }
+
+    public function createFromTheliaModel($theliaModel, $locale = null)
+    {
+        /** @var \Thelia\Model\Brand $theliaModel */
+        $brandImages = $theliaModel->getBrandImagesRelatedByBrandId();
+
+        $images = array_filter(array_map(function ($value) {
+            return $this->modelFactory->buildModel('Images', $value);
+        }, iterator_to_array($brandImages)));
+
+        $this->setImages($images);
+
+        parent::createFromTheliaModel($theliaModel, $locale);
     }
 }

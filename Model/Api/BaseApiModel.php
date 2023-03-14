@@ -306,6 +306,10 @@ abstract class BaseApiModel implements \JsonSerializable
             }
         }
 
+        if (method_exists($this, 'sortImagesByPosition')) {
+            $this->sortImagesByPosition();
+        }
+
         return $this;
     }
 

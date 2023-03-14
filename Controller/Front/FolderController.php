@@ -2,25 +2,27 @@
 
 namespace OpenApi\Controller\Front;
 
-use OpenApi\Annotations as OA;
+use Exception;
+use OpenApi\OpenApi;
 use OpenApi\Service\SearchService;
-use Propel\Runtime\ActiveQuery\Criteria;
-use Symfony\Component\Routing\Annotation\Route;
+use Thelia\Core\HttpFoundation\JsonResponse;
 use Thelia\Core\HttpFoundation\Request;
-use Thelia\Model\ProductQuery;
+use Symfony\Component\Routing\Annotation\Route;
+use OpenApi\Annotations as OA;
+use Thelia\Core\Translation\Translator;
 
 /**
- * @Route("/product", name="product")
+ * @Route("/folder", name="folder")
  */
-class ProductController extends BaseFrontOpenApiController
+class FolderController extends BaseFrontOpenApiController
 {
     /**
-     * @Route("/search", name="product_search", methods="GET")
+     * @Route("/search", name="folder_search", methods="GET")
      *
      * @OA\Get(
-     *     path="/product/search",
-     *     tags={"product", "search"},
-     *     summary="Search products",
+     *     path="/folder/search",
+     *     tags={"folder", "search"},
+     *     summary="Search folders",
      *     @OA\Parameter(
      *          name="id",
      *          in="query",
@@ -29,10 +31,23 @@ class ProductController extends BaseFrontOpenApiController
      *          )
      *     ),
      *     @OA\Parameter(
-     *          name="reference",
+     *          name="ids[]",
      *          in="query",
      *          @OA\Schema(
-     *              type="string"
+     *              type="array",
+     *              @OA\Items(
+     *                  type="integer"
+     *              )
+     *          )
+     *     ),
+     *     @OA\Parameter(
+     *          name="parentsIds[]",
+     *          in="query",
+     *          @OA\Schema(
+     *              type="array",
+     *              @OA\Items(
+     *                  type="integer"
+     *              )
      *          )
      *     ),
      *     @OA\Parameter(
@@ -109,7 +124,7 @@ class ProductController extends BaseFrontOpenApiController
      *          @OA\JsonContent(
      *                  type="array",
      *                  @OA\Items(
-     *                      ref="#/components/schemas/Product"
+     *                      ref="#/components/schemas/Folder"
      *                  )
      *          )
      *     ),
@@ -120,20 +135,23 @@ class ProductController extends BaseFrontOpenApiController
      *     )
      * )
      */
-    public function search(Request $request)
+    public function getFolder(Request $request)
     {
         $modelFactory = $this->getModelFactory();
 
         /** @var SearchService $searchService */
         $searchService = $this->getContainer()->get('open_api.search.service');
 
-        $query = $searchService->baseSearchItems("product", $request);
-        $products = $query->find();
+        $query = $searchService->baseSearchItems("folder", $request);
+        $folders = $query->find();
 
-        $products = array_map(function ($product) use ($modelFactory) {
-            return $modelFactory->buildModel('Product', $product);
-        }, iterator_to_array($products));
-
-        return $this->jsonResponse($products);
+        return new JsonResponse(
+            array_map(
+                function($folder) use ($modelFactory) {
+                    return $modelFactory->buildModel('Folder', $folder);
+                },
+                iterator_to_array($folders)
+            )
+        );
     }
 }

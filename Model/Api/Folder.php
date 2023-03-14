@@ -4,16 +4,15 @@ namespace OpenApi\Model\Api;
 
 use OpenApi\Model\Api\ModelTrait\hasImages;
 use OpenApi\Model\Api\ModelTrait\translatable;
-use OpenApi\Annotations as OA;
 
 /**
- * Class Content
+ * Class Folder
  * @package OpenApi\Model\Api
  * @OA\Schema(
- *     description="A Content"
+ *     description="A Folder"
  * )
  */
-class Content extends BaseApiModel
+class Folder extends BaseApiModel
 {
     use translatable;
     use hasImages;
@@ -46,7 +45,7 @@ class Content extends BaseApiModel
     /**
      * @param int $id
      *
-     * @return Content
+     * @return Folder
      */
     public function setId($id)
     {
@@ -65,7 +64,7 @@ class Content extends BaseApiModel
     /**
      * @param bool $visible
      *
-     * @return Content
+     * @return Folder
      */
     public function setVisible($visible)
     {

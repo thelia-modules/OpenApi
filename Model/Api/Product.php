@@ -3,6 +3,7 @@
 namespace OpenApi\Model\Api;
 
 use OpenApi\Annotations as OA;
+use OpenApi\Model\Api\ModelTrait\hasImages;
 use OpenApi\Model\Api\ModelTrait\translatable;
 use OpenApi\Service\ImageService;
 use Propel\Runtime\Collection\Collection;
@@ -22,6 +23,7 @@ use OpenApi\Constraint as Constraint;
 class Product extends BaseApiModel
 {
     use translatable;
+    use hasImages;
 
     /**
      * @var integer
@@ -101,17 +103,6 @@ class Product extends BaseApiModel
      * )
      */
     protected $contents = [];
-
-    /**
-     * @var array
-     * @OA\Property(
-     *    type="array",
-     *     @OA\Items(
-     *          ref="#/components/schemas/File"
-     *     )
-     * )
-     */
-    protected $images = [];
 
     /**
      * @var array
@@ -261,24 +252,6 @@ class Product extends BaseApiModel
     public function setUrl($url)
     {
         $this->url = $url;
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getImages()
-    {
-        return $this->images;
-    }
-
-    /**
-     * @param array $images
-     * @return Product
-     */
-    public function setImages($images)
-    {
-        $this->images = $images;
         return $this;
     }
 

@@ -2,25 +2,28 @@
 
 namespace OpenApi\Controller\Front;
 
-use OpenApi\Annotations as OA;
+use Exception;
+use OpenApi\OpenApi;
 use OpenApi\Service\SearchService;
-use Propel\Runtime\ActiveQuery\Criteria;
-use Symfony\Component\Routing\Annotation\Route;
+use Thelia\Core\HttpFoundation\JsonResponse;
 use Thelia\Core\HttpFoundation\Request;
-use Thelia\Model\ProductQuery;
+use Symfony\Component\Routing\Annotation\Route;
+use OpenApi\Annotations as OA;
+use Thelia\Core\Translation\Translator;
+use Thelia\Model\BrandQuery;
 
 /**
- * @Route("/product", name="product")
+ * @Route("/brand", name="brand")
  */
-class ProductController extends BaseFrontOpenApiController
+class BrandController extends BaseFrontOpenApiController
 {
     /**
-     * @Route("/search", name="product_search", methods="GET")
+     * @Route("/search", name="brand_search", methods="GET")
      *
      * @OA\Get(
-     *     path="/product/search",
-     *     tags={"product", "search"},
-     *     summary="Search products",
+     *     path="/brand/search",
+     *     tags={"Brand", "search"},
+     *     summary="Search brands",
      *     @OA\Parameter(
      *          name="id",
      *          in="query",
@@ -29,10 +32,23 @@ class ProductController extends BaseFrontOpenApiController
      *          )
      *     ),
      *     @OA\Parameter(
-     *          name="reference",
+     *          name="ids[]",
      *          in="query",
      *          @OA\Schema(
-     *              type="string"
+     *              type="array",
+     *              @OA\Items(
+     *                  type="integer"
+     *              )
+     *          )
+     *     ),
+     *     @OA\Parameter(
+     *          name="parentsIds[]",
+     *          in="query",
+     *          @OA\Schema(
+     *              type="array",
+     *              @OA\Items(
+     *                  type="integer"
+     *              )
      *          )
      *     ),
      *     @OA\Parameter(
@@ -109,7 +125,7 @@ class ProductController extends BaseFrontOpenApiController
      *          @OA\JsonContent(
      *                  type="array",
      *                  @OA\Items(
-     *                      ref="#/components/schemas/Product"
+     *                      ref="#/components/schemas/Brand"
      *                  )
      *          )
      *     ),
@@ -120,20 +136,23 @@ class ProductController extends BaseFrontOpenApiController
      *     )
      * )
      */
-    public function search(Request $request)
+    public function getBrand(Request $request)
     {
         $modelFactory = $this->getModelFactory();
 
         /** @var SearchService $searchService */
         $searchService = $this->getContainer()->get('open_api.search.service');
 
-        $query = $searchService->baseSearchItems("product", $request);
-        $products = $query->find();
+        $query = $searchService->baseSearchItems("brand", $request);
+        $brands = $query->find();
 
-        $products = array_map(function ($product) use ($modelFactory) {
-            return $modelFactory->buildModel('Product', $product);
-        }, iterator_to_array($products));
-
-        return $this->jsonResponse($products);
+        return new JsonResponse(
+            array_map(
+                function($brand) use ($modelFactory) {
+                    return $modelFactory->buildModel('Brand', $brand);
+                },
+                iterator_to_array($brands)
+            )
+        );
     }
 }

@@ -52,6 +52,16 @@ class Coupon extends BaseApiModel
     protected $amount;
 
     /**
+     * @var float
+     * @OA\Property(
+     *    type="number",
+     *    format="float",
+     * )
+     * @Constraint\NotBlank(groups={"create", "update"})
+     */
+    protected $percentage;
+
+    /**
      * @return int
      */
     public function getId()
@@ -130,4 +140,25 @@ class Coupon extends BaseApiModel
 
         return $this;
     }
+
+    /**
+     * @return float
+     */
+    public function getPercentage()
+    {
+        return $this->percentage;
+    }
+
+    /**
+     * @param float $percentage
+     *
+     * @return Coupon
+     */
+    public function setPercentage($percentage)
+    {
+        $this->percentage = $percentage;
+
+        return $this;
+    }
+
 }

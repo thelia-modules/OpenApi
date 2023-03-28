@@ -33,6 +33,15 @@ class Coupon extends BaseApiModel
     protected $code;
 
     /**
+     * @var string
+     * @OA\Property(
+     *     type="string",
+     * )
+     * @Constraint\NotBlank(groups={"create", "update"})
+     */
+    protected $title; 
+
+    /**
      * @var float
      * @OA\Property(
      *    type="number",
@@ -88,6 +97,26 @@ class Coupon extends BaseApiModel
     public function getAmount()
     {
         return $this->amount;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    /**
+     * @param string $title
+     *
+     * @return Coupon
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
+
+        return $this;
     }
 
     /**

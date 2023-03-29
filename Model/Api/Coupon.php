@@ -33,6 +33,15 @@ class Coupon extends BaseApiModel
     protected $code;
 
     /**
+     * @var string
+     * @OA\Property(
+     *     type="string",
+     * )
+     * @Constraint\NotBlank(groups={"create", "update"})
+     */
+    protected $title; 
+
+    /**
      * @var float
      * @OA\Property(
      *    type="number",
@@ -41,6 +50,16 @@ class Coupon extends BaseApiModel
      * @Constraint\NotBlank(groups={"create", "update"})
      */
     protected $amount;
+
+    /**
+     * @var float
+     * @OA\Property(
+     *    type="number",
+     *    format="float",
+     * )
+     * @Constraint\NotBlank(groups={"create", "update"})
+     */
+    protected $percentage;
 
     /**
      * @return int
@@ -91,6 +110,26 @@ class Coupon extends BaseApiModel
     }
 
     /**
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    /**
+     * @param string $title
+     *
+     * @return Coupon
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
+    /**
      * @param float $amount
      *
      * @return Coupon
@@ -101,4 +140,25 @@ class Coupon extends BaseApiModel
 
         return $this;
     }
+
+    /**
+     * @return float
+     */
+    public function getPercentage()
+    {
+        return $this->percentage;
+    }
+
+    /**
+     * @param float $percentage
+     *
+     * @return Coupon
+     */
+    public function setPercentage($percentage)
+    {
+        $this->percentage = $percentage;
+
+        return $this;
+    }
+
 }

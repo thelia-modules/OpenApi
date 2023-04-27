@@ -50,10 +50,6 @@ abstract class BaseApiModel implements \JsonSerializable
         EventDispatcherInterface $dispatcher,
         ValidatorInterface $validator
     ) {
-        if (class_exists(AnnotationRegistry::class)) {
-            AnnotationRegistry::registerLoader('class_exists');
-        }
-
         $this->dispatcher = $dispatcher;
         $this->validator = $validator;
 

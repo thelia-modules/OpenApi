@@ -85,6 +85,10 @@ class CouponController extends BaseFrontOpenApiController
             throw new \Exception(Translator::getInstance()->trans('You should sign in or register to use this coupon.', [], OpenApi::DOMAIN_NAME));
         }
 
+        if (!$event->getIsValid()) {
+            throw new \Exception(Translator::getInstance()->trans('The conditions required for this coupon are not met.', [], OpenApi::DOMAIN_NAME));
+        }
+
         return OpenApiService::jsonResponse($openApiCoupon);
     }
 

@@ -21,6 +21,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Thelia\Action\BaseAction;
 use Thelia\Core\Event\Customer\CustomerLoginEvent;
+use Thelia\Core\Event\DefaultActionEvent;
 use Thelia\Core\Event\TheliaEvents;
 use Thelia\Core\HttpFoundation\Request;
 use Thelia\Core\Security\SecurityContext;
@@ -139,7 +140,7 @@ class AuthController extends BaseFrontOpenApiController
             throw new \Exception(Translator::getInstance()->trans('No user is currently logged in.'));
         }
 
-        $dispatcher->dispatch((new BaseAction()), TheliaEvents::CUSTOMER_LOGOUT);
+        $dispatcher->dispatch((new DefaultActionEvent()), TheliaEvents::CUSTOMER_LOGOUT);
         (new CookieTokenProvider())->clearCookie(ConfigQuery::read('customer_remember_me_cookie_name', 'crmcn'));
 
         return OpenApiService::jsonResponse('Success', 204);

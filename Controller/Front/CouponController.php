@@ -82,7 +82,8 @@ class CouponController extends BaseFrontOpenApiController
             $dispatcher->dispatch($event, TheliaEvents::COUPON_CONSUME);
             $openApiCoupon = $modelFactory->buildModel('Coupon', $theliaCoupon);
         } catch (UnmatchableConditionException $exception) {
-            throw new \Exception(Translator::getInstance()->trans('You should sign in or register to use this coupon.', [], OpenApi::DOMAIN_NAME));
+            $message = !empty($exception->getMessage()) ? $exception->getMessage() : Translator::getInstance()->trans('You should sign in or register to use this coupon.', [], OpenApi::DOMAIN_NAME);
+            throw new \Exception($message);
         }
 
         if (!$event->getIsValid()) {

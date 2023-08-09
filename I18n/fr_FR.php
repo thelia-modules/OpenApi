@@ -8,4 +8,5 @@ return array(
     'This zip code should respect the following format : %format.' => 'Ce code postal doit respecter le format suivant : %format.',
     'You should sign in or register to use this coupon.' => 'Vous devez vous connecter ou vous inscrire pour utiliser ce coupon',
     'Your username/password pair, does not correspond to any account' => 'Votre couple identifiant/mot de passe, ne correspond à aucun compte',
+    'Invalid data' => 'Données invalides',
 );

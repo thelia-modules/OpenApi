@@ -40,6 +40,16 @@ class Category extends BaseApiModel
     protected $id;
 
     /**
+     * @var int
+     *
+     * @OA\Property(
+     *    type="integer",
+     * )
+     * @Constraint\NotBlank(groups={"read"})
+     */
+    protected $parent;
+
+    /**
      * @var bool
      *
      * @OA\Property(
@@ -113,6 +123,26 @@ class Category extends BaseApiModel
     public function setUrl($url)
     {
         $this->url = $url;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getParent()
+    {
+        return $this->parent;
+    }
+
+    /**
+     * @param string $parent
+     *
+     * @return Category
+     */
+    public function setParent($parent)
+    {
+        $this->parent = $parent;
 
         return $this;
     }

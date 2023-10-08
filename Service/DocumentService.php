@@ -37,11 +37,8 @@ class DocumentService
         }
 
         $baseSourceFilePath = ConfigQuery::read('documents_library_path');
-        if ($baseSourceFilePath === null) {
-            $baseSourceFilePath = THELIA_LOCAL_DIR.'media'.DS.'documents';
-        } else {
-            $baseSourceFilePath = THELIA_ROOT.$baseSourceFilePath;
-        }
+        $baseSourceFilePath = 
+            $baseSourceFilePath === null ?THELIA_LOCAL_DIR.'media'.DS.'documents' : THELIA_ROOT.$baseSourceFilePath;
 
         $event = new DocumentEvent();
         // Put source document file path

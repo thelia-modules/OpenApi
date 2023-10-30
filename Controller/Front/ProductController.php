@@ -116,14 +116,17 @@ class ProductController extends BaseFrontOpenApiController
      *          )
      *     ),
      *     @OA\Parameter(
-     *           name="category",
+     *           name="categories[]",
      *           in="query",
      *           @OA\Schema(
-     *               type="string"
+     *               type="array",
+     *               @OA\Items(
+     *                   type="integer"
+     *               )
      *           )
      *      ),
      *      @OA\Parameter(
-     *           name="category_depth",
+     *           name="depth",
      *           in="query",
      *           @OA\Schema(
      *               type="integer",
@@ -220,9 +223,10 @@ class ProductController extends BaseFrontOpenApiController
             $productI18nQuery->endUse();
         }
 
-        if (null !== $request->get('category')) {
-            $depth = $request->get('category_depth', 1);
-            $allCategoryIDs = CategoryQuery::getCategoryTreeIds($request->get('category'), $depth);
+        if (null !== $request->get('categories')) {
+            $depth = $request->get('depth');
+            $allCategoryIDs = CategoryQuery::getCategoryTreeIds($request->get('categories'), $depth);
+
             $productQuery->useProductCategoryQuery('CategorySelect')
                 ->filterByCategoryId($allCategoryIDs, Criteria::IN)
                 ->endUse()

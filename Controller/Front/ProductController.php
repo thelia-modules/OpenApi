@@ -8,6 +8,7 @@ use OpenApi\Service\OpenApiService;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Symfony\Component\Routing\Annotation\Route;
 use Thelia\Core\HttpFoundation\Request;
+use Thelia\Model\CategoryQuery;
 use Thelia\Model\ProductQuery;
 
 /**
@@ -114,6 +115,21 @@ class ProductController extends BaseFrontOpenApiController
      *              default="alpha"
      *          )
      *     ),
+     *     @OA\Parameter(
+     *           name="category",
+     *           in="query",
+     *           @OA\Schema(
+     *               type="string"
+     *           )
+     *      ),
+     *      @OA\Parameter(
+     *           name="category_depth",
+     *           in="query",
+     *           @OA\Schema(
+     *               type="integer",
+     *               default="1"
+     *           )
+     *      ),
      *     @OA\Response(
      *          response="200",
      *          description="Success",
@@ -202,6 +218,15 @@ class ProductController extends BaseFrontOpenApiController
             }
 
             $productI18nQuery->endUse();
+        }
+
+        if (null !== $request->get('category')) {
+            $depth = $request->get('category_depth', 1);
+            $allCategoryIDs = CategoryQuery::getCategoryTreeIds($request->get('category'), $depth);
+            $productQuery->useProductCategoryQuery('CategorySelect')
+                ->filterByCategoryId($allCategoryIDs, Criteria::IN)
+                ->endUse()
+            ;
         }
 
         $products = $productQuery->find();

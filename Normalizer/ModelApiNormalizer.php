@@ -22,4 +22,9 @@ class ModelApiNormalizer extends ObjectNormalizer
 
         return $data;
     }
+
+    public function supportsNormalization(mixed $data, string $format = null)
+    {
+        return is_object($data) && $data instanceof BaseApiModel;
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace OpenApi\Normalizer;
 
+use OpenApi\Model\Api\BaseApiModel;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
 class ModelApiNormalizer extends ObjectNormalizer

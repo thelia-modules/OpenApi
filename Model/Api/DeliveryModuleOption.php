@@ -170,7 +170,7 @@ class DeliveryModuleOption extends BaseApiModel
     }
 
     /**
-     * @param string $title
+     * @param string $description
      *
      * @return DeliveryModuleOption
      */

@@ -43,6 +43,14 @@ class DeliveryModuleOption extends BaseApiModel
      * @var string
      * @OA\Property(
      *    type="string",
+     * )
+     */
+    protected $description;
+
+    /**
+     * @var string
+     * @OA\Property(
+     *    type="string",
      *    description="Delivery logo url",
      * )
      */
@@ -149,6 +157,26 @@ class DeliveryModuleOption extends BaseApiModel
     public function setTitle($title)
     {
         $this->title = $title;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * @param string $description
+     *
+     * @return DeliveryModuleOption
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
 
         return $this;
     }

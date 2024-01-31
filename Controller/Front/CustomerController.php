@@ -25,6 +25,7 @@ use Thelia\Core\Security\SecurityContext;
 use Thelia\Core\Translation\Translator;
 use Thelia\Model\Address;
 use Thelia\Model\Customer;
+use Thelia\Model\CustomerQuery;
 
 /**
  * @Route("/customer", name="customer")
@@ -127,25 +128,37 @@ class CustomerController extends BaseFrontOpenApiController
          */
         $con = Propel::getConnection();
         $con->beginTransaction();
-
+        $theliaAddress = null;
         try {
+            $email = $data['customer']['email'];
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                throw new \Exception(Translator::getInstance()->trans("Invalid email", [], OpenApi::DOMAIN_NAME));
+            }
+
+            $accountAlreadyExist = CustomerQuery::create()->filterByEmail($email)->findOne();
+            if (null !== $accountAlreadyExist) {
+                throw new \Exception(Translator::getInstance()->trans("Something went wrong during account creation", [], OpenApi::DOMAIN_NAME));
+            }
+
             /** @var Customer $theliaCustomer */
             $theliaCustomer = $openApiCustomer->toTheliaModel();
             $theliaCustomer->setPassword($data['password'])->save();
             $openApiCustomer->setId($theliaCustomer->getId());
 
-            /** We must catch the validation exception if it is thrown to rollback the Propel transaction before throwing the exception again */
-            /** @var OpenApiAddress $openApiAddress */
-            $openApiAddress = $modelFactory->buildModel('Address', $data['address']);
-            $openApiAddress->setCustomer($openApiCustomer)->validate(self::GROUP_CREATE);
+            if (isset($data['address'])) {
+                /** We must catch the validation exception if it is thrown to rollback the Propel transaction before throwing the exception again */
+                /** @var OpenApiAddress $openApiAddress */
+                $openApiAddress = $modelFactory->buildModel('Address', $data['address']);
+                $openApiAddress->setCustomer($openApiCustomer)->validate(self::GROUP_CREATE);
 
-            /** @var Address $theliaAddress */
-            $theliaAddress = $openApiAddress->toTheliaModel();
-            $theliaAddress
-                ->setLabel(Translator::getInstance()->trans('Main Address', [], OpenApi::DOMAIN_NAME))
-                ->setIsDefault(1)
-                ->save()
-            ;
+                /** @var Address $theliaAddress */
+                $theliaAddress = $openApiAddress->toTheliaModel();
+                $theliaAddress
+                    ->setLabel(Translator::getInstance()->trans('Main Address', [], OpenApi::DOMAIN_NAME))
+                    ->setIsDefault(1)
+                    ->save()
+                ;
+            }
         } catch (\Exception $exception) {
             $con->rollBack();
             throw $exception;
@@ -154,7 +167,9 @@ class CustomerController extends BaseFrontOpenApiController
         /* If everything went fine, we actually commit the changes to the base. */
         $con->commit();
 
-        $openApiCustomer->setDefaultAddressId($theliaAddress->getId());
+        if (null !== $theliaAddress) {
+            $openApiCustomer->setDefaultAddressId($theliaAddress->getId());
+        }
 
         return OpenApiService::jsonResponse($openApiCustomer);
     }

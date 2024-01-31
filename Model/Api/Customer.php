@@ -98,16 +98,6 @@ class Customer extends BaseApiModel
     protected $rememberMe;
 
     /**
-     * @var float
-     * @OA\Property(
-     *    type="number",
-     *    format="float",
-     * )
-     * @Constraint\NotBlank(groups={"create", "update"})
-     */
-    protected $discount;
-
-    /**
      * @var bool
      * @OA\Property(
      *    type="boolean",
@@ -285,26 +275,6 @@ class Customer extends BaseApiModel
     public function setRememberMe($rememberMe)
     {
         $this->rememberMe = $rememberMe;
-
-        return $this;
-    }
-
-    /**
-     * @return float
-     */
-    public function getDiscount()
-    {
-        return $this->discount;
-    }
-
-    /**
-     * @param float $discount
-     *
-     * @return Customer
-     */
-    public function setDiscount($discount)
-    {
-        $this->discount = $discount;
 
         return $this;
     }

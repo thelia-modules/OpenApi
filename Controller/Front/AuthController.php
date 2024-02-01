@@ -88,17 +88,17 @@ class AuthController extends BaseFrontOpenApiController
 
         $customer = CustomerQuery::create()
             ->filterByEmail($data['email'])
-            ->findOne()
-        ;
+            ->findOne();
 
         if ($customer === null || !$customer->checkPassword($data['password'])) {
-            throw new \Exception(Translator::getInstance()->trans('Your username/password pair, does not correspond to any account', [], OpenApi::DOMAIN_NAME));
+            throw new \Exception(Translator::getInstance()->trans('Your username/password pair, does not correspond to any account',
+                [], OpenApi::DOMAIN_NAME));
         }
 
         $dispatcher->dispatch(new CustomerLoginEvent($customer), TheliaEvents::CUSTOMER_LOGIN);
 
         /* If the rememberMe property is set to true, we create a new cookie to store the information */
-        if (true === (bool) $data['rememberMe']) {
+        if (true === (bool)$data['rememberMe']) {
             (new CookieTokenProvider())->createCookie(
                 $customer,
                 ConfigQuery::read('customer_remember_me_cookie_name', 'crmcn'),
@@ -108,7 +108,7 @@ class AuthController extends BaseFrontOpenApiController
 
         /** @var OpenApiCustomer $openApiCustomer */
         $openApiCustomer = $modelFactory->buildModel('Customer', $customer);
-        $openApiCustomer->setDefaultAddressId($customer->getDefaultAddress()->getId());
+        $openApiCustomer->setDefaultAddressId($customer->getDefaultAddress()?->getId());
 
         return OpenApiService::jsonResponse($openApiCustomer);
     }

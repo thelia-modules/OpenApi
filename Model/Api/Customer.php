@@ -116,7 +116,7 @@ class Customer extends BaseApiModel
     public function createFromTheliaModel($theliaModel, $locale = null): void
     {
         parent::createFromTheliaModel($theliaModel, $locale);
-        $this->setDefaultAddressId($theliaModel->getDefaultAddress()->getId());
+        $this->setDefaultAddressId($theliaModel->getDefaultAddress()?->getId());
     }
 
     /**

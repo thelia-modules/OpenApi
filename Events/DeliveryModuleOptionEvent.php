@@ -35,7 +35,7 @@ class DeliveryModuleOptionEvent extends ActionEvent
 
     public function __construct(
         Module $module,
-        Address $address,
+        Address $address = null,
         Cart $cart = null,
         Country $country = null,
         State $state = null
@@ -46,7 +46,7 @@ class DeliveryModuleOptionEvent extends ActionEvent
         $this->country = $country;
         $this->state = $state;
 
-        if (null === $this->module || null === $this->address) {
+        if (null === $this->address && null === $this->country) {
             throw new \Exception(Translator::getInstance()->trans('Not enough informations to retrieve module options'));
         }
 

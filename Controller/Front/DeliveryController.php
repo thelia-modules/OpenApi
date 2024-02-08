@@ -250,13 +250,14 @@ class DeliveryController extends BaseFrontOpenApiController
     ) {
         $deliveryAddress = $this->getDeliveryAddress($request, $securityContext);
 
-        if (null === $deliveryAddress) {
+        $cart = $request->getSession()->getSessionCart($dispatcher);
+        $country = $deliveryAddress ? $deliveryAddress->getCountry() : CountryQuery::create()->filterByByDefault(1)->findOne();
+
+        if (null === $country) {
             throw new \Exception(Translator::getInstance()->trans('You must either pass an address id or have a customer connected', [], OpenApi::DOMAIN_NAME));
         }
 
-        $cart = $request->getSession()->getSessionCart($dispatcher);
-        $country = $deliveryAddress->getCountry();
-        $state = $deliveryAddress->getState();
+        $state = $deliveryAddress ? $deliveryAddress->getState() : StateQuery::create()->filterByCountryId($country->getId())->findOne();
 
         $moduleQuery = ModuleQuery::create()
             ->filterByActivate(1)

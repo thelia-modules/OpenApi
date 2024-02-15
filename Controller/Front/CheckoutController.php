@@ -9,6 +9,7 @@ use OpenApi\Model\Api\ModelFactory;
 use OpenApi\OpenApi;
 use OpenApi\Service\OpenApiService;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\EventDispatcher\Event;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Thelia\Core\Event\Delivery\DeliveryPostageEvent;
 use Thelia\Core\Event\Order\OrderEvent;
@@ -84,12 +85,14 @@ class CheckoutController extends BaseFrontOpenApiController
         /** @var Checkout $checkout */
         $checkout = $modelFactory->buildModel('Checkout', $decodedContent);
 
+
         if (isset($decodedContent['needValidate']) && true === $decodedContent['needValidate']) {
             $checkout->checkIsValid();
         }
 
         $order = $this->getOrder($request);
         $orderEvent = new OrderEvent($order);
+
 
         $this->setOrderDeliveryPart(
             $request,
@@ -99,6 +102,7 @@ class CheckoutController extends BaseFrontOpenApiController
             $checkout,
             $orderEvent
         );
+
         $this->setOrderInvoicePart(
             $dispatcher,
             $securityContext,
@@ -148,6 +152,7 @@ class CheckoutController extends BaseFrontOpenApiController
         Checkout $checkout,
         OrderEvent $orderEvent
     ): void {
+        /** @var Cart $cart */
         $cart = $session->getSessionCart($dispatcher);
         $deliveryAddress = AddressQuery::create()->findPk($checkout->getDeliveryAddressId());
         $deliveryModule = ModuleQuery::create()->findPk($checkout->getDeliveryModuleId());
@@ -204,13 +209,26 @@ class CheckoutController extends BaseFrontOpenApiController
         
         $orderEvent->setDeliveryAddress($deliveryAddress !== null ? $deliveryAddress->getId() : $securityContext->getCustomerUser()?->getDefaultAddress()?->getId());
         $orderEvent->setDeliveryModule($deliveryModule?->getId());
+
         $orderEvent->setPostage($postage !== null ? $postage->getAmount() : 0.0);
         $orderEvent->setPostageTax($postage !== null ? $postage->getAmountTax() : 0.0);
         $orderEvent->setPostageTaxRuleTitle($postage !== null ? $postage->getTaxRuleTitle() : '');
 
         $dispatcher->dispatch($orderEvent, TheliaEvents::ORDER_SET_DELIVERY_ADDRESS);
-        $dispatcher->dispatch($orderEvent, TheliaEvents::ORDER_SET_POSTAGE);
+
+        $reflection = new \ReflectionClass(Event::class);
+        $property = $reflection->getProperty('propagationStopped');
+        $property->setAccessible(true);
+        $property->setValue($orderEvent, false);
+
         $dispatcher->dispatch($orderEvent, TheliaEvents::ORDER_SET_DELIVERY_MODULE);
+
+        $reflection = new \ReflectionClass(Event::class);
+        $property = $reflection->getProperty('propagationStopped');
+        $property->setAccessible(true);
+        $property->setValue($orderEvent, false);
+
+        $dispatcher->dispatch($orderEvent, TheliaEvents::ORDER_SET_POSTAGE);
 
         if ($deliveryAddress && $deliveryModule) {
             $this->checkValidDelivery();
@@ -243,7 +261,19 @@ class CheckoutController extends BaseFrontOpenApiController
 
         $orderEvent->setInvoiceAddress($billingAddress !== null ? $billingAddress->getId() : null);
         $orderEvent->setPaymentModule($paymentModule !== null ? $paymentModule->getId() : null);
+
+        $reflection = new \ReflectionClass(Event::class);
+        $property = $reflection->getProperty('propagationStopped');
+        $property->setAccessible(true);
+        $property->setValue($orderEvent, false);
+
         $dispatcher->dispatch($orderEvent, TheliaEvents::ORDER_SET_INVOICE_ADDRESS);
+
+        $reflection = new \ReflectionClass(Event::class);
+        $property = $reflection->getProperty('propagationStopped');
+        $property->setAccessible(true);
+        $property->setValue($orderEvent, false);
+
         $dispatcher->dispatch($orderEvent, TheliaEvents::ORDER_SET_PAYMENT_MODULE);
 
         // Only check invoice is module and address is set
@@ -286,6 +316,7 @@ class CheckoutController extends BaseFrontOpenApiController
     protected function checkValidInvoice(): void
     {
         $order = $this->getSession()->getOrder();
+
         if (null === $order
             ||
             null === $order->getChoosenInvoiceAddress()

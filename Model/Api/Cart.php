@@ -12,10 +12,16 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Thelia\Core\Event\Delivery\DeliveryPostageEvent;
 use Thelia\Core\Event\TheliaEvents;
+use Thelia\Coupon\CouponManager;
+use Thelia\Coupon\Type\CouponInterface;
+use Thelia\Model\AddressQuery;
 use Thelia\Model\AreaDeliveryModuleQuery;
 use Thelia\Model\Country;
+use Thelia\Model\CouponCountry;
+use Thelia\Model\CouponModule;
 use Thelia\Model\CouponQuery;
 use Thelia\Model\ModuleQuery;
+use Thelia\Model\Order;
 use Thelia\Model\State;
 use Thelia\Module\BaseModule;
 use Thelia\Module\Exception\DeliveryException;
@@ -136,6 +142,11 @@ class Cart extends BaseApiModel
      */
     protected $container;
 
+    /**
+     * @var CouponManager
+     */
+    protected $couponManager;
+
     public function __construct(
         ModelFactory $modelFactory,
         RequestStack $requestStack,
@@ -143,11 +154,13 @@ class Cart extends BaseApiModel
         EventDispatcherInterface $dispatcher,
         ValidatorInterface $validator,
         // Todo find a way to remove container here (only used to get module instance)
-        ContainerInterface $container
+        ContainerInterface $container,
+        CouponManager $couponManager
     )
     {
         parent::__construct($modelFactory, $requestStack, $taxEngine, $dispatcher, $validator);
         $this->container = $container;
+        $this->couponManager = $couponManager;
     }
 
     public function createFromTheliaModel($theliaModel, $locale = null): void
@@ -462,9 +475,75 @@ class Cart extends BaseApiModel
             }
         }
 
+        if ($this->isCouponRemovingPostage($country->getId(), $deliveryModule->getId())) {
+            $postage = 0;
+            $postageTax = 0;
+        }
+
         return [
             'postage' => $postage,
             'tax' => $postageTax
         ];
+    }
+
+    private function isCouponRemovingPostage(int $countryId, int $deliveryModuleId)
+    {
+        $couponsKept = $this->couponManager->getCouponsKept();
+
+        if (\count($couponsKept) == 0) {
+            return false;
+        }
+
+        /** @var CouponInterface $coupon */
+        foreach ($couponsKept as $coupon) {
+            if (!$coupon->isRemovingPostage()) {
+                continue;
+            }
+
+            // Check if delivery country is on the list of countries for which delivery is free
+            // If the list is empty, the shipping is free for all countries.
+            $couponCountries = $coupon->getFreeShippingForCountries();
+
+            if (!$couponCountries->isEmpty()) {
+                $countryValid = false;
+
+                /** @var CouponCountry $couponCountry */
+                foreach ($couponCountries as $couponCountry) {
+                    if ($countryId == $couponCountry->getCountryId()) {
+                        $countryValid = true;
+                        break;
+                    }
+                }
+
+                if (!$countryValid) {
+                    continue;
+                }
+            }
+
+            // Check if shipping method is on the list of methods for which delivery is free
+            // If the list is empty, the shipping is free for all methods.
+            $couponModules = $coupon->getFreeShippingForModules();
+
+            if (!$couponModules->isEmpty()) {
+                $moduleValid = false;
+
+                /** @var CouponModule $couponModule */
+                foreach ($couponModules as $couponModule) {
+                    if ($deliveryModuleId == $couponModule->getModuleId()) {
+                        $moduleValid = true;
+                        break;
+                    }
+                }
+
+                if (!$moduleValid) {
+                    continue;
+                }
+            }
+
+            // All conditions are met, the shipping is free !
+            return true;
+        }
+
+        return false;
     }
 }

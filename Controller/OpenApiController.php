@@ -25,6 +25,7 @@ class OpenApiController extends BaseFrontController
 
         $annotations = Generator::scan(Util::finder([
             THELIA_MODULE_DIR.'/*/Model/Api',
+            THELIA_MODULE_DIR.'/*/Model/OpenApi',
             THELIA_MODULE_DIR.'/*/EventListener',
             THELIA_MODULE_DIR.'/*/ApiExtend',
             THELIA_MODULE_DIR.'/*/Controller',

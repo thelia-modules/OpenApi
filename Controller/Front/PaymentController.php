@@ -3,6 +3,8 @@
 namespace OpenApi\Controller\Front;
 
 use OpenApi\Annotations as OA;
+use OpenApi\Events\OpenApiEvents;
+use OpenApi\Events\PaymentModuleOptionEvent;
 use OpenApi\Model\Api\ModelFactory;
 use OpenApi\Model\Api\PaymentModule;
 use OpenApi\Service\OpenApiService;
@@ -103,12 +105,21 @@ class PaymentController extends BaseFrontOpenApiController
             TheliaEvents::MODULE_PAYMENT_IS_VALID
         );
 
+        $paymentModuleOptionEvent = new PaymentModuleOptionEvent($paymentModule, $cart);
+
+        $dispatcher->dispatch(
+            $paymentModuleOptionEvent,
+            OpenApiEvents::MODULE_PAYMENT_GET_OPTIONS
+        );
+
         /** @var PaymentModule $paymentModule */
         $paymentModule = $modelFactory->buildModel('PaymentModule', $paymentModule);
+
         $paymentModule->setValid($isValidPaymentEvent->isValidModule())
             ->setCode($moduleInstance->getCode())
             ->setMinimumAmount($isValidPaymentEvent->getMinimumAmount())
-            ->setMaximumAmount($isValidPaymentEvent->getMaximumAmount());
+            ->setMaximumAmount($isValidPaymentEvent->getMaximumAmount())
+            ->setOptionGroups($paymentModuleOptionEvent->getPaymentModuleOptionGroups());
 
         return $paymentModule;
     }

@@ -11,6 +11,7 @@ use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Thelia\Core\HttpFoundation\JsonResponse;
 use Thelia\Core\Translation\Translator;
+use Thelia\Log\Tlog;
 
 class ExceptionListener implements EventSubscriberInterface
 {
@@ -36,6 +37,8 @@ class ExceptionListener implements EventSubscriberInterface
         if (!$event->getRequest()->attributes->get(OpenApi::OPEN_API_ROUTE_REQUEST_KEY, false)) {
             return;
         }
+
+        Tlog::getInstance()->error($event->getThrowable()->getTraceAsString());
 
         /** @var Error $error */
         $error = $this->modelFactory->buildModel(

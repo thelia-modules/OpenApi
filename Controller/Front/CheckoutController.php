@@ -31,6 +31,7 @@ use Thelia\Module\Exception\DeliveryException;
  */
 class CheckoutController extends BaseFrontOpenApiController
 {
+    const PAYMENT_MODULE_OPTION_CHOICES_SESSION_KEY = 'payment_module_option_choices';
     /**
      * @Route("", name="set_checkout", methods="POST")
      * @OA\Post(
@@ -110,6 +111,11 @@ class CheckoutController extends BaseFrontOpenApiController
             $orderEvent
         );
 
+        if (isset($decodedContent['paymentOptionChoices'])) {
+            // Save payment module option choices in session (for the next step)
+            $session->set(self::PAYMENT_MODULE_OPTION_CHOICES_SESSION_KEY, $decodedContent['paymentOptionChoices']);
+        }
+
         $responseCheckout = $checkout
             ->createFromOrder($orderEvent->getOrder());
 
@@ -140,6 +146,10 @@ class CheckoutController extends BaseFrontOpenApiController
             ->createFromOrder($order);
 
         $checkout->setPickupAddress($request->getSession()->get(OpenApi::PICKUP_ADDRESS_SESSION_KEY));
+
+        $checkout->setPaymentOptionChoices(
+            $request->getSession()->get(self::PAYMENT_MODULE_OPTION_CHOICES_SESSION_KEY)
+        );
 
         return OpenApiService::jsonResponse($checkout);
     }

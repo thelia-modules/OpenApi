@@ -64,6 +64,17 @@ class PaymentModule extends BaseApiModel
      * @OA\Property(
      *    type="array",
      *     @OA\Items(
+     *          ref="#/components/schemas/PaymentModuleOptionGroup"
+     *     )
+     * )
+     */
+    protected $optionGroups;
+
+    /**
+     * @var array
+     * @OA\Property(
+     *    type="array",
+     *     @OA\Items(
      *          ref="#/components/schemas/File"
      *     )
      * )
@@ -166,6 +177,24 @@ class PaymentModule extends BaseApiModel
     public function setMaximumAmount($maximumAmount)
     {
         $this->maximumAmount = $maximumAmount;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getOptionGroups()
+    {
+        return $this->optionGroups;
+    }
+
+    /**
+     * @return PaymentModule
+     */
+    public function setOptionGroups($optionGroups)
+    {
+        $this->optionGroups = $optionGroups;
 
         return $this;
     }

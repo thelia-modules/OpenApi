@@ -71,6 +71,17 @@ class Checkout extends BaseApiModel
     protected $pickupAddress;
 
     /**
+     * @var array
+     * @OA\Property(
+     *    type="array",
+     *    @OA\Items(
+     *           ref="#/components/schemas/PaymentModuleOptionChoice"
+     *    )
+     * )
+     */
+    protected $paymentOptionChoices = [];
+
+    /**
      * @var bool
      * @OA\Property(
      *    type="boolean"
@@ -305,5 +316,14 @@ class Checkout extends BaseApiModel
         return $this;
     }
 
+    public function getPaymentOptionChoices(): array
+    {
+        return $this->paymentOptionChoices;
+    }
 
+    public function setPaymentOptionChoices(?array $paymentOptionChoices = []): Checkout
+    {
+        $this->paymentOptionChoices = $paymentOptionChoices;
+        return $this;
+    }
 }

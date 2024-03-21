@@ -105,22 +105,27 @@ class PaymentController extends BaseFrontOpenApiController
             TheliaEvents::MODULE_PAYMENT_IS_VALID
         );
 
-        $paymentModuleOptionEvent = new PaymentModuleOptionEvent($paymentModule, $cart);
-
-        $dispatcher->dispatch(
-            $paymentModuleOptionEvent,
-            OpenApiEvents::MODULE_PAYMENT_GET_OPTIONS
-        );
-
         /** @var PaymentModule $paymentModule */
-        $paymentModule = $modelFactory->buildModel('PaymentModule', $paymentModule);
+        $paymentModuleApi = $modelFactory->buildModel('PaymentModule', $paymentModule);
 
-        $paymentModule->setValid($isValidPaymentEvent->isValidModule())
+        $paymentModuleApi->setValid($isValidPaymentEvent->isValidModule())
             ->setCode($moduleInstance->getCode())
             ->setMinimumAmount($isValidPaymentEvent->getMinimumAmount())
-            ->setMaximumAmount($isValidPaymentEvent->getMaximumAmount())
-            ->setOptionGroups($paymentModuleOptionEvent->getPaymentModuleOptionGroups());
+            ->setMaximumAmount($isValidPaymentEvent->getMaximumAmount());
 
-        return $paymentModule;
+        if ($isValidPaymentEvent->isValidModule()) {
+            $paymentModuleOptionEvent = new PaymentModuleOptionEvent($paymentModule, $cart);
+
+            $dispatcher->dispatch(
+                $paymentModuleOptionEvent,
+                OpenApiEvents::MODULE_PAYMENT_GET_OPTIONS
+            );
+
+            $paymentModuleApi
+                ->setOptionGroups($paymentModuleOptionEvent->getPaymentModuleOptionGroups());
+
+        }
+
+        return $paymentModuleApi;
     }
 }

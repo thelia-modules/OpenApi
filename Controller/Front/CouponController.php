@@ -16,6 +16,7 @@ use Thelia\Core\Event\TheliaEvents;
 use Thelia\Core\HttpFoundation\Request;
 use Thelia\Core\HttpFoundation\Session\Session;
 use Thelia\Core\Translation\Translator;
+use Thelia\Coupon\CouponManager;
 use Thelia\Exception\UnmatchableConditionException;
 use Thelia\Model\CouponQuery;
 
@@ -160,6 +161,7 @@ class CouponController extends BaseFrontOpenApiController
         EventDispatcherInterface $dispatcher,
         ModelFactory $modelFactory,
         Session $session,
+        CouponManager $couponManager,
         $id
     ) {
         $cart = $session->getSessionCart($dispatcher);
@@ -176,6 +178,19 @@ class CouponController extends BaseFrontOpenApiController
             unset($consumedCoupons[$coupon->getCode()]);
 
             $session->setConsumedCoupons($consumedCoupons);
+
+
+            $discount = $couponManager->getDiscount();
+
+            $session
+                ->getSessionCart($dispatcher)
+                ->setDiscount($discount)
+                ->save();
+
+            $session
+                ->getOrder()
+                ->setDiscount($discount);
+
         } catch (Exception $e) {
             throw new Exception(Translator::getInstance()->trans('An error occurred while clearing coupon ' . $id . ' : ') . $e->getMessage());
         }

@@ -39,7 +39,16 @@ class Coupon extends BaseApiModel
      * )
      * @Constraint\NotBlank(groups={"create", "update"})
      */
-    protected $title; 
+    protected $title;
+
+    /**
+     * @var string
+     * @OA\Property(
+     *     type="string",
+     * )
+     * @Constraint\NotBlank(groups={"create", "update"})
+     */
+    protected $shortDescription;
 
     /**
      * @var float
@@ -161,4 +170,22 @@ class Coupon extends BaseApiModel
         return $this;
     }
 
+    /**
+     * @return string
+     */
+    public function getShortDescription(): string
+    {
+        return $this->shortDescription;
+    }
+
+    /**
+     * @param string $shortDescription
+     * @return Coupon
+     */
+    public function setShortDescription(string $shortDescription): Coupon
+    {
+        $this->shortDescription = $shortDescription;
+
+        return $this;
+    }
 }

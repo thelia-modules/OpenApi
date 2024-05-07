@@ -4,6 +4,7 @@ namespace OpenApi\Controller\Front;
 
 use Front\Front;
 use OpenApi\Annotations as OA;
+use OpenApi\Events\PickupLocationEvent;
 use OpenApi\Model\Api\Checkout;
 use OpenApi\Model\Api\ModelFactory;
 use OpenApi\OpenApi;
@@ -86,14 +87,29 @@ class CheckoutController extends BaseFrontOpenApiController
         /** @var Checkout $checkout */
         $checkout = $modelFactory->buildModel('Checkout', $decodedContent);
 
+        if (isset($decodedContent['pickupAddress'])) {
+            $pickupAddress = $decodedContent['pickupAddress'];
+            if(is_string($pickupAddress)) {
+                $pickupAddress = json_decode($pickupAddress, true, 512, JSON_THROW_ON_ERROR);
+            }
+            $pickupLocationEvent = new PickupLocationEvent();
+            $pickupLocationEvent
+                ->setFromPayload($pickupAddress)
+                ->setCart($cart);
+            $dispatcher->dispatch(
+                $pickupLocationEvent,
+                PickupLocationEvent::MODULE_DELIVERY_SET_PICKUP_LOCATION,
+            );
+        }
+
 
         if (isset($decodedContent['needValidate']) && true === $decodedContent['needValidate']) {
             $checkout->checkIsValid();
         }
 
+
         $order = $this->getOrder($request);
         $orderEvent = new OrderEvent($order);
-
 
         $this->setOrderDeliveryPart(
             $request,
@@ -115,10 +131,8 @@ class CheckoutController extends BaseFrontOpenApiController
             // Save payment module option choices in session (for the next step)
             $session->set(self::PAYMENT_MODULE_OPTION_CHOICES_SESSION_KEY, $decodedContent['paymentOptionChoices']);
         }
-
         $responseCheckout = $checkout
             ->createFromOrder($orderEvent->getOrder());
-
         return OpenApiService::jsonResponse($responseCheckout);
     }
 
@@ -199,15 +213,14 @@ class CheckoutController extends BaseFrontOpenApiController
 
         $postage = null;
         if ($deliveryAddress && $deliveryModule) {
+
             $moduleInstance = $deliveryModule->getDeliveryModuleInstance($this->container);
 
             $deliveryPostageEvent = new DeliveryPostageEvent($moduleInstance, $cart, $deliveryAddress);
-
             $dispatcher->dispatch(
                 $deliveryPostageEvent,
                 TheliaEvents::MODULE_DELIVERY_GET_POSTAGE
             );
-
             if (!$deliveryPostageEvent->isValidModule()) {
                 throw new DeliveryException(
                     Translator::getInstance()->trans('The delivery module is not valid.', [], Front::MESSAGE_DOMAIN)
@@ -216,7 +229,7 @@ class CheckoutController extends BaseFrontOpenApiController
 
             $postage = $deliveryPostageEvent->getPostage();
         }
-        
+
         $orderEvent->setDeliveryAddress($deliveryAddress !== null ? $deliveryAddress->getId() : $securityContext->getCustomerUser()?->getDefaultAddress()?->getId());
         $orderEvent->setDeliveryModule($deliveryModule?->getId());
 

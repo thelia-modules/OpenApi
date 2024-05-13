@@ -92,14 +92,16 @@ class CheckoutController extends BaseFrontOpenApiController
             if(is_string($pickupAddress)) {
                 $pickupAddress = json_decode($pickupAddress, true, 512, JSON_THROW_ON_ERROR);
             }
-            $pickupLocationEvent = new PickupLocationEvent();
-            $pickupLocationEvent
-                ->setFromPayload($pickupAddress)
-                ->setCart($cart);
-            $dispatcher->dispatch(
-                $pickupLocationEvent,
-                PickupLocationEvent::MODULE_DELIVERY_SET_PICKUP_LOCATION,
-            );
+            if (null !== $pickupAddress) {
+		    $pickupLocationEvent = new PickupLocationEvent();
+		    $pickupLocationEvent
+		        ->setFromPayload($pickupAddress)
+		        ->setCart($cart);
+		    $dispatcher->dispatch(
+		        $pickupLocationEvent,
+		        PickupLocationEvent::MODULE_DELIVERY_SET_PICKUP_LOCATION,
+		    );
+            }
         }
 
 

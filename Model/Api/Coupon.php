@@ -188,4 +188,11 @@ class Coupon extends BaseApiModel
 
         return $this;
     }
+
+    public function createFromTheliaModel($theliaModel, $locale = null): void
+    {
+        parent::createFromTheliaModel($theliaModel, $locale);
+        $percentage = isset($theliaModel->getEffects()['percentage']) ? $theliaModel->getEffects()['percentage'] : 0;
+        $this->setPercentage(floatval($percentage));
+    }
 }

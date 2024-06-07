@@ -23,15 +23,27 @@ class OpenApiController extends BaseFrontController
     {
         header('Access-Control-Allow-Origin: *');
 
-        $annotations = Generator::scan(Util::finder([
+        $directories = [
             THELIA_MODULE_DIR.'/*/Model/Api',
             THELIA_MODULE_DIR.'/*/Model/OpenApi',
             THELIA_MODULE_DIR.'/*/EventListener',
             THELIA_MODULE_DIR.'/*/ApiExtend',
             THELIA_MODULE_DIR.'/*/Controller',
-        ]));
+        ];
 
-        $annotations = json_decode($annotations->toJson(), true);
+        $validDirectories = [];
+
+        foreach ($directories as $directory) {
+            $matches = glob($directory);
+
+            if (!empty($matches)) {
+                $validDirectories[] = $directory;
+            }
+        }
+
+        $annotations = Generator::scan(Util::finder($validDirectories));
+
+        $annotations = json_decode($annotations?->toJson(), true);
 
         $modelAnnotations = $annotations['components']['schemas'];
         foreach ($modelAnnotations as $modelName => $modelAnnotation) {

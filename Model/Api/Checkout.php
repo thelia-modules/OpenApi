@@ -87,6 +87,14 @@ class Checkout extends BaseApiModel
      *    type="boolean"
      * )
      */
+    protected $mustSelectPaymentOption = false;
+
+    /**
+     * @var bool
+     * @OA\Property(
+     *    type="boolean"
+     * )
+     */
     protected $acceptedTermsAndConditions = false;
 
     public function createFromOrder(Order $order)
@@ -127,6 +135,10 @@ class Checkout extends BaseApiModel
             return false;
         }
 
+        if ($this->isMustSelectPaymentOption() && empty($this->getPaymentOptionChoices())) {
+            return false;
+        }
+
         return true;
     }
 
@@ -145,7 +157,7 @@ class Checkout extends BaseApiModel
             );
         }
 
-        if (null === $this->getPaymentModuleId()) {
+        if (null === $this->getPaymentModuleId() || ($this->isMustSelectPaymentOption() && empty($this->getPaymentOptionChoices()))) {
             throw new \Exception(
                 Translator::getInstance()->trans(
                     'You must choose a payment module',
@@ -326,4 +338,23 @@ class Checkout extends BaseApiModel
         $this->paymentOptionChoices = $paymentOptionChoices;
         return $this;
     }
+
+    /**
+     * @return bool
+     */
+    public function isMustSelectPaymentOption(): bool
+    {
+        return $this->mustSelectPaymentOption;
+    }
+
+    /**
+     * @param bool $mustSelectPaymentOption
+     */
+    public function setMustSelectPaymentOption(?bool $mustSelectPaymentOption = false): Checkout
+    {
+        $this->mustSelectPaymentOption = $mustSelectPaymentOption;
+        return $this;
+    }
+
+
 }

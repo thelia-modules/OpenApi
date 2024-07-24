@@ -92,6 +92,77 @@ class CartItem extends BaseApiModel
     protected $quantity;
 
     /**
+     * @var float
+     * @OA\Property(
+     *    type="number",
+     *    format="float",
+     * )
+     */
+    protected $calculatedTotalPrice;
+
+    /**
+     * @var float
+     * @OA\Property(
+     *    type="number",
+     *    format="float",
+     * )
+     */
+    protected $calculatedTotalPromoPrice;
+
+    /**
+     * @var float
+     * @OA\Property(
+     *    type="number",
+     *    format="float",
+     * )
+     */
+    protected $calculatedTotalTaxedPrice;
+
+    /**
+     * @var float
+     * @OA\Property(
+     *    type="number",
+     *    format="float",
+     * )
+     */
+    protected $calculatedTotalPromoTaxedPrice;
+
+    /**
+     * @var float
+     * @OA\Property(
+     *    type="number",
+     *    format="float",
+     * )
+     */
+    protected $calculatedRealPrice;
+
+    /**
+     * @var float
+     * @OA\Property(
+     *    type="number",
+     *    format="float",
+     * )
+     */
+    protected $calculatedRealTaxedPrice;
+
+    /**
+     * @var float
+     * @OA\Property(
+     *    type="number",
+     *    format="float",
+     * )
+     */
+    protected $calculatedRealTotalPrice;
+
+    /**
+     * @var float
+     * @OA\Property(
+     *    type="number",
+     *    format="float",
+     * )
+     */
+    protected $calculatedRealTotalTaxedPrice;
+    /**
      * Create a new OpenApi CartItem from a Thelia CartItem and a Country, then returns it.
      *
      * @param \Thelia\Model\CartItem $cartItem
@@ -129,6 +200,16 @@ class CartItem extends BaseApiModel
             ]
         );
         $this->quantity = $cartItem->getQuantity();
+        //reproduce cart loop comportement
+        $this->calculatedTotalPrice = $cartItem->getTotalPrice();
+        $this->calculatedTotalPromoPrice = $cartItem->getTotalPromoPrice();
+        $this->calculatedTotalTaxedPrice = $cartItem->getTotalTaxedPrice($country);
+        $this->calculatedTotalPromoTaxedPrice = $cartItem->getTotalTaxedPromoPrice($country);
+
+        $this->calculatedRealPrice = $cartItem->getRealPrice();
+        $this->calculatedRealTaxedPrice = $cartItem->getRealTaxedPrice($country);
+        $this->calculatedRealTotalPrice = $cartItem->getTotalRealPrice();
+        $this->calculatedRealTotalTaxedPrice = $cartItem->getTotalTaxedPrice($country);
 
         /** If there are PSE specific images, we use them. Otherwise, we just use the product images */
         $modelFactory = $this->modelFactory;
@@ -304,6 +385,94 @@ class CartItem extends BaseApiModel
     {
         $this->quantity = $quantity;
 
+        return $this;
+    }
+
+    public function getCalculatedRealPrice(): float
+    {
+        return $this->calculatedRealPrice;
+    }
+
+    public function setCalculatedRealPrice(float $calculatedRealPrice): CartItem
+    {
+        $this->calculatedRealPrice = $calculatedRealPrice;
+        return $this;
+    }
+
+    public function getCalculatedRealTaxedPrice(): float
+    {
+        return $this->calculatedRealTaxedPrice;
+    }
+
+    public function setCalculatedRealTaxedPrice(float $calculatedRealTaxedPrice): CartItem
+    {
+        $this->calculatedRealTaxedPrice = $calculatedRealTaxedPrice;
+        return $this;
+    }
+
+    public function getCalculatedRealTotalPrice(): float
+    {
+        return $this->calculatedRealTotalPrice;
+    }
+
+    public function setCalculatedRealTotalPrice(float $calculatedRealTotalPrice): CartItem
+    {
+        $this->calculatedRealTotalPrice = $calculatedRealTotalPrice;
+        return $this;
+    }
+
+    public function getCalculatedRealTotalTaxedPrice(): float
+    {
+        return $this->calculatedRealTotalTaxedPrice;
+    }
+
+    public function setCalculatedRealTotalTaxedPrice(float $calculatedRealTotalTaxedPrice): CartItem
+    {
+        $this->calculatedRealTotalTaxedPrice = $calculatedRealTotalTaxedPrice;
+        return $this;
+    }
+
+    public function getCalculatedTotalPrice(): float
+    {
+        return $this->calculatedTotalPrice;
+    }
+
+    public function setCalculatedTotalPrice(float $calculatedTotalPrice): CartItem
+    {
+        $this->calculatedTotalPrice = $calculatedTotalPrice;
+        return $this;
+    }
+
+    public function getCalculatedTotalPromoPrice(): float
+    {
+        return $this->calculatedTotalPromoPrice;
+    }
+
+    public function setCalculatedTotalPromoPrice(float $calculatedTotalPromoPrice): CartItem
+    {
+        $this->calculatedTotalPromoPrice = $calculatedTotalPromoPrice;
+        return $this;
+    }
+
+    public function getCalculatedTotalPromoTaxedPrice(): float
+    {
+        return $this->calculatedTotalPromoTaxedPrice;
+    }
+
+    public function setCalculatedTotalPromoTaxedPrice(float $calculatedTotalPromoTaxedPrice): CartItem
+    {
+        $this->calculatedTotalPromoTaxedPrice = $calculatedTotalPromoTaxedPrice;
+        return $this;
+    }
+
+    public function getCalculatedTotalTaxedPrice(): float
+    {
+        return $this->calculatedTotalTaxedPrice;
+    }
+
+    public function setCalculatedTotalTaxedPrice(float $calculatedTotalTaxedPrice): CartItem
+    {
+        $this->calculatedTotalTaxedPrice = $calculatedTotalTaxedPrice;
         return $this;
     }
 }

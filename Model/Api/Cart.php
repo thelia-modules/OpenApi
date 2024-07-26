@@ -138,6 +138,14 @@ class Cart extends BaseApiModel
     protected $items;
 
     /**
+     * @var float
+     * @OA\Property(
+     *    type="number",
+     *    format="float",
+     * )
+     */
+    protected $totalWithoutTax;
+    /**
      * @var ContainerInterface
      */
     protected $container;
@@ -187,6 +195,7 @@ class Cart extends BaseApiModel
         );
 
         $this
+            ->setTotalWithoutTax($theliaModel->getTotalAmount())
             ->setDeliveryTax($postageTax)
             ->setTaxes($theliaModel->getTotalVAT($deliveryCountry, null, false))
             ->setDelivery($estimatedPostage)
@@ -391,6 +400,17 @@ class Cart extends BaseApiModel
     {
         $this->items = $items;
 
+        return $this;
+    }
+
+    public function getTotalWithoutTax(): float
+    {
+        return $this->totalWithoutTax;
+    }
+
+    public function setTotalWithoutTax(float $totalWithoutTax): Cart
+    {
+        $this->totalWithoutTax = $totalWithoutTax;
         return $this;
     }
 

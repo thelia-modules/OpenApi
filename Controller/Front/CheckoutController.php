@@ -161,7 +161,11 @@ class CheckoutController extends BaseFrontOpenApiController
         $checkout = ($modelFactory->buildModel('Checkout'))
             ->createFromOrder($order);
 
-        $checkout->setPickupAddress($request->getSession()->get(OpenApi::PICKUP_ADDRESS_SESSION_KEY));
+        $pickupAddress = $modelFactory->buildModel('Address');
+        $pickupAddress?->createOrUpdateFromData($request->getSession()?->get(OpenApi::PICKUP_ADDRESS_SESSION_KEY));
+        $checkout->setPickupAddress(
+            $pickupAddress
+        );
 
         $checkout->setPaymentOptionChoices(
             $request->getSession()->get(self::PAYMENT_MODULE_OPTION_CHOICES_SESSION_KEY)

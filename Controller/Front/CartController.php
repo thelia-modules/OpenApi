@@ -407,14 +407,22 @@ class CartController extends BaseFrontOpenApiController
             throw new \Exception(Translator::getInstance()->trans('A quantity is needed in the POST request to add an item to the cart.'));
         }
 
-        /* If the function was called from the PATCH route, we just update the quantity and return */
+        /* If the function was called from the PATCH route, we just update the quantity,pse,product id and return */
         if ($cartItemId = $event->getCartItemId()) {
             $cartItem = CartItemQuery::create()->filterById($cartItemId)->findOne();
             if ($this->checkAvailableStock($cartItem->getProductSaleElements(), $data['quantity'])) {
                 throw new \Exception(Translator::getInstance()->trans('Desired quantity exceed available stock'));
             }
             $event->setQuantity($data['quantity']);
-
+            if (!isset($data['pseId'])) {
+                return;
+            }
+            $cartItem = CartItemQuery::create()->filterById($cartItemId)->findOne();
+            $pse = ProductSaleElementsQuery::create()->findPk($data['pseId']);
+            $cartItem
+                ->setProductId($pse->getProductId())
+                ->setProductSaleElementsId($data['pseId'])
+                ->save();
             return;
         }
 

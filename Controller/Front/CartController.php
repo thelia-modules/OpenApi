@@ -14,6 +14,7 @@ use Thelia\Core\Event\TheliaEvents;
 use Thelia\Core\HttpFoundation\JsonResponse;
 use Thelia\Core\HttpFoundation\Request;
 use Thelia\Core\Translation\Translator;
+use Thelia\Model\Base\ProductPriceQuery;
 use Thelia\Model\Cart;
 use Thelia\Model\CartItemQuery;
 use Thelia\Model\ConfigQuery;
@@ -419,9 +420,12 @@ class CartController extends BaseFrontOpenApiController
             }
             $cartItem = CartItemQuery::create()->filterById($cartItemId)->findOne();
             $pse = ProductSaleElementsQuery::create()->findPk($data['pseId']);
+            $productPrice = ProductPriceQuery::create()->findOneByProductSaleElementsId($data['pseId']);
             $cartItem
                 ->setProductId($pse->getProductId())
                 ->setProductSaleElementsId($data['pseId'])
+                ->setPrice($productPrice->getPrice())
+                ->setPromoPrice($productPrice->getPromoPrice())
                 ->save();
             return;
         }

@@ -382,17 +382,15 @@ class CartController extends BaseFrontOpenApiController
     }
 
     /**
+     * @param ProductSaleElements $pse
      * @param int $quantity
-     *
      * @return bool
+     * @throws \Propel\Runtime\Exception\PropelException
      */
-    protected function checkAvailableStock(ProductSaleElements $pse, $quantity)
+    protected function checkAvailableStock(ProductSaleElements $pse, int $quantity): bool
     {
-        if ($pse && $quantity) {
-            return $quantity > $pse->getQuantity() && ConfigQuery::checkAvailableStock() && !$pse->getProduct()->getVirtual() === 0;
-        }
-
-        throw new \Exception(Translator::getInstance()->trans('A PSE is needed in the POST request to add an item to the cart.'));
+        return $quantity > $pse->getQuantity() &&
+            ConfigQuery::checkAvailableStock() && !$pse->getProduct()->getVirtual();
     }
 
     /**

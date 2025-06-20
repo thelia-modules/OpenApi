@@ -35,7 +35,7 @@ class OpenApi extends BaseModule
      * Have fun !
      */
 
-    public static function getCompilers()
+    public static function getCompilers(): array
     {
         return [
             new ModelPass(),

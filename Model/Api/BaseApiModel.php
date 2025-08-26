@@ -2,7 +2,6 @@
 
 namespace OpenApi\Model\Api;
 
-use Doctrine\Common\Annotations\AnnotationRegistry;
 use OpenApi\Events\ModelExtendDataEvent;
 use OpenApi\Events\ModelValidationEvent;
 use OpenApi\Exception\OpenApiException;
@@ -12,14 +11,13 @@ use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Collection\Collection;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Serializer\Serializer;
-use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Thelia\Core\HttpFoundation\Request;
 use Thelia\Core\Translation\Translator;
+use Thelia\Domain\Taxation\TaxEngine\TaxEngine;
 use Thelia\Model\Country;
 use Thelia\Model\State;
-use Thelia\TaxEngine\TaxEngine;
 
 abstract class BaseApiModel implements \JsonSerializable
 {

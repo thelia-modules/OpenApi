@@ -12,8 +12,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Thelia\Core\Event\Delivery\DeliveryPostageEvent;
 use Thelia\Core\Event\TheliaEvents;
-use Thelia\Coupon\CouponManager;
-use Thelia\Coupon\Type\CouponInterface;
+use Thelia\Domain\Promotion\Coupon\CouponManager;
+use Thelia\Domain\Promotion\Coupon\Type\CouponInterface;
 use Thelia\Model\AddressQuery;
 use Thelia\Model\AreaDeliveryModuleQuery;
 use Thelia\Model\Country;
@@ -25,7 +25,7 @@ use Thelia\Model\Order;
 use Thelia\Model\State;
 use Thelia\Module\BaseModule;
 use Thelia\Module\Exception\DeliveryException;
-use Thelia\TaxEngine\TaxEngine;
+use Thelia\Domain\Taxation\TaxEngine\TaxEngine;
 
 /**
  * Class Cart.

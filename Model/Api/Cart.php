@@ -12,7 +12,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Thelia\Core\Event\Delivery\DeliveryPostageEvent;
 use Thelia\Core\Event\TheliaEvents;
-use Thelia\Domain\Promotion\Coupon\CouponManager;
+use Thelia\Domain\Promotion\Coupon\Service\CouponManager;
 use Thelia\Domain\Promotion\Coupon\Type\CouponInterface;
 use Thelia\Model\AddressQuery;
 use Thelia\Model\AreaDeliveryModuleQuery;

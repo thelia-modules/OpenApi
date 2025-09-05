@@ -6,12 +6,12 @@ use OpenApi\Service\DocumentService;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
-use Thelia\TaxEngine\TaxEngine;
+use Thelia\Domain\Taxation\TaxEngine\TaxEngine;
 
 class Document extends File
 {
     static $serviceAliases = ["ProductDocuments"];
-    
+
     /** @var DocumentService */
     protected $documentService;
 

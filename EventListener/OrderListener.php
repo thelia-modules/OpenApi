@@ -26,7 +26,7 @@ class OrderListener implements EventSubscriberInterface
     public function setPickupAddress(OrderEvent $event): void
     {
         /** @var Address $pickupAddress */
-        $pickupAddressJson = $this->request->getSession()->get(OpenApi::PICKUP_ADDRESS_SESSION_KEY);
+        $pickupAddressJson = $this->request?->getSession()?->get(OpenApi::PICKUP_ADDRESS_SESSION_KEY);
         $pickupAddress = $this->modelFactory->buildModel('Address', $pickupAddressJson);
 
         if (null === $pickupAddress || null === $pickupAddress->getAddress1() || null === $pickupAddress->getCity()) {
@@ -46,7 +46,7 @@ class OrderListener implements EventSubscriberInterface
         $event->setDeliveryAddress($orderAddress->getId());
 
         // Reset pickup address
-        $this->request->getSession()->set(OpenApi::PICKUP_ADDRESS_SESSION_KEY, null);
+        $this->request?->getSession()?->set(OpenApi::PICKUP_ADDRESS_SESSION_KEY, null);
     }
 
     public static function getSubscribedEvents()

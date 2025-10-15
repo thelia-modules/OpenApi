@@ -7,6 +7,7 @@ use OpenApi\Model\Api\PaymentModuleOptionGroup;
 use Thelia\Core\Event\ActionEvent;
 use Thelia\Core\Translation\Translator;
 use Thelia\Model\Address;
+use Thelia\Model\AddressQuery;
 use Thelia\Model\Base\CountryQuery;
 use Thelia\Model\Cart;
 use Thelia\Model\Country;
@@ -32,11 +33,13 @@ class PaymentModuleOptionEvent extends ActionEvent
         Cart $cart = null,
     ) {
         $this->module = $module;
-        $address = $cart?->getAddressRelatedByAddressInvoiceId() ?? $cart?->getAddressRelatedByAddressDeliveryId() ?? null;
-        $this->address = $address;
+        $address = $cart?->getCartAddressRelatedByAddressInvoiceId()?->getAddressId()
+            ?? $cart?->getCartAddressRelatedByAddressDeliveryId()?->getAddressId()
+            ?? null;
+        $this->address = $address ? AddressQuery::create()->findPk($address) : null;
         $this->cart = $cart;
-        $this->country = $address?->getCountry() ?? CountryQuery::create()->filterByByDefault(true)->findOne();
-        $this->state = $address?->getState() ?? $this->country?->getStates()?->getFirst() ?? null;
+        $this->country = $this->address?->getCountry() ?? CountryQuery::create()->filterByByDefault(true)->findOne();
+        $this->state = $this->address?->getState() ?? $this->country?->getStates()?->getFirst() ?? null;
 
         if (!$module->isPayementModule()) {
             throw new \Exception(Translator::getInstance()->trans($module->getTitle().' is not a payment module.'));

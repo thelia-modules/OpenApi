@@ -8,6 +8,7 @@ use OpenApi\Model\Api\Coupon;
 use OpenApi\Model\Api\ModelFactory;
 use OpenApi\OpenApi;
 use OpenApi\Service\OpenApiService;
+use Propel\Runtime\ActiveQuery\Criteria;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\EventDispatcher\Event;
@@ -73,7 +74,7 @@ class CouponController extends BaseFrontOpenApiController
         }
 
         /** We verify that the given coupon actually exists in the base */
-        $theliaCoupon = CouponQuery::create()->filterByCode($openApiCoupon->getCode())->findOne();
+        $theliaCoupon = CouponQuery::create()->filterByCode($openApiCoupon->getCode(), Criteria::LIKE)->findOne();
         if (null === $theliaCoupon) {
             throw new \Exception(Translator::getInstance()->trans('No coupons were found for this coupon code.', [], OpenApi::DOMAIN_NAME));
         }

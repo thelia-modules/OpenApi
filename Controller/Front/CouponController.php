@@ -20,6 +20,7 @@ use Thelia\Core\Translation\Translator;
 use Thelia\Coupon\CouponManager;
 use Thelia\Exception\UnmatchableConditionException;
 use Thelia\Model\CouponQuery;
+use Thelia\Model\Map\CouponTableMap;
 
 /**
  * @Route("/coupon", name="coupon")
@@ -74,7 +75,12 @@ class CouponController extends BaseFrontOpenApiController
         }
 
         /** We verify that the given coupon actually exists in the base */
-        $theliaCoupon = CouponQuery::create()->filterByCode($openApiCoupon->getCode(), Criteria::LIKE)->findOne();
+        $theliaCoupon = CouponQuery::create()
+            ->where(
+                'BINARY ' . CouponTableMap::COL_CODE . ' LIKE ?',
+                $openApiCoupon->getCode()
+            )
+            ->findOne();
         if (null === $theliaCoupon) {
             throw new \Exception(Translator::getInstance()->trans('No coupons were found for this coupon code.', [], OpenApi::DOMAIN_NAME));
         }

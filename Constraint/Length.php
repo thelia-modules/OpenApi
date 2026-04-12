@@ -22,7 +22,7 @@ class Length extends \Symfony\Component\Validator\Constraints\Length
         $this->charsetMessage = $translator->trans('This value does not match the expected {{ charset }} charset.', [], OpenApi::DOMAIN_NAME);
     }
 
-    public function validatedBy()
+    public function validatedBy(): string
     {
         return get_parent_class().'Validator';
     }

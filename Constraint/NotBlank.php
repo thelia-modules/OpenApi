@@ -17,7 +17,7 @@ class NotBlank extends \Symfony\Component\Validator\Constraints\NotBlank
         $this->message = Translator::getInstance()->trans('This value should not be blank', [], OpenApi::DOMAIN_NAME);
     }
 
-    public function validatedBy()
+    public function validatedBy(): string
     {
         return get_parent_class().'Validator';
     }

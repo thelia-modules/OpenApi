@@ -17,7 +17,7 @@ class NotNull extends \Symfony\Component\Validator\Constraints\NotNull
         $this->message = Translator::getInstance()->trans('This value should not be null', [], OpenApi::DOMAIN_NAME);
     }
 
-    public function validatedBy()
+    public function validatedBy(): string
     {
         return get_parent_class().'Validator';
     }

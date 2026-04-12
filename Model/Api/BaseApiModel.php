@@ -118,7 +118,7 @@ abstract class BaseApiModel implements \JsonSerializable
         return array_merge($violations, $event->getViolations());
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         $normalizer = new ModelApiNormalizer();
         $serializer = new Serializer([$normalizer]);

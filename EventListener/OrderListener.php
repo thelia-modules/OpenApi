@@ -49,7 +49,7 @@ class OrderListener implements EventSubscriberInterface
         $this->request?->getSession()?->set(OpenApi::PICKUP_ADDRESS_SESSION_KEY, null);
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             TheliaEvents::ORDER_BEFORE_PAYMENT => ['setPickupAddress', 256],

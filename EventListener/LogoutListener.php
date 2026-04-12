@@ -19,7 +19,7 @@ class LogoutListener implements EventSubscriberInterface
     }
 
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             TheliaEvents::CUSTOMER_LOGOUT => ['emptyOrderSession', 30]

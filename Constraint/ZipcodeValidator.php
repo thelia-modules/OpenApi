@@ -10,7 +10,7 @@ use Thelia\Model\CountryQuery;
 
 class ZipcodeValidator extends ConstraintValidator
 {
-    public function validate($value, Constraint $constraint)
+    public function validate($value, Constraint $constraint): void
     {
         $address = $this->context->getRoot();
         $country = CountryQuery::create()->findPk($address->getCountryId());

@@ -5,18 +5,14 @@ namespace OpenApi\Controller\Admin;
 use OpenApi\Form\ConfigForm;
 use OpenApi\OpenApi;
 use Thelia\Controller\Admin\BaseAdminController;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Thelia\Core\Template\ParserContext;
 use Thelia\Log\Tlog;
 
-/**
- * @Route("/admin/module/OpenApi", name="config_configuration")
- */
+#[Route("/admin/module/OpenApi", name: "config_configuration")]
 class ConfigurationController extends BaseAdminController
 {
-    /**
-     * @Route("/save", name="_save", methods="POST")
-     */
+    #[Route("/save", name: "_save", methods: ["POST"])]
     public function saveAction(ParserContext $parserContext)
     {
         $configForm = $this->createForm(ConfigForm::getName());

@@ -7,7 +7,7 @@ use OpenApi\Annotations as OA;
 use OpenApi\Model\Api\ModelFactory;
 use OpenApi\OpenApi;
 use OpenApi\Service\OpenApiService;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Thelia\Core\Event\Cart\CartEvent;
 use Thelia\Core\Event\TheliaEvents;
@@ -21,14 +21,10 @@ use Thelia\Model\ConfigQuery;
 use Thelia\Model\ProductSaleElements;
 use Thelia\Model\ProductSaleElementsQuery;
 
-/**
- * @Route("/cart", name="cart")
- */
+#[Route("/cart", name: "cart")]
 class CartController extends BaseFrontOpenApiController
 {
     /**
-     * @Route("", name="get_cart", methods="GET")
-     *
      * @OA\Get(
      *     path="/cart",
      *     tags={"cart"},
@@ -45,14 +41,13 @@ class CartController extends BaseFrontOpenApiController
      *     )
      * )
      */
+    #[Route("", name: "get_cart", methods: ["GET"])]
     public function getCart(OpenApiService $openApiService)
     {
         return $this->createResponseFromCart($openApiService);
     }
 
     /**
-     * @Route("/add", name="add_cartitem", methods="POST")
-     *
      * @OA\Post(
      *     path="/cart/add",
      *     tags={"cart"},
@@ -104,6 +99,7 @@ class CartController extends BaseFrontOpenApiController
      *     )
      * )
      */
+    #[Route("/add", name: "add_cartitem", methods: ["POST"])]
     public function cartAddCartItem(
         Request $request,
         EventDispatcherInterface $dispatcher,
@@ -128,8 +124,6 @@ class CartController extends BaseFrontOpenApiController
     }
 
     /**
-     * @Route("/add_multiple", name="add_cartitem_mutliple", methods="POST")
-     *
      * @OA\Post(
      *     path="/cart/add_multiple",
      *     tags={"cart"},
@@ -180,6 +174,7 @@ class CartController extends BaseFrontOpenApiController
      *     )
      * )
      */
+    #[Route("/add_multiple", name: "add_cartitem_mutliple", methods: ["POST"])]
      public function cartAddMultiple(
          Request $request,
          EventDispatcherInterface $dispatcher,
@@ -218,8 +213,6 @@ class CartController extends BaseFrontOpenApiController
      }
 
     /**
-      * @Route("/{cartItemId}", name="delete_cartitem", methods="DELETE")
-      *
       * @OA\Delete(
       *     path="/cart/{cartItemId}",
       *     tags={"cart"},
@@ -257,6 +250,7 @@ class CartController extends BaseFrontOpenApiController
       *     )
       * )
       */
+    #[Route("/{cartItemId}", name: "delete_cartitem", methods: ["DELETE"])]
     public function cartDeleteCartItem(
         Request $request,
         EventDispatcherInterface $dispatcher,
@@ -286,8 +280,6 @@ class CartController extends BaseFrontOpenApiController
     }
 
     /**
-     * @Route("/{cartItemId}", name="update_cartitem", methods="PATCH")
-     *
      * @OA\Patch(
      *     path="/cart/{cartItemId}",
      *     tags={"cart"},
@@ -324,6 +316,7 @@ class CartController extends BaseFrontOpenApiController
      *     )
      * )
      */
+    #[Route("/{cartItemId}", name: "update_cartitem", methods: ["PATCH"])]
     public function cartUpdateCartItem(
         Request $request,
         EventDispatcherInterface $dispatcher,

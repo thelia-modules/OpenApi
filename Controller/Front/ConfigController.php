@@ -4,20 +4,16 @@ namespace OpenApi\Controller\Front;
 
 use OpenApi\Annotations as OA;
 use OpenApi\OpenApi;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Thelia\Core\HttpFoundation\JsonResponse;
 use Thelia\Core\HttpFoundation\Request;
 use Thelia\Core\Translation\Translator;
 use Thelia\Model\ConfigQuery;
 
-/**
- * @Route("/config", name="config")
- */
+#[Route("/config", name: "config")]
 class ConfigController extends BaseFrontOpenApiController
 {
     /**
-     * @Route("/{key}", name="get_config", methods="GET")
-     *
      * @OA\Get(
      *     path="/config/{key}",
      *     tags={"config"},
@@ -42,6 +38,7 @@ class ConfigController extends BaseFrontOpenApiController
      *     )
      * )
      */
+    #[Route("/{key}", name: "get_config", methods: ["GET"])]
     public function getConfig($key)
     {
         $config = ConfigQuery::create()->filterByName($key)->findOne();

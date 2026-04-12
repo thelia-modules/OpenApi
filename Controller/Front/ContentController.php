@@ -8,20 +8,16 @@ use OpenApi\Model\Api\ModelFactory;
 use OpenApi\OpenApi;
 use OpenApi\Service\OpenApiService;
 use OpenApi\Service\SearchService;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Thelia\Core\HttpFoundation\JsonResponse;
 use Thelia\Core\HttpFoundation\Request;
 use Thelia\Core\Translation\Translator;
 use Thelia\Model\ContentQuery;
 
-/**
- * @Route("/content", name="content")
- */
+#[Route("/content", name: "content")]
 class ContentController extends BaseFrontOpenApiController
 {
     /**
-     * @Route("/search", name="content_search", methods="GET")
-     *
      * @OA\Get(
      *     path="/content/search",
      *     tags={"Content", "Search"},
@@ -128,6 +124,7 @@ class ContentController extends BaseFrontOpenApiController
      *     )
      * )
      */
+    #[Route("/search", name: "content_search", methods: ["GET"])]
     public function search(
         Request $request,
         ModelFactory $modelFactory,
@@ -143,8 +140,6 @@ class ContentController extends BaseFrontOpenApiController
 
 
     /**
-     * @Route("/{id}", name="get_content", methods="GET", requirements={"collectionId"="\d+"})
-     *
      * @OA\Get(
      *     path="/content/{id}",
      *     tags={"content"},
@@ -172,6 +167,7 @@ class ContentController extends BaseFrontOpenApiController
      *
      * @throws Exception
      */
+    #[Route("/{id}", name: "get_content", methods: ["GET"], requirements: ["collectionId" => "\d+"])]
     public function getContent(ModelFactory $modelFactory, $id)
     {
         $content = ContentQuery::create()

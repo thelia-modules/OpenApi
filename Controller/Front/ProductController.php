@@ -6,19 +6,15 @@ use OpenApi\Annotations as OA;
 use OpenApi\Model\Api\ModelFactory;
 use OpenApi\Service\OpenApiService;
 use Propel\Runtime\ActiveQuery\Criteria;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Thelia\Core\HttpFoundation\Request;
 use Thelia\Model\CategoryQuery;
 use Thelia\Model\ProductQuery;
 
-/**
- * @Route("/product", name="product")
- */
+#[Route("/product", name: "product")]
 class ProductController extends BaseFrontOpenApiController
 {
     /**
-     * @Route("/search", name="product_search", methods="GET")
-     *
      * @OA\Get(
      *     path="/product/search",
      *     tags={"Product", "Search"},
@@ -150,6 +146,7 @@ class ProductController extends BaseFrontOpenApiController
      *     )
      * )
      */
+    #[Route("/search", name: "product_search", methods: ["GET"])]
     public function search(
         Request $request,
         ModelFactory $modelFactory

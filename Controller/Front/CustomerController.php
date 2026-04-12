@@ -19,7 +19,7 @@ use OpenApi\Model\Api\ModelFactory;
 use OpenApi\OpenApi;
 use OpenApi\Service\OpenApiService;
 use Propel\Runtime\Propel;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Thelia\Core\HttpFoundation\Request;
 use Thelia\Core\Security\SecurityContext;
 use Thelia\Core\Translation\Translator;
@@ -27,14 +27,10 @@ use Thelia\Model\Address;
 use Thelia\Model\Customer;
 use Thelia\Model\CustomerQuery;
 
-/**
- * @Route("/customer", name="customer")
- */
+#[Route("/customer", name: "customer")]
 class CustomerController extends BaseFrontOpenApiController
 {
     /**
-     * @Route("", name="get_customer", methods="GET")
-     *
      * @OA\Get(
      *     path="/customer",
      *     tags={"customer"},
@@ -57,6 +53,7 @@ class CustomerController extends BaseFrontOpenApiController
      * )
      * )
      */
+    #[Route("", name: "get_customer", methods: ["GET"])]
     public function getCustomer(
         OpenApiService $openApiService,
         ModelFactory $modelFactory
@@ -71,8 +68,6 @@ class CustomerController extends BaseFrontOpenApiController
     }
 
     /**
-     * @Route("", name="add_customer", methods="POST")
-     *
      * @OA\Post(
      *     path="/customer",
      *     tags={"customer"},
@@ -115,6 +110,7 @@ class CustomerController extends BaseFrontOpenApiController
      *     )
      * )
      */
+    #[Route("", name: "add_customer", methods: ["POST"])]
     public function createCustomer(Request $request, ModelFactory $modelFactory)
     {
         $data = json_decode($request->getContent(), true);
@@ -175,8 +171,6 @@ class CustomerController extends BaseFrontOpenApiController
     }
 
     /**
-     * @Route("", name="update_customer", methods="PATCH")
-     *
      * @OA\Patch(
      *     path="/customer",
      *     tags={"customer"},
@@ -214,6 +208,7 @@ class CustomerController extends BaseFrontOpenApiController
      *     )
      * )
      */
+    #[Route("", name: "update_customer", methods: ["PATCH"])]
     public function updateCustomer(
         Request $request,
         SecurityContext $securityContext,

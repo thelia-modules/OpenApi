@@ -8,7 +8,7 @@ use OpenApi\Model\Api\Coupon;
 use OpenApi\Model\Api\ModelFactory;
 use OpenApi\OpenApi;
 use OpenApi\Service\OpenApiService;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\EventDispatcher\Event;
 use Thelia\Core\Event\Coupon\CouponConsumeEvent;
@@ -20,14 +20,10 @@ use Thelia\Coupon\CouponManager;
 use Thelia\Exception\UnmatchableConditionException;
 use Thelia\Model\CouponQuery;
 
-/**
- * @Route("/coupon", name="coupon")
- */
+#[Route("/coupon", name: "coupon")]
 class CouponController extends BaseFrontOpenApiController
 {
     /**
-     * @Route("", name="submit_coupon", methods="POST")
-     *
      * @OA\Post(
      *     path="/coupon",
      *     tags={"coupon"},
@@ -56,6 +52,7 @@ class CouponController extends BaseFrontOpenApiController
      *     )
      * )
      */
+    #[Route("", name: "submit_coupon", methods: ["POST"])]
     public function submitCoupon(
         Request $request,
         EventDispatcherInterface $dispatcher,
@@ -95,8 +92,6 @@ class CouponController extends BaseFrontOpenApiController
     }
 
     /**
-     * @Route("/clear_all", name="clear_all_coupon", methods="GET")
-     *
      * @OA\Get(
      *     path="/coupon/clear_all",
      *     tags={"coupon"},
@@ -114,6 +109,7 @@ class CouponController extends BaseFrontOpenApiController
      *     )
      * )
      */
+    #[Route("/clear_all", name: "clear_all_coupon", methods: ["GET"])]
     public function clearAllCoupon(
         Request $request,
         EventDispatcherInterface $dispatcher,
@@ -130,8 +126,6 @@ class CouponController extends BaseFrontOpenApiController
     }
 
     /**
-     * @Route("/clear/{id}", name="clear_coupon", methods="GET")
-     *
      * @OA\Get(
      *     path="/coupon/clear/{id}",
      *     tags={"coupon"},
@@ -157,6 +151,7 @@ class CouponController extends BaseFrontOpenApiController
      *     )
      * )
      */
+    #[Route("/clear/{id}", name: "clear_coupon", methods: ["GET"])]
     public function clearCoupon(
         EventDispatcherInterface $dispatcher,
         ModelFactory $modelFactory,

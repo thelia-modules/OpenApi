@@ -8,21 +8,17 @@ use OpenApi\Model\Api\Customer as OpenApiCustomer;
 use OpenApi\Model\Api\ModelFactory;
 use OpenApi\OpenApi;
 use OpenApi\Service\OpenApiService;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Thelia\Core\HttpFoundation\JsonResponse;
 use Thelia\Core\HttpFoundation\Request;
 use Thelia\Core\Translation\Translator;
 use Thelia\Model\Address;
 use Thelia\Model\AddressQuery;
 
-/**
- * @Route("/address", name="address")
- */
+#[Route("/address", name: "address")]
 class AddressController extends BaseFrontOpenApiController
 {
     /**
-     * @Route("", name="get_address", methods="GET")
-     *
      * @OA\Get(
      *     path="/address",
      *     tags={"address"},
@@ -45,6 +41,7 @@ class AddressController extends BaseFrontOpenApiController
      * )
      * )
      */
+    #[Route("", name: "get_address", methods: ["GET"])]
     public function getAddress(
         OpenApiService $openApiService,
         ModelFactory $modelFactory
@@ -70,8 +67,6 @@ class AddressController extends BaseFrontOpenApiController
     }
 
     /**
-     * @Route("", name="add_address", methods="POST")
-     *
      * @OA\Post(
      *     path="/address",
      *     tags={"address"},
@@ -97,6 +92,7 @@ class AddressController extends BaseFrontOpenApiController
      *     )
      * )
      */
+    #[Route("", name: "add_address", methods: ["POST"])]
     public function createAddress(
         Request $request,
         OpenApiService $openApiService,
@@ -129,8 +125,6 @@ class AddressController extends BaseFrontOpenApiController
     }
 
     /**
-     * @Route("/{id}", name="update_address", methods="PATCH")
-     *
      * @OA\Patch(
      *     path="/address/{id}",
      *     tags={"address"},
@@ -160,6 +154,7 @@ class AddressController extends BaseFrontOpenApiController
      *     )
      * )
      */
+    #[Route("/{id}", name: "update_address", methods: ["PATCH"])]
     public function updateAddress(
         Request $request,
         OpenApiService $openApiService,
@@ -216,8 +211,6 @@ class AddressController extends BaseFrontOpenApiController
     }
 
     /**
-     * @Route("/{id}", name="delete_address", methods="DELETE")
-     *
      * @OA\Delete(
      *     path="/address/{id}",
      *     tags={"address"},
@@ -241,6 +234,7 @@ class AddressController extends BaseFrontOpenApiController
      *     )
      * )
      */
+    #[Route("/{id}", name: "delete_address", methods: ["DELETE"])]
     public function deleteAddress(
         OpenApiService $openApiService,
         ModelFactory $modelFactory,

@@ -17,7 +17,7 @@ use OpenApi\Model\Api\Customer as OpenApiCustomer;
 use OpenApi\Model\Api\ModelFactory;
 use OpenApi\OpenApi;
 use OpenApi\Service\OpenApiService;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Thelia\Action\BaseAction;
 use Thelia\Core\Event\Customer\CustomerLoginEvent;
@@ -30,14 +30,10 @@ use Thelia\Core\Translation\Translator;
 use Thelia\Model\ConfigQuery;
 use Thelia\Model\CustomerQuery;
 
-/**
- * @Route("", name="auth")
- */
+#[Route("", name: "auth")]
 class AuthController extends BaseFrontOpenApiController
 {
     /**
-     * @Route("/login", name="login", methods="POST")
-     *
      * @OA\Post(
      *     path="/login",
      *     tags={"customer"},
@@ -74,6 +70,7 @@ class AuthController extends BaseFrontOpenApiController
      *     )
      * )
      */
+    #[Route("/login", name: "login", methods: ["POST"])]
     public function customerLogin(
         Request $request,
         SecurityContext $securityContext,
@@ -114,8 +111,6 @@ class AuthController extends BaseFrontOpenApiController
     }
 
     /**
-     * @Route("/logout", name="logout", methods="POST")
-     *
      * @OA\Post(
      *     path="/logout",
      *     tags={"customer"},
@@ -132,6 +127,7 @@ class AuthController extends BaseFrontOpenApiController
      *     )
      * )
      */
+    #[Route("/logout", name: "logout", methods: ["POST"])]
     public function customerLogout(
         SecurityContext $securityContext,
         EventDispatcherInterface $dispatcher

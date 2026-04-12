@@ -6,17 +6,13 @@ use OpenApi\Annotations as OA;
 use OpenApi\Model\Api\ModelFactory;
 use OpenApi\Service\OpenApiService;
 use OpenApi\Service\SearchService;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Thelia\Core\HttpFoundation\Request;
 
-/**
- * @Route("/category", name="category")
- */
+#[Route("/category", name: "category")]
 class CategoryController extends BaseFrontOpenApiController
 {
     /**
-     * @Route("/search", name="_search", methods="GET")
-     *
      * @OA\Get(
      *     path="/category/search",
      *     tags={"Category", "Search"},
@@ -133,6 +129,7 @@ class CategoryController extends BaseFrontOpenApiController
      *     )
      * )
      */
+    #[Route("/search", name: "_search", methods: ["GET"])]
     public function search(
         Request $request,
         ModelFactory $modelFactory,

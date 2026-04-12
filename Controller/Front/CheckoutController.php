@@ -9,7 +9,7 @@ use OpenApi\Model\Api\Checkout;
 use OpenApi\Model\Api\ModelFactory;
 use OpenApi\OpenApi;
 use OpenApi\Service\OpenApiService;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\EventDispatcher\Event;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Thelia\Core\Event\Delivery\DeliveryPostageEvent;
@@ -27,14 +27,11 @@ use Thelia\Model\ModuleQuery;
 use Thelia\Model\Order;
 use Thelia\Module\Exception\DeliveryException;
 
-/**
- * @Route("/checkout")
- */
+#[Route("/checkout")]
 class CheckoutController extends BaseFrontOpenApiController
 {
     const PAYMENT_MODULE_OPTION_CHOICES_SESSION_KEY = 'payment_module_option_choices';
     /**
-     * @Route("", name="set_checkout", methods="POST")
      * @OA\Post(
      *     path="/checkout",
      *     tags={"checkout"},
@@ -60,6 +57,7 @@ class CheckoutController extends BaseFrontOpenApiController
      *     )
      * )
      */
+    #[Route("", name: "set_checkout", methods: ["POST"])]
     public function setCheckout(
         Request $request,
         Session $session,
@@ -139,7 +137,6 @@ class CheckoutController extends BaseFrontOpenApiController
     }
 
     /**
-     * @Route("", name="get_checkout", methods="GET")
      * @OA\Get(
      *     path="/checkout",
      *     tags={"checkout"},
@@ -151,6 +148,7 @@ class CheckoutController extends BaseFrontOpenApiController
      *     )
      * )
      */
+    #[Route("", name: "get_checkout", methods: ["GET"])]
     public function getCheckout(
         Request $request,
         ModelFactory $modelFactory

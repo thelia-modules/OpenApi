@@ -9,7 +9,7 @@ use OpenApi\Model\Api\DeliveryModule;
 use OpenApi\Model\Api\ModelFactory;
 use OpenApi\OpenApi;
 use OpenApi\Service\OpenApiService;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Thelia\Core\Event\Delivery\DeliveryPostageEvent;
 use Thelia\Core\Event\Delivery\PickupLocationEvent;
@@ -30,14 +30,10 @@ use Thelia\Module\AbstractDeliveryModule;
 use Thelia\Module\BaseModule;
 use Thelia\Module\Exception\DeliveryException;
 
-/**
- * @Route("/delivery", name="delivery")
- */
+#[Route("/delivery", name: "delivery")]
 class DeliveryController extends BaseFrontOpenApiController
 {
     /**
-     * @Route("/pickup-locations", name="delivery_pickup_locations", methods="GET")
-     *
      * @OA\Get(
      *     path="/delivery/pickup-locations",
      *     tags={"delivery"},
@@ -129,6 +125,7 @@ class DeliveryController extends BaseFrontOpenApiController
      *     )
      * )
      */
+    #[Route("/pickup-locations", name: "delivery_pickup_locations", methods: ["GET"])]
     public function getPickupLocations(Request $request, EventDispatcherInterface $dispatcher)
     {
         $state = $request->get('stateId') ? (StateQuery::create())->filterById($request->get('stateId'))->findOne() : null;
@@ -157,8 +154,6 @@ class DeliveryController extends BaseFrontOpenApiController
     }
 
     /**
-     * @Route("/simple-modules", name="delivery_simple_modules", methods="GET")
-     *
      * @OA\Get(
      *     path="/delivery/simple-modules",
      *     tags={"delivery", "modules"},
@@ -180,6 +175,7 @@ class DeliveryController extends BaseFrontOpenApiController
      *     )
      * )
      */
+    #[Route("/simple-modules", name: "delivery_simple_modules", methods: ["GET"])]
     public function getSimpleDeliveryModules(ModelFactory $modelFactory)
     {
         $modules = ModuleQuery::create()
@@ -205,8 +201,6 @@ class DeliveryController extends BaseFrontOpenApiController
     }
 
     /**
-     * @Route("/modules", name="delivery_modules", methods="GET")
-     *
      * @OA\Get(
      *     path="/delivery/modules",
      *     tags={"delivery", "modules"},
@@ -242,6 +236,7 @@ class DeliveryController extends BaseFrontOpenApiController
      *     )
      * )
      */
+    #[Route("/modules", name: "delivery_modules", methods: ["GET"])]
     public function getDeliveryModules(
         Request $request,
         SecurityContext $securityContext,
@@ -280,8 +275,6 @@ class DeliveryController extends BaseFrontOpenApiController
     }
 
     /**
-     * @Route("/set-delivery", name="set_delivery_modules", methods="GET")
-     *
      * @OA\Get(
      *     path="/delivery/set-delivery",
      *     tags={"delivery", "modules"},
@@ -304,6 +297,7 @@ class DeliveryController extends BaseFrontOpenApiController
      *     )
      * )
      */
+    #[Route("/set-delivery", name: "set_delivery_modules", methods: ["GET"])]
     public function setDeliveryModules(Request $request)
     {
         $deliveryModuleId = $request->get('delivery_module_id');

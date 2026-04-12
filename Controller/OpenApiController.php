@@ -7,7 +7,7 @@ use OpenApi\Generator;
 use OpenApi\Util;
 use Thelia\Core\HttpFoundation\JsonResponse;
 use function OpenApi\scan;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Thelia\Controller\Front\BaseFrontController;
 use Thelia\Core\HttpFoundation\Request;
 
@@ -16,9 +16,7 @@ use Thelia\Core\HttpFoundation\Request;
  */
 class OpenApiController extends BaseFrontController
 {
-    /**
-     * @Route("/doc", name="documentation")
-     */
+    #[Route("/doc", name: "documentation")]
     public function getDocumentation(Request $request)
     {
         header('Access-Control-Allow-Origin: *');

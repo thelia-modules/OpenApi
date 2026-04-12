@@ -8,7 +8,7 @@ use OpenApi\Events\PaymentModuleOptionEvent;
 use OpenApi\Model\Api\ModelFactory;
 use OpenApi\Model\Api\PaymentModule;
 use OpenApi\Service\OpenApiService;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Thelia\Core\Event\Payment\IsValidPaymentEvent;
 use Thelia\Core\Event\TheliaEvents;
@@ -19,14 +19,10 @@ use Thelia\Model\Module;
 use Thelia\Model\ModuleQuery;
 use Thelia\Module\BaseModule;
 
-/**
- * @Route("/payment", name="payment")
- */
+#[Route("/payment", name: "payment")]
 class PaymentController extends BaseFrontOpenApiController
 {
     /**
-     * @Route("/modules", name="payment_modules", methods="GET")
-     *
      * @OA\Get(
      *     path="/payment/modules",
      *     tags={"payment", "modules"},
@@ -62,6 +58,7 @@ class PaymentController extends BaseFrontOpenApiController
      *     )
      * )
      */
+    #[Route("/modules", name: "payment_modules", methods: ["GET"])]
     public function getPaymentModules(
         EventDispatcherInterface $dispatcher,
         ModelFactory $modelFactory,

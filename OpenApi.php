@@ -66,4 +66,9 @@ class OpenApi extends BaseModule
     {
         return 'open_api';
     }
+
+    public static function getRoutePrefix(): string
+    {
+        return 'open_api';
+    }
 }

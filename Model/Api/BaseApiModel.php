@@ -10,6 +10,9 @@ use OpenApi\OpenApi;
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Collection\Collection;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
+use Symfony\Component\Serializer\Normalizer\JsonSerializableNormalizer;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
@@ -120,8 +123,16 @@ abstract class BaseApiModel implements \JsonSerializable
 
     public function jsonSerialize(): mixed
     {
-        $normalizer = new ModelApiNormalizer();
-        $serializer = new Serializer([$normalizer]);
+        // Fallback normalizers cover values nested in api models (DateTime,
+        // JsonSerializable, plain objects). Without them, SF 7.4 Serializer
+        // throws NotNormalizableValueException as soon as a property is not
+        // itself a BaseApiModel.
+        $serializer = new Serializer([
+            new ModelApiNormalizer(),
+            new DateTimeNormalizer(),
+            new JsonSerializableNormalizer(),
+            new ObjectNormalizer(),
+        ]);
 
         return $serializer->normalize($this, null);
     }

@@ -61,6 +61,14 @@ class ExceptionListener implements EventSubscriberInterface
             return;
         }
 
+        // Do nothing on non-api routes: legacy front controllers may bubble
+        // an OpenApiException up the stack (e.g. via shared services), and
+        // converting it to a JSON response on an HTML route only swaps the
+        // error for a normalizer failure under the SF 7.4 Serializer.
+        if (!$event->getRequest()->attributes->get(OpenApi::OPEN_API_ROUTE_REQUEST_KEY, false)) {
+            return;
+        }
+
         /** @var OpenApiException $openApiException */
         $openApiException = $event->getThrowable();
 

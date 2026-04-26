@@ -88,12 +88,26 @@ class ImageService
         $event
             ->setAllowZoom($allowZoom)
             ->setResizeMode($resizeMode)
-            ->setWidth($width)
-            ->setHeight($height)
-            ->setRotation($rotation)
-            ->setBackgroundColor($backgroundColor)
-            ->setQuality($quality)
         ;
+
+        // ImageEvent setters now type-hint scalars: only forward
+        // explicitly provided values. Null arguments would otherwise
+        // trip a TypeError under PHP 8.x strict signatures.
+        if ($width !== null) {
+            $event->setWidth((int) $width);
+        }
+        if ($height !== null) {
+            $event->setHeight((int) $height);
+        }
+        if ($rotation !== null) {
+            $event->setRotation((int) $rotation);
+        }
+        if ($backgroundColor !== null) {
+            $event->setBackgroundColor((string) $backgroundColor);
+        }
+        if ($quality !== null) {
+            $event->setQuality((int) $quality);
+        }
 
         /* Needed as setting effects as null will throw an exception during dispatch */
         if ($effects) {

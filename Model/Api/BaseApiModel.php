@@ -10,9 +10,9 @@ use OpenApi\OpenApi;
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Collection\Collection;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
-use Symfony\Component\Serializer\Normalizer\JsonSerializableNormalizer;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Normalizer\PropertyNormalizer;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
@@ -123,18 +123,44 @@ abstract class BaseApiModel implements \JsonSerializable
 
     public function jsonSerialize(): mixed
     {
-        // Fallback normalizers cover values nested in api models (DateTime,
-        // JsonSerializable, plain objects). Without them, SF 7.4 Serializer
-        // throws NotNormalizableValueException as soon as a property is not
-        // itself a BaseApiModel.
+        // PropertyNormalizer (no getter introspection) is paired with the
+        // BaseApiModel-aware decorator. Getter introspection would refetch
+        // propel relations on each call and explode the heap on /cart and
+        // similar endpoints (Cart -> Customer -> Cart back-reference,
+        // CartItem -> ProductSaleElements -> Product graph). Injected
+        // services and propel models living on BaseApiModel itself are
+        // ignored; circular references fall back on the resource id.
         $serializer = new Serializer([
             new ModelApiNormalizer(),
             new DateTimeNormalizer(),
-            new JsonSerializableNormalizer(),
-            new ObjectNormalizer(),
+            new PropertyNormalizer(),
         ]);
 
-        return $serializer->normalize($this, null);
+        return $serializer->normalize($this, null, [
+            AbstractNormalizer::IGNORED_ATTRIBUTES => [
+                // BaseApiModel-level injected dependencies and propel models.
+                'validator',
+                'modelFactory',
+                'request',
+                'country',
+                'state',
+                'dispatcher',
+                'extendedData',
+                // Subclass-level injected dependencies that turn up across
+                // the api models (Cart, CartItem, Image…). Listed here as
+                // a single guard so individual models do not need to mark
+                // each property with #[Ignore].
+                'container',
+                'couponManager',
+                'imageService',
+                'documentService',
+                'taxEngine',
+                'requestStack',
+                'securityContext',
+                'eventDispatcher',
+            ],
+            AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => static fn (object $object): mixed => method_exists($object, 'getId') ? $object->getId() : spl_object_id($object),
+        ]);
     }
 
     public function createOrUpdateFromData($data, $locale = null): void

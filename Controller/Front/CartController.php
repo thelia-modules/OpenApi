@@ -441,7 +441,7 @@ class CartController extends BaseFrontOpenApiController
         $newness = isset($data['newness']) ? (bool) $data['newness'] : false;
 
         $event
-            ->setProduct($pse->getProductId())
+            ->setProductId($pse->getProductId())
             ->setProductSaleElementsId($data['pseId'])
             ->setQuantity($data['quantity'])
             ->setAppend($data['append'])

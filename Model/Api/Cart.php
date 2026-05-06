@@ -183,10 +183,13 @@ class Cart extends BaseApiModel
 
         $modelFactory = $this->modelFactory;
         $deliveryCountry = $this->country;
+        // Issue #100: build CartItem without the 2nd argument so the BaseApiModel
+        // introspection (which would call setProduct → buildModel('Product')) is
+        // skipped. The full hydration is then done by fillFromTheliaCartItemAndCountry.
         $cartItems = array_map(
             function ($theliaCartItem) use ($modelFactory, $deliveryCountry) {
                 /** @var CartItem $cartItem */
-                $cartItem = $modelFactory->buildModel('CartItem', $theliaCartItem);
+                $cartItem = $modelFactory->buildModel('CartItem');
                 $cartItem->fillFromTheliaCartItemAndCountry($theliaCartItem, $deliveryCountry);
 
                 return $cartItem;

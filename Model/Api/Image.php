@@ -41,4 +41,26 @@ class Image extends File
 
         return $this;
     }
+
+    public function fromTheliaImageLight($theliaImage, $locale = null): self
+    {
+        $this->id = $theliaImage->getId();
+        if (method_exists($theliaImage, 'getPosition')) {
+            $this->position = $theliaImage->getPosition();
+        }
+        if (method_exists($theliaImage, 'getVisible')) {
+            $this->visible = $theliaImage->getVisible();
+        }
+        if (method_exists($theliaImage, 'getTranslation')) {
+            $translation = $theliaImage->getTranslation($locale ?? $this->getCurrentLocale());
+            if (null !== $translation) {
+                $this->setTitle($translation->getTitle() ?? '');
+                $this->setChapo($translation->getChapo() ?? '');
+                $this->setDescription($translation->getDescription() ?? '');
+                $this->setPostscriptum($translation->getPostscriptum() ?? '');
+            }
+        }
+
+        return $this;
+    }
 }

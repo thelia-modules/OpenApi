@@ -178,29 +178,46 @@ class CartItem extends BaseApiModel
         $modelFactory = $this->modelFactory;
         $theliaPse = $cartItem->getProductSaleElements();
         $theliaProduct = $cartItem->getProduct();
+        $locale = $this->getCurrentLocale();
+
+        // Issue #100: building a full Image API model per cart line image was the
+        // actual hotspot (~50-240ms per image in prod) because BaseApiModel runs
+        // an introspection that lazily loads every Propel relation. Use the light
+        // builder which only sets id/url/i18n + position/visible.
+        $imageBuilder = static function ($img) use ($modelFactory, $locale) {
+            if (null === $img) {
+                return null;
+            }
+            try {
+                return $modelFactory->buildModel('Image')->fromTheliaImageLight($img, $locale);
+            } catch (\Throwable) {
+                return null;
+            }
+        };
 
         try {
             $images = array_values(array_filter(array_map(
-                fn ($productSaleElementsImage) => $modelFactory->buildModel('Image', $productSaleElementsImage->getProductImage()),
+                static fn ($pseImage) => $imageBuilder($pseImage->getProductImage()),
                 iterator_to_array($theliaPse->getProductSaleElementsProductImages())
             )));
-        } catch (\Exception) {
+        } catch (\Throwable) {
             $images = [];
         }
 
         if ([] === $images && null !== $theliaProduct) {
-            $images = array_values(array_filter(array_map(
-                fn ($productImage) => $modelFactory->buildModel('Image', $productImage),
-                iterator_to_array($theliaProduct->getProductImages())
-            )));
+            try {
+                $images = array_values(array_filter(array_map(
+                    static fn ($productImage) => $imageBuilder($productImage),
+                    iterator_to_array($theliaProduct->getProductImages())
+                )));
+            } catch (\Throwable) {
+                $images = [];
+            }
         }
 
         $this->images = $images;
 
-        // Issue #100: a full Product API model per cart line embeds features, categories,
-        // contents, documents and the full PSE list — payload reached several MB on
-        // large carts and timed out PHP-FPM. Expose only what cart consumers use.
-        $productI18n = $theliaProduct?->getTranslation($this->getCurrentLocale());
+        $productI18n = $theliaProduct?->getTranslation($locale);
         $this->product = [
             'id' => $theliaProduct?->getId(),
             'url' => $theliaProduct?->getUrl(),
@@ -210,9 +227,9 @@ class CartItem extends BaseApiModel
                 'chapo' => $productI18n?->getChapo() ?? '',
             ],
             'images' => array_map(
-                static fn ($image) => [
-                    'id' => $image->getId(),
-                    'i18n' => $image->getI18n(),
+                static fn ($img) => [
+                    'id' => $img->getId(),
+                    'i18n' => $img->getI18n(),
                 ],
                 $images,
             ),

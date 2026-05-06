@@ -175,24 +175,63 @@ class CartItem extends BaseApiModel
     public function fillFromTheliaCartItemAndCountry(TheliaCartItem $cartItem, Country $country)
     {
         $this->id = $cartItem->getId();
-        /** @var Product $product */
-        $product = $this->modelFactory->buildModel('Product', $cartItem->getProduct());
-        $this->product = $product;
+        $modelFactory = $this->modelFactory;
+        $theliaPse = $cartItem->getProductSaleElements();
+        $theliaProduct = $cartItem->getProduct();
+
+        try {
+            $images = array_values(array_filter(array_map(
+                fn ($productSaleElementsImage) => $modelFactory->buildModel('Image', $productSaleElementsImage->getProductImage()),
+                iterator_to_array($theliaPse->getProductSaleElementsProductImages())
+            )));
+        } catch (\Exception) {
+            $images = [];
+        }
+
+        if ([] === $images && null !== $theliaProduct) {
+            $images = array_values(array_filter(array_map(
+                fn ($productImage) => $modelFactory->buildModel('Image', $productImage),
+                iterator_to_array($theliaProduct->getProductImages())
+            )));
+        }
+
+        $this->images = $images;
+
+        // Issue #100: a full Product API model per cart line embeds features, categories,
+        // contents, documents and the full PSE list — payload reached several MB on
+        // large carts and timed out PHP-FPM. Expose only what cart consumers use.
+        $productI18n = $theliaProduct?->getTranslation($this->getCurrentLocale());
+        $this->product = [
+            'id' => $theliaProduct?->getId(),
+            'url' => $theliaProduct?->getUrl(),
+            'ref' => $theliaProduct?->getRef(),
+            'i18n' => [
+                'title' => $productI18n?->getTitle() ?? '',
+                'chapo' => $productI18n?->getChapo() ?? '',
+            ],
+            'images' => array_map(
+                static fn ($image) => [
+                    'id' => $image->getId(),
+                    'i18n' => $image->getI18n(),
+                ],
+                $images,
+            ),
+        ];
 
         /** @var ProductSaleElement $productSaleElements */
-        $productSaleElements = $this->modelFactory->buildModel('ProductSaleElement');
-        $productSaleElements->fillFromTheliaPseAndCountry($cartItem->getProductSaleElements(), $country);
+        $productSaleElements = $modelFactory->buildModel('ProductSaleElement');
+        $productSaleElements->fillFromTheliaPseAndCountry($theliaPse, $country);
         $this->productSaleElement = $productSaleElements;
 
         $this->isPromo = (bool) $cartItem->getPromo();
-        $this->price = $this->modelFactory->buildModel(
+        $this->price = $modelFactory->buildModel(
             'Price',
             [
                 'taxed' => $cartItem->getTaxedPrice($country),
                 'untaxed' => $cartItem->getPrice(),
             ]
         );
-        $this->promoPrice = $this->modelFactory->buildModel(
+        $this->promoPrice = $modelFactory->buildModel(
             'Price',
             [
                 'taxed' => $cartItem->getTaxedPromoPrice($country),
@@ -200,30 +239,17 @@ class CartItem extends BaseApiModel
             ]
         );
         $this->quantity = $cartItem->getQuantity();
-        //reproduce cart loop comportement
+
         $this->calculatedTotalPrice = $cartItem->getTotalPrice();
         $this->calculatedTotalPromoPrice = $cartItem->getTotalPromoPrice();
-        $this->calculatedTotalTaxedPrice = $cartItem->getTotalTaxedPrice($country);
+        $totalTaxedPrice = $cartItem->getTotalTaxedPrice($country);
+        $this->calculatedTotalTaxedPrice = $totalTaxedPrice;
         $this->calculatedTotalPromoTaxedPrice = $cartItem->getTotalTaxedPromoPrice($country);
 
         $this->calculatedRealPrice = $cartItem->getRealPrice();
         $this->calculatedRealTaxedPrice = $cartItem->getRealTaxedPrice($country);
         $this->calculatedRealTotalPrice = $cartItem->getTotalRealPrice();
-        $this->calculatedRealTotalTaxedPrice = $cartItem->getTotalTaxedPrice($country);
-
-        /** If there are PSE specific images, we use them. Otherwise, we just use the product images */
-        $modelFactory = $this->modelFactory;
-
-        try {
-            $images = array_map(
-                fn ($productSaleElementsImage) => $modelFactory->buildModel('Image', $productSaleElementsImage->getProductImage()),
-                iterator_to_array($cartItem->getProductSaleElements()->getProductSaleElementsProductImages())
-            );
-        } catch (\Exception $exception) {
-            $images = [];
-        }
-
-        $this->images = !empty($images) ? $images : $this->product->getImages();
+        $this->calculatedRealTotalTaxedPrice = $totalTaxedPrice;
 
         return $this;
     }

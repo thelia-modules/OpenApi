@@ -205,10 +205,8 @@ class ProductSaleElement extends BaseApiModel
         $price = $this->modelFactory->buildModel('Price');
         $price->fillFromTheliaPseAndCountry($pse, $country);
         $this->price = $price;
-
-        /** @var Price $promoPrice */
-        $promoPrice = $this->modelFactory->buildModel('Price');
-        $promoPrice->fillFromTheliaPseAndCountry($pse, $country);
+        // Pre-existing bug: a duplicate Price was built then discarded ($promoPrice
+        // was overwritten by $price). Reuse the same instance instead of building twice.
         $this->promoPrice = $price;
         $this->weight = $pse->getWeight();
 

@@ -4,20 +4,21 @@ namespace OpenApi\Hook;
 
 use OpenApi\Form\ConfigForm;
 use OpenApi\OpenApi;
-use Symfony\Component\DependencyInjection\Attribute\Required;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Thelia\Core\Event\Hook\HookRenderEvent;
 use Thelia\Core\Form\TheliaFormFactory;
 use Thelia\Core\Hook\BaseHook;
+use Thelia\Core\Template\Parser\ParserResolver;
 use Thelia\Model\ConfigQuery;
 
 class BackHook extends BaseHook
 {
-    protected ?TheliaFormFactory $formFactory = null;
-
-    #[Required]
-    public function setFormFactory(TheliaFormFactory $formFactory): void
-    {
-        $this->formFactory = $formFactory;
+    public function __construct(
+        private readonly TheliaFormFactory $formFactory,
+        ?EventDispatcherInterface $dispatcher = null,
+        ?ParserResolver $parserResolver = null,
+    ) {
+        parent::__construct($dispatcher, $parserResolver);
     }
 
     public static function getSubscribedHooks(): array

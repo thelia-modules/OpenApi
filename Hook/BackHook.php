@@ -33,10 +33,7 @@ class BackHook extends BaseHook
             array_map('intval', explode(',', (string) OpenApi::getConfigValue('config_variables', '')))
         );
 
-        $form = $this->formFactory->createForm(ConfigForm::getName(), data: [
-            'success_url' => '/admin/module/OpenApi',
-            'error_url' => '/admin/module/OpenApi',
-        ]);
+        $form = $this->formFactory->createForm(ConfigForm::getName());
         $form->createView();
 
         $allConfigs = ConfigQuery::create()->orderByName()->find();

@@ -45,6 +45,11 @@
             </table>
 
             {% do form.enable_config.setRendered %}
+            {# Redirect targets after save/error — Thelia core hosts the module config page at /admin/module/<CODE> #}
+            <input type="hidden" name="{{ form.success_url.vars.full_name }}" value="/admin/module/OpenApi">
+            <input type="hidden" name="{{ form.error_url.vars.full_name }}" value="/admin/module/OpenApi">
+            {% do form.success_url.setRendered %}
+            {% do form.error_url.setRendered %}
             {{ form_rest(form) }}
         </div>
 

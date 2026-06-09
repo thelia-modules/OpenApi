@@ -13,10 +13,7 @@ use Thelia\Model\ConfigQuery;
 class BackHook extends BaseHook
 {
     #[Required]
-    public function setFormFactory(TheliaFormFactory $formFactory): void
-    {
-        $this->formFactory = $formFactory;
-    }
+    public ?TheliaFormFactory $formFactory = null;
 
     public static function getSubscribedHooks(): array
     {

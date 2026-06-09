@@ -10,12 +10,6 @@
         -->
     </loops>
 
-    <forms>
-        <!--
-        <form name="MyFormName" class="OpenApi\Form\MySuperForm" />
-        -->
-    </forms>
-
     <commands>
         <!--
         <command class="OpenApi\Command\MySuperCommand" />

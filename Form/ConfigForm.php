@@ -5,12 +5,16 @@ namespace OpenApi\Form;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Thelia\Core\Translation\Translator;
 use Thelia\Form\BaseForm;
 
 class ConfigForm extends BaseForm
 {
-    protected function buildForm()
+    public static function getName(): string
+    {
+        return 'openapi_config_form';
+    }
+
+    protected function buildForm(): void
     {
         $this->formBuilder
             ->add(
@@ -22,7 +26,8 @@ class ConfigForm extends BaseForm
                     'allow_delete' => true,
                 ]
             )
-            ;
+            ->add('success_url', HiddenType::class, ['required' => false])
+            ->add('error_url', HiddenType::class, ['required' => false])
+        ;
     }
-
 }

@@ -34,13 +34,6 @@
         </service>
     </services>
 
-    <hooks>
-        <hook id="openapi.back.hook" class="OpenApi\Hook\BackHook">
-            <tag name="hook.event_listener" event="module.configuration" type="back" method="onModuleConfiguration" />
-        </hook>
-    </hooks>
-
-
     <!--
     <exports>
 

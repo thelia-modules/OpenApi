@@ -7,6 +7,8 @@ use OpenApi\Constraint as Constraint;
 use OpenApi\Service\ImageService;
 use Thelia\Model\CartItem as TheliaCartItem;
 use Thelia\Model\Country;
+use Thelia\Model\ProductImageQuery;
+use Thelia\Model\ProductSaleElementsProductImageQuery;
 
 /**
  * Class CartItem.
@@ -198,7 +200,12 @@ class CartItem extends BaseApiModel
         try {
             $images = array_values(array_filter(array_map(
                 static fn ($pseImage) => $imageBuilder($pseImage->getProductImage()),
-                iterator_to_array($theliaPse->getProductSaleElementsProductImages())
+                iterator_to_array($theliaPse->getProductSaleElementsProductImages(
+                    ProductSaleElementsProductImageQuery::create()
+                        ->useProductImageQuery()
+                            ->orderByPosition()
+                        ->endUse()
+                ))
             )));
         } catch (\Throwable) {
             $images = [];
@@ -208,7 +215,9 @@ class CartItem extends BaseApiModel
             try {
                 $images = array_values(array_filter(array_map(
                     static fn ($productImage) => $imageBuilder($productImage),
-                    iterator_to_array($theliaProduct->getProductImages())
+                    iterator_to_array($theliaProduct->getProductImages(
+                        ProductImageQuery::create()->orderByPosition()
+                    ))
                 )));
             } catch (\Throwable) {
                 $images = [];
